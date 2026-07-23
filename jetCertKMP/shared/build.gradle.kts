@@ -30,6 +30,10 @@ kotlin {
     wasmJs {
         browser()
     }
+
+    compilerOptions {
+        freeCompilerArgs.set(listOf("-Xexplicit-backing-fields"))
+    }
     
     android {
        namespace = "okik.tech.jetcert.shared"
