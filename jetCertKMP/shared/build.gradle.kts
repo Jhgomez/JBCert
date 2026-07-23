@@ -87,8 +87,12 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.wasm)
+        }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
+            implementation(libs.ktor.client.wasm)
         }
     }
 }
