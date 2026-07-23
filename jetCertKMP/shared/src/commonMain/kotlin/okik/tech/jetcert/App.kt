@@ -45,7 +45,7 @@ fun App(viewModel: MainViewModel = viewModel { MainViewModel() }) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: ${state.value.greeting""}")
+                    Text("Compose: ${state.value.greeting}")
                 }
             }
         }
