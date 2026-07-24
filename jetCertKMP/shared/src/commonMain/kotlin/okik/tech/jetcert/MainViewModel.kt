@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import okik.tech.jetcert.api.GitHubApi
 import okik.tech.jetcert.api.NewsApi
 import okik.tech.jetcert.api.NewsResponse
+import okik.tech.jetcert.apollo.generated.SearchTopReposQuery
 
 class MainViewModel : ViewModel() {
 
@@ -15,6 +17,7 @@ class MainViewModel : ViewModel() {
             field = MutableStateFlow(UiState(false , emptyList()))
 
     val newsApi: NewsApi = NewsApi()
+    val gitHubApi: GitHubApi = GitHubApi()
 
     fun toggelShowingContent() = uiState.update { state -> state.copy(showContent = !state.showContent) }
 
@@ -26,6 +29,10 @@ class MainViewModel : ViewModel() {
         uiState.update { uiState ->
             uiState.copy(showContent = true, topStories)
         }
+    }
+
+    suspend fun getRepos() {
+        val repus = gitHubApi.apolloClient.query(SearchTopReposQuery()).execute().data?.search?.repos
     }
 }
 
