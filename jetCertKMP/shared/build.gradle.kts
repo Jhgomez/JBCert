@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -96,7 +95,7 @@ kotlin {
 }
 
 apollo {
-    service("juanGithub") {
+    service("github") {
         // since apollo generates code we need to give the generated files a package name
         packageName.set("okik.tech.jetcert.apollo.generated")
         introspection {
@@ -104,8 +103,9 @@ apollo {
             // schema defines available  queries and mutations
             // then get github's schema, search for "github graphql schema' or just download it here "https://docs.github.com/public/fpt/schema.docs.graphql"
             // define where our schema files are locaed explictly,, rename the chema to match this fiel name, it is important to hage "graphqls" at the end
-            schemaFile.set(File("src/main/grapql/github.schema.graphqls"))
-            // after adding schema rebuild the app, this will generate code that allows you to access the schema from the main common module
+            schemaFile.set(File("src/main/graphql/schema.docs.graphqls"))
+            // after adding schema rebuild the app(just run it and if you'd like install AS apollo plugin but you should), this will generate code that allows you to access the schema from the main common module
+            // put the generated files(queries and mutations) in the same directory or in a subdirectory(you create them manually, you write them)
         }
     }
 }
