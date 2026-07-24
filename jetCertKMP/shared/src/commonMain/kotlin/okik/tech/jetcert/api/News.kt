@@ -28,7 +28,7 @@ sealed interface NewsResponse {
         val type: String,
         val time: Long,
         val by: String? = null,
-        val tittle: String? = null,
+        val title: String? = null,
         val score: Int? = null,
         val url: String? = null,
         val descendants: Int? = null,
