@@ -29,6 +29,11 @@ import jetcert.shared.generated.resources.Res
 import jetcert.shared.generated.resources.compose_multiplatform
 import kotlinx.coroutines.launch
 
+object Doggy {
+    const val hola = "hola"
+}
+
+
 @Composable
 @Preview
 fun App(viewModel: MainViewModel = viewModel { MainViewModel() }) {

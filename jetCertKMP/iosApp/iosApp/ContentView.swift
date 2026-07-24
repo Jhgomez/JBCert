@@ -7,7 +7,10 @@ struct ComposeView: UIViewControllerRepresentable {
         MainViewControllerKt.MainViewController()
     }
 
-    func updateUIViewController(_ uiViewController: UIViewController, context: Self.Context) {}
+    func updateUIViewController(_ uiViewController: UIViewController, context: Self.Context) {
+        // print(BuildConfig.Shared.GITHUB_API_KEY)
+        // print(Doggy.shared.hola)
+    }
 }
 
 struct ContentView: View {
