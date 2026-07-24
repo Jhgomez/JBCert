@@ -31,10 +31,6 @@ kotlin {
     wasmJs {
         browser()
     }
-
-    compilerOptions {
-        freeCompilerArgs.set(listOf("-Xexplicit-backing-fields"))
-    }
     
     android {
        namespace = "okik.tech.jetcert.shared"
@@ -92,7 +88,7 @@ kotlin {
         }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
-            implementation(libs.ktor.client.wasm)
+            implementation(libs.ktor.client.js)
         }
     }
 }
