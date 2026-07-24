@@ -1,0 +1,19 @@
+query searchTopRepos{
+    search(
+        type: REPOSITORY,
+        query: "is:public sort:stars",
+        first: 10
+    ) {
+        repos: edges {
+            repo: node {
+                ... on Repository {
+                    url,
+                    name,
+                    stargazerCount,
+                    createdAt,
+                    updatedAt
+                }
+            }
+        }
+    }
+}
