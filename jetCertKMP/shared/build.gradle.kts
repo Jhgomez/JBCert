@@ -8,6 +8,12 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization) // found in kmp docs when adding kton
     alias(libs.plugins.apollo)
+    alias(libs.plugins.okik.tech.buildConfig)
+}
+
+buildConfig {
+    buildConfigField("GITHUB_API_KEY")
+    packageName = "okik.tech.jetcert"
 }
 
 kotlin {

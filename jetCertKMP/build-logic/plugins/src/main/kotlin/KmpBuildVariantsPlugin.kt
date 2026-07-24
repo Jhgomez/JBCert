@@ -29,6 +29,11 @@ import java.util.Properties
         buildConfigField("APY_KEY")
         booleanField("SHOULD_SHOW_PRODUCTION_SCREEN", false)
     }
+
+    This will enable you to access BuildConfig.MY_KEY from any kotlin file and from a swift file, since
+    shared modules are compiled into an objective-c apple framework(.framework), and you can access it this way
+    BuildConfig.shared.MY_KEY which assumes your named your framework "Shared" in the gradle file and you
+    are already importing your module with "import Shared" in the swift file
  */
 class KmpBuildVariantsPlugin : Plugin<Project> {
     override fun apply(target: Project) {
