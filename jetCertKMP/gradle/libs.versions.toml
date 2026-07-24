@@ -48,6 +48,9 @@ ktor-client-wasm = { module = "io.ktor:ktor-client-js-wasm-js", version.ref = "k
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" } # found by AI
 apollo-grapql-client = { module = "com.apollographql.apollo:apollo-runtime" }
 
+## used in buildscript
+gradle_kmp = { group = "org.jetbrains.kotlin.multiplatform", name = "org.jetbrains.kotlin.multiplatform.gradle.plugin" , version.ref = "kotlin"} # same as "org.jetbrains.kotlin.multiplatform" plugin
+
 [plugins]
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" } # found in kmp doc
 androidApplication = { id = "com.android.application", version.ref = "agp" }
