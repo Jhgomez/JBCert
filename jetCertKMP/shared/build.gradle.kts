@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization) // found in kmp docs when adding kton
+    alias(libs.plugins.apollo)
 }
 
 kotlin {
@@ -73,6 +74,7 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.apollo.grapql.client)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -89,6 +91,21 @@ kotlin {
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
             implementation(libs.ktor.client.js)
+        }
+    }
+}
+
+apollo {
+    service("juanGithub") {
+        // since apollo generates code we need to give the generated files a package name
+        packageName.set("okik.tech.jetcert.apollo.generated")
+        introspection {
+            endpointUrl.set("https://api.github.com/graphql") // this is github's API
+            // schema defines available  queries and mutations
+            // then get github's schema, search for "github graphql schema' or just download it here "https://docs.github.com/public/fpt/schema.docs.graphql"
+            // define where our schema files are locaed explictly,, rename the chema to match this fiel name, it is important to hage "graphqls" at the end
+            schemaFile.set(File("src/main/grapql/github.schema.graphqls"))
+            // after adding schema rebuild the app, this will generate code that allows you to access the schema from the main common module
         }
     }
 }
