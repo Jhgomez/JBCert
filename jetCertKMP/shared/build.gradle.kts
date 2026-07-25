@@ -12,15 +12,24 @@ plugins {
     alias(libs.plugins.sqldelight)
 }
 
-//sqldelight {
-//    databases {
-//        register("jetcertDB") {
-//            packageName.set("okik.tech.jetcert.db")
-//            dialect("{{ dialect }}:{{ versions.sqldelight }}")
-//            generateAsync.set(true){% endif %}
-//        }
-//    }
-//}
+sqldelight {
+    databases {
+        register("jetcertDB") {
+            packageName.set("okik.tech.jetcert.db")
+            // if not set it defaults to an "old" version(3.18) of sqlite dialect, you can use
+            // other dialects like, postgres, MySql, etc
+            dialect(libs.cashapp.sqldelight.dialect)
+
+            generateAsync.set(true)
+
+            schemaOutputDirectory = file("src/main/sqldelight/migrations")
+
+            deriveSchemaFromMigrations = false
+            treatNullAsUnknownForEquality = true
+            generateAsync = true
+        }
+    }
+}
 
 buildConfig {
     buildConfigField("GITHUB_API_KEY")
@@ -42,7 +51,6 @@ kotlin {
     
     js {
         browser()
-//        =================
         binaries.executable()
         useCommonJs()
     }
@@ -78,7 +86,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
             implementation(libs.ktor.client.okhttp)
-            implementation(libs.sqldelight)
+            implementation(libs.sqldelight.android)
         }
 
         commonMain.dependencies {
@@ -95,35 +103,69 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.apollo.grapql.client)
+//            implementation("app.cash.sqldelight:runtime:2.3.2")
+            implementation(libs.sqldelight.coroutines)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.apollo.datetime)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-            implementation(libs.sqldelight)
+            implementation(libs.sqldelight.native)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
-            implementation(libs.sqldelight)
+            implementation(libs.sqldelight.jvm)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
-            implementation(libs.sqldelight.js)
         }
         wasmJsMain.dependencies {
             implementation(libs.ktor.client.wasm)
+            implementation(libs.sqldelight.js)
+            implementation(
+                devNpm(
+                    libs.plugins.webpack.get().pluginId,
+                    libs.versions.webpack.get()
+                )
+            )
+            implementation(
+                npm(
+                    libs.plugins.sqldelight.js.worker.get().pluginId,
+                    libs.versions.js.worker.get()
+                )
+            )
+            implementation(
+                npm(
+                    libs.plugins.sql.js.get().pluginId,
+                    libs.versions.sql.js.get()
+                )
+            )
         }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
             implementation(libs.ktor.client.js)
-//            ============================================
-            implementation("app.cash.sqldelight:web-worker-driver")
-            implementation("app.cash.sqldelight:primitive-adapters")
-            implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.12.0")
-            implementation(devNpm("copy-webpack-plugin", "9.1.0"))
-            implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.2.1"))
-            implementation(npm("sql.js", "1.8.0"))
-
-//            val sqljsWorker = file("${gradle.includedBuild("sqldelight").projectDir}/drivers/web-worker-driver/sqljs")
-//            implementation(npm("@cashapp/sqldelight-sqljs-worker", sqljsWorker))
+            implementation(libs.sqldelight.js)
+            // It provides a typesafe Domain-Specific Language (DSL) to build HTML and manipulate
+            // the Document Object Model (DOM) directly in the browser using Kotlin
+            implementation(libs.kotlinx.html)
+            implementation(
+                devNpm(
+                    libs.plugins.webpack.get().pluginId,
+                    libs.versions.webpack.get()
+                )
+            )
+            implementation(
+                npm(
+                    libs.plugins.sqldelight.js.worker.get().pluginId,
+                    libs.versions.js.worker.get()
+                )
+            )
+            implementation(
+                npm(
+                    libs.plugins.sql.js.get().pluginId,
+                    libs.versions.sql.js.get()
+                )
+            )
         }
     }
 }
