@@ -18,7 +18,12 @@ material3 = "1.11.0-alpha07"
 ktor = "3.5.1"
 apollo = "5.0.1"
 sqldelight = "2.3.2"
-sqldelight1 = "2.2.1"
+ktxDateTime = "0.8.0"
+apolloDateTimeScalar = "0.0.6"
+kotlinx-html = "0.12.0"
+webpack = "9.1.0"
+js-worker = "2.3.2"
+sql-js = "1.12.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -48,12 +53,19 @@ ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negoti
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" } # found kmp doc
 ktor-client-wasm = { module = "io.ktor:ktor-client-js-wasm-js", version.ref = "ktor"} # found in ktor docs
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" } # found by AI
+kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-js", version.ref = "kotlinx-html"}
 apollo-grapql-client = { module = "com.apollographql.apollo:apollo-runtime" }
 # ============================================
-sqldelight = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+cashapp-sqldelight-dialect = { module = "app.cash.sqldelight:sqlite-3-38-dialect", version.ref = "sqldelight" }
+sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight"}
+sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+sqldelight-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-js = { module = "app.cash.sqldelight:web-worker-driver", version.ref = "sqldelight" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "ktxDateTime" }
+apollo-datetime = { module = "com.apollographql.adapters:apollo-adapters-kotlinx-datetime", version.ref = "apolloDateTimeScalar"}
 
-## used in buildscript
+## used in build logic included build to be able to extend KMP extensions
 gradle_kmp = { group = "org.jetbrains.kotlin.multiplatform", name = "org.jetbrains.kotlin.multiplatform.gradle.plugin" , version.ref = "kotlin"} # same as "org.jetbrains.kotlin.multiplatform" plugin
 
 [plugins]
@@ -66,6 +78,9 @@ kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight"}
+webpack = { id = "copy-webpack-plugin" }
+sqldelight-js-worker = { id = "@cashapp/sqldelight-sqljs-worker"}
+sql-js = { id = "sql.js" }
 
 # custom plugins
 okik-tech-buildConfig = { id = "okik.tech.kmp.buildConfig", version = "unspecified" }
