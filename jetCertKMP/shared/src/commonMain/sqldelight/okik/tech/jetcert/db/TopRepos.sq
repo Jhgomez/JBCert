@@ -1,0 +1,31 @@
+CREATE TABLE TopRepos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  url TEXT NOT NULL,
+  name TEXT NOT NULL,
+  stargazerCount INTEGER NOT NULL,
+  createdAt INTEGER NOT NULL,
+  updatedAt INTEGER NOT NULL
+);
+
+selectAll:
+SELECT *
+FROM TopRepos;
+
+upsert:
+INSERT INTO TopRepos (id, url, name, stargazerCount, createdAt, updatedAt)
+VALUES (?, ?, ?, ?, ?, ?)
+ON CONFLICT (id)
+DO UPDATE SET
+     url= excluded.url,
+     name= excluded.name,
+     stargazerCount= excluded.stargazerCount,
+     createdAt= excluded.createdAt,
+     updatedAt= excluded.updatedAt;
+
+insert:
+INSERT INTO TopRepos (url, name, stargazerCount, createdAt, updatedAt)
+VALUES ?;
+
+delete:
+DELETE FROM TopRepos
+WHERE id = ?;

@@ -1,0 +1,38 @@
+CREATE TABLE News (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  type TEXT NOT NULL,
+  time INTEGER NOT NULL,
+  by TEXT NOT NULL,
+  title TEXT,
+  score INTEGER,
+  url TEXT,
+  descendants INTEGER,
+  text TEXT
+);
+
+selectAll:
+SELECT *
+FROM News
+ORDER BY score DESC;
+
+upsert:
+INSERT INTO News (id, type, time, by, title, score, url, descendants, text)
+VALUES ?
+ON CONFLICT (id)
+DO UPDATE SET
+    type = excluded.type,
+    time = excluded.time,
+    by = excluded.by,
+    title = excluded.title,
+    score = excluded.score,
+    url = excluded.url,
+    descendants = excluded.descendants,
+    text = excluded.text;
+
+insert:
+INSERT INTO News(id, type, time, by, title, score, url, descendants, text)
+VALUES ?;
+
+delete:
+DELETE FROM News
+WHERE id = ?;

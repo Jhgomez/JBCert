@@ -14,7 +14,15 @@ plugins {
 
 sqldelight {
     databases {
-        register("jetcertDB") {
+        // we could use create or register, create generates the DB eagerly while register does it lazily
+        // which helps us decrease build times becase it avoids running the the entire block
+        // if the db task is not called as opposed to run it on evey build, the name you register here
+        // is the name of your DB. After you sync you can explicitly generate the kotlin APIs that will
+        // let you interact with your DB using `./gradlew generateCommonMainJetcertDBInterface` not this
+        // command includes the registered name of the the DB
+        register("JetcertDB") {
+            // this package name has to mimic the directory struture where you will declare your
+            // tables/db schemas
             packageName.set("okik.tech.jetcert.db")
             // if not set it defaults to an "old" version(3.18) of sqlite dialect, you can use
             // other dialects like, postgres, MySql, etc
