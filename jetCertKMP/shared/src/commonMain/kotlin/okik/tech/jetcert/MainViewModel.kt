@@ -14,7 +14,7 @@ class MainViewModel : ViewModel() {
 //    private val _uiState = MutableStateFlow(UiState(false, Greeting().greet()))
 //    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
     val uiState: StateFlow<UiState>
-            field = MutableStateFlow(UiState(false , emptyList()))
+            field = MutableStateFlow(UiState(false ))
 
     val newsApi: NewsApi = NewsApi()
     val gitHubApi: GitHubApi = GitHubApi()
@@ -27,13 +27,34 @@ class MainViewModel : ViewModel() {
         println("Top stories are ${topStories.map(NewsResponse.Story::title)}")
 
         uiState.update { uiState ->
-            uiState.copy(showContent = true, topStories)
+            uiState.copy(
+                showContent = true,
+                topStories
+            )
         }
     }
 
-    suspend fun getRepos() {
-        val repus = gitHubApi.apolloClient.query(SearchTopReposQuery()).execute().data?.search?.repos
+    suspend fun getTopRepos() {
+        val repos = gitHubApi
+            .apolloClient
+            .query(SearchTopReposQuery())
+            .execute()
+            .dataAssertNoErrors
+            .search
+            .repos
+
+        uiState.update {
+            UiState(
+                showContent = true,
+                topRepos = repos?.filterNotNull()
+            )
+        }
+
     }
 }
 
-data class UiState(val showContent: Boolean, val stories: List<NewsResponse.Story>)
+data class UiState(
+    val showContent: Boolean,
+    val stories: List<NewsResponse.Story>? = null,
+    val topRepos: List<SearchTopReposQuery.Repo>? = null
+)
