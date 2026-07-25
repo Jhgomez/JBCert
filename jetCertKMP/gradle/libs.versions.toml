@@ -17,6 +17,8 @@ kotlinx-coroutines = "1.11.0"
 material3 = "1.11.0-alpha07"
 ktor = "3.5.1"
 apollo = "5.0.1"
+sqldelight = "2.3.2"
+sqldelight1 = "2.2.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -47,6 +49,9 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 ktor-client-wasm = { module = "io.ktor:ktor-client-js-wasm-js", version.ref = "ktor"} # found in ktor docs
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" } # found by AI
 apollo-grapql-client = { module = "com.apollographql.apollo:apollo-runtime" }
+# ============================================
+sqldelight = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-js = { module = "app.cash.sqldelight:web-worker-driver", version.ref = "sqldelight" }
 
 ## used in buildscript
 gradle_kmp = { group = "org.jetbrains.kotlin.multiplatform", name = "org.jetbrains.kotlin.multiplatform.gradle.plugin" , version.ref = "kotlin"} # same as "org.jetbrains.kotlin.multiplatform" plugin
@@ -60,6 +65,7 @@ composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "k
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight"}
 
 # custom plugins
 okik-tech-buildConfig = { id = "okik.tech.kmp.buildConfig", version = "unspecified" }
