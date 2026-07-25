@@ -53,8 +53,19 @@ fun App(viewModel: MainViewModel = viewModel { MainViewModel() }) {
                     viewModel.getStories()
                 }
             }) {
-                Text("Click me!")
+                Text("Get Stories(Rest Client)")
             }
+
+            Spacer(Modifier.height(8.dp))
+
+            Button(onClick = {
+                coroutineScope.launch {
+                    viewModel.getTopRepos()
+                }
+            }) {
+                Text("Get Top Repos(Apollo GraphQl Client)")
+            }
+
             AnimatedVisibility(state.value.showContent) {
 //                val greeting = remember { Greeting().greet() }
 
@@ -65,15 +76,23 @@ fun App(viewModel: MainViewModel = viewModel { MainViewModel() }) {
                     Image(painterResource(Res.drawable.compose_multiplatform), null)
                     LazyColumn {
                         item {
-                            Text("Top 10 Hacker News Stories", fontSize = 30.sp)
+                            Text("Top 10", fontSize = 30.sp)
                             HorizontalDivider()
                             Spacer(Modifier.height(16.dp))
                         }
 
-                        items(state.value.stories) { story ->
-                            Text(story.title.orEmpty())
-                            Spacer(Modifier.height(8.dp))
+                        if (!state.value.stories.isNullOrEmpty()) {
+                            items(state.value.stories!!) { story ->
+                                Text(story.title.orEmpty())
+                                Spacer(Modifier.height(8.dp))
+                            }
+                        } else if (!state.value.topRepos.isNullOrEmpty()) {
+                            items(state.value.topRepos!!) { repo ->
+                                Text(repo.repo?.onRepository?.name ?: "name was null")
+                                Spacer(Modifier.height(8.dp))
+                            }
                         }
+
                     }
                 }
             }
