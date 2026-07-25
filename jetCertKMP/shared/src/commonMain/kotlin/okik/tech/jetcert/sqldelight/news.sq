@@ -1,9 +1,7 @@
-CREATE TABLE hockeyPlayer (
-  player_number INTEGER PRIMARY KEY NOT NULL,
-  full_name TEXT NOT NULL
+CREATE TABLE news (
+  id INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,
+  title TEXT NOT NULL
 );
 
-CREATE INDEX hockeyPlayer_full_name ON hockeyPlayer(full_name);
-
-INSERT INTO hockeyPlayer (player_number, full_name)
-VALUES (15, 'Ryan Getzlaf');
+INSERT INTO news (title)
+VALUES (?);
