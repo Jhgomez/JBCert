@@ -9,7 +9,18 @@ plugins {
     alias(libs.plugins.kotlinxSerialization) // found in kmp docs when adding kton
     alias(libs.plugins.apollo)
     alias(libs.plugins.okik.tech.buildConfig)
+    alias(libs.plugins.sqldelight)
 }
+
+//sqldelight {
+//    databases {
+//        register("jetcertDB") {
+//            packageName.set("okik.tech.jetcert.db")
+//            dialect("{{ dialect }}:{{ versions.sqldelight }}")
+//            generateAsync.set(true){% endif %}
+//        }
+//    }
+//}
 
 buildConfig {
     buildConfigField("GITHUB_API_KEY")
@@ -31,6 +42,9 @@ kotlin {
     
     js {
         browser()
+//        =================
+        binaries.executable()
+        useCommonJs()
     }
     
     @OptIn(ExperimentalWasmDsl::class)
@@ -64,6 +78,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.sqldelight)
         }
 
         commonMain.dependencies {
@@ -83,12 +98,15 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.sqldelight)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.sqldelight)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.sqldelight.js)
         }
         wasmJsMain.dependencies {
             implementation(libs.ktor.client.wasm)
@@ -96,6 +114,16 @@ kotlin {
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
             implementation(libs.ktor.client.js)
+//            ============================================
+            implementation("app.cash.sqldelight:web-worker-driver")
+            implementation("app.cash.sqldelight:primitive-adapters")
+            implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.12.0")
+            implementation(devNpm("copy-webpack-plugin", "9.1.0"))
+            implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.2.1"))
+            implementation(npm("sql.js", "1.8.0"))
+
+//            val sqljsWorker = file("${gradle.includedBuild("sqldelight").projectDir}/drivers/web-worker-driver/sqljs")
+//            implementation(npm("@cashapp/sqldelight-sqljs-worker", sqljsWorker))
         }
     }
 }
