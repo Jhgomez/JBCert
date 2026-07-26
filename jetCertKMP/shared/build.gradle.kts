@@ -113,10 +113,11 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.apollo.grapql.client)
-//            implementation("app.cash.sqldelight:runtime:2.3.2")
+            implementation("app.cash.sqldelight:runtime:2.3.2")
             implementation(libs.sqldelight.coroutines)
             implementation(libs.kotlinx.datetime)
             implementation(libs.apollo.datetime)
+            implementation(libs.koin.core)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
