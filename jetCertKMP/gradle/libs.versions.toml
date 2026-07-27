@@ -24,7 +24,8 @@ kotlinx-html = "0.12.0"
 webpack = "9.1.0"
 js-worker = "2.3.2"
 sql-js = "1.12.0"
-koin = "4.2.2"
+koin = "4.2.2" # 4.2.0
+koin-compiler = "1.0.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -66,8 +67,11 @@ sqldelight-js = { module = "app.cash.sqldelight:web-worker-driver", version.ref 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "ktxDateTime" }
 apollo-datetime = { module = "com.apollographql.adapters:apollo-adapters-kotlinx-datetime", version.ref = "apolloDateTimeScalar"}
 
-koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-cmp = { module = "io.insert-koin:koin-compose" }
+koin-cmp-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose"}
 
 ## used in build logic included build to be able to extend KMP extensions
 gradle_kmp = { group = "org.jetbrains.kotlin.multiplatform", name = "org.jetbrains.kotlin.multiplatform.gradle.plugin" , version.ref = "kotlin"} # same as "org.jetbrains.kotlin.multiplatform" plugin
@@ -85,6 +89,7 @@ sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight"}
 webpack = { id = "copy-webpack-plugin" }
 sqldelight-js-worker = { id = "@cashapp/sqldelight-sqljs-worker"}
 sql-js = { id = "sql.js" }
+koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koin-compiler" }
 
 # custom plugins
 okik-tech-buildConfig = { id = "okik.tech.kmp.buildConfig", version = "unspecified" }
