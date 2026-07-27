@@ -28,6 +28,7 @@ import org.jetbrains.compose.resources.painterResource
 import jetcert.shared.generated.resources.Res
 import jetcert.shared.generated.resources.compose_multiplatform
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 object Doggy {
     const val hola = "hola"
@@ -36,7 +37,9 @@ object Doggy {
 
 @Composable
 @Preview
-fun App(viewModel: MainViewModel = viewModel { MainViewModel() }) {
+fun App() {
+    val viewModel: MainViewModel = koinViewModel<MainViewModel>()
+
     MaterialTheme {
         val coroutineScope = rememberCoroutineScope()
         val state = viewModel.uiState.collectAsStateWithLifecycle()
