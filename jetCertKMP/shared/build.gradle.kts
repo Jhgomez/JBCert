@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.apollo)
     alias(libs.plugins.okik.tech.buildConfig)
     alias(libs.plugins.sqldelight)
-    libs.plugins.koin.compiler
+    alias(libs.plugins.koin.compiler)
 }
 
 sqldelight {
@@ -98,9 +98,6 @@ kotlin {
             implementation(libs.compose.uiTooling)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.android)
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:4.2.0"))
-            implementation("io.insert-koin:koin-core")
-            implementation( "io.insert-koin:koin-androidx-compose")
         }
 
         commonMain.dependencies {
@@ -122,11 +119,11 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.apollo.datetime)
 
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:4.2.0"))
-            implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-compose")
-            implementation("io.insert-koin:koin-compose-viewmodel")
-            implementation("io.insert-koin:koin-core-viewmodel")
+            implementation(project.dependencies.platform(libs.koin.bom))
+//            implementation(libs.koin.core)
+            implementation(libs.koin.cmp)
+            implementation(libs.koin.cmp.viewmodel)
+//            implementation("io.insert-koin:koin-core-viewmodel")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
