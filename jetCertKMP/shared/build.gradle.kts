@@ -38,6 +38,26 @@ sqldelight {
             generateAsync = true
         }
     }
+
+    // The below setting is usually used to link outer libraries to the native(iOS) framework, in our case
+    // the framework we are producing for our ios targets is static(isStatic = true) that changes how outher
+    // dependencies are linked, but it is said that static framweorks are more performant, but if we make them
+    // static and we don't link outer libraries, the system won't be able to execute our code, so there is different
+    // solutions, one is to remove the "isStatic" flag in ios framwworks, which makes the dynamic by default
+    // meaning they are not static by defualt, this solves linking errors, but we can do other things to keep
+    // the framework static, all of them requireq to open the app in xcode, so first from xcode navigate
+    // to the iosApp module and select the ".xcodeproj" file, when it is open you will see a gutter to the left
+    // at the top of the gutter you will the name of the project in this case(if you didn't change it) "iosApp",
+    // click it and now youll sse "PROJECT" and "TARGETS", the option I chooses is select the target "iosApp",
+    // Build Phases > Link Binary With Libraries, click add and search "sqlite" you'll find two "libsqlite.tdb", choose
+    // either or, I choosed "libsqlite3.tdb". According to other info you can do the same from the target options,
+    // General > Frameworks, Libraries, and Embedded Content, click add and add the same, the other option, also
+    // from target, Build Settings > Linking - General > Linking - General > Other LInker Flags and add the "-lsqlite3"
+    // flag however it seems you need to choos the build type also, acording to info I found the modern approach is
+    // thw two first approaches, After you do this, clear the build in xcode Product > Clean Build Folder and run the app
+    // from xcode or AS, it should work now. If you wan to digg it yourself a litle you can search
+    // thing like "how can i add sqlite3 c library in my swift app"
+    //      linkSqlite = true
 }
 
 buildConfig {
