@@ -118,6 +118,7 @@ kotlin {
             implementation(libs.sqldelight.coroutines)
             implementation(libs.kotlinx.datetime)
             implementation(libs.apollo.datetime)
+            implementation("app.cash.sqldelight:primitive-adapters:2.3.2")
 
             implementation(project.dependencies.platform(libs.koin.bom))
 //            implementation(libs.koin.core)
@@ -130,6 +131,7 @@ kotlin {
             implementation(libs.sqldelight.native)
         }
         jvmMain.dependencies {
+//            implementation(libs.kotlinx.swing.coroutines)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.jvm)
         }

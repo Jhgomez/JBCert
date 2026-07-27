@@ -1,12 +1,14 @@
+import kotlin.Int;
+
 CREATE TABLE News (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   type TEXT NOT NULL,
   time INTEGER NOT NULL,
   by TEXT NOT NULL,
   title TEXT,
-  score INTEGER,
+  score INTEGER AS Int,
   url TEXT,
-  descendants INTEGER,
+  descendants INTEGER AS Int,
   text TEXT
 );
 
@@ -17,7 +19,7 @@ ORDER BY score DESC;
 
 upsert:
 INSERT INTO News (id, type, time, by, title, score, url, descendants, text)
-VALUES ?
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 ON CONFLICT (id)
 DO UPDATE SET
     type = excluded.type,
@@ -30,8 +32,8 @@ DO UPDATE SET
     text = excluded.text;
 
 insert:
-INSERT INTO News(id, type, time, by, title, score, url, descendants, text)
-VALUES ?;
+INSERT INTO News(type, time, by, title, score, url, descendants, text)
+VALUES ?; -- this generates an object insertion, while if we use (?, ?, ?, ?, ?, ?, ?, ?) is field by field
 
 delete:
 DELETE FROM News

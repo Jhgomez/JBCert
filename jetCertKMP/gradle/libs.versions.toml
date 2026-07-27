@@ -57,7 +57,7 @@ ktor-client-wasm = { module = "io.ktor:ktor-client-js-wasm-js", version.ref = "k
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" } # found by AI
 kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-js", version.ref = "kotlinx-html"}
 apollo-grapql-client = { module = "com.apollographql.apollo:apollo-runtime" }
-# ============================================
+kotlinx-swing-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 cashapp-sqldelight-dialect = { module = "app.cash.sqldelight:sqlite-3-38-dialect", version.ref = "sqldelight" }
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight"}

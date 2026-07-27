@@ -27,11 +27,11 @@ sealed interface NewsResponse {
         val id: Long,
         val type: String,
         val time: Long,
-        val by: String? = null,
+        val by: String = "",
         val title: String? = null,
         val score: Int? = null,
         val url: String? = null,
-        val descendants: Int? = null,
+        val descendants: Int = 0,
         val kids: List<Long>? = null,
         val text: String? = null,
     ) : NewsResponse

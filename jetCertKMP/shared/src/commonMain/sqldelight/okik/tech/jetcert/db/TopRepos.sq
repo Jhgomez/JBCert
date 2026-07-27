@@ -1,18 +1,20 @@
-CREATE TABLE TopRepos (
+import kotlin.Int;
+
+CREATE TABLE TopRepo (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   url TEXT NOT NULL,
   name TEXT NOT NULL,
-  stargazerCount INTEGER NOT NULL,
+  stargazerCount INTEGER AS Int NOT NULL,
   createdAt INTEGER NOT NULL,
   updatedAt INTEGER NOT NULL
 );
 
 selectAll:
 SELECT *
-FROM TopRepos;
+FROM TopRepo;
 
 upsert:
-INSERT INTO TopRepos (id, url, name, stargazerCount, createdAt, updatedAt)
+INSERT INTO TopRepo (id, url, name, stargazerCount, createdAt, updatedAt)
 VALUES (?, ?, ?, ?, ?, ?)
 ON CONFLICT (id)
 DO UPDATE SET
@@ -23,9 +25,9 @@ DO UPDATE SET
      updatedAt= excluded.updatedAt;
 
 insert:
-INSERT INTO TopRepos (url, name, stargazerCount, createdAt, updatedAt)
-VALUES ?;
+INSERT INTO TopRepo (url, name, stargazerCount, createdAt, updatedAt)
+VALUES (?, ?, ?, ?, ?);
 
 delete:
-DELETE FROM TopRepos
+DELETE FROM TopRepo
 WHERE id = ?;
