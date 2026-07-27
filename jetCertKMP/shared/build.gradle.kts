@@ -192,7 +192,7 @@ kotlin {
 apollo {
     service("github") {
         // since apollo generates code we need to give the generated files a package name
-        packageName.set("okik.tech.jetcert.apollo.generated")
+        packageName.set("okik.tech.jetcert.apollo")
         introspection {
             endpointUrl.set("https://api.github.com/graphql") // this is github's API
             // schema defines available  queries and mutations
