@@ -222,6 +222,9 @@ apollo {
             // after adding schema rebuild the app(just run it and if you'd like install AS apollo plugin but you should), this will generate code that allows you to access the schema from the main common module
             // put the generated files(queries and mutations) in the same directory or in a subdirectory(you create them manually, you write them)
         }
+
+        mapScalar("DateTime", "kotlinx.datetime.Instant", "com.apollographql.adapter.datetime.KotlinxInstantAdapter")
+        mapScalar("URI", "kotlin.String")
     }
 }
 
