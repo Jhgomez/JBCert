@@ -6,12 +6,17 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A896A53A30181AA2000E9D5D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A896A53930181AA2000E9D5D /* libsqlite3.tbd */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		A896A53930181AA2000E9D5D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		D83B1C455620E4066539E27C /* JetCert.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JetCert.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		819AEAB89929C178E5A96E18 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		819AEAB89929C178E5A96E18 /* Exceptions for "iosApp" folder in "iosApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -24,7 +29,7 @@
 		E40E6A71AD2BFA6C2BBCF17F /* iosApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				819AEAB89929C178E5A96E18 /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
+				819AEAB89929C178E5A96E18 /* Exceptions for "iosApp" folder in "iosApp" target */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -41,12 +46,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A896A53A30181AA2000E9D5D /* libsqlite3.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A896A53830181AA2000E9D5D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A896A53930181AA2000E9D5D /* libsqlite3.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		CD25B3CD80201FF11FB2BEA6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -60,6 +74,7 @@
 			children = (
 				F292E71DC2238E5D4C983418 /* Configuration */,
 				E40E6A71AD2BFA6C2BBCF17F /* iosApp */,
+				A896A53830181AA2000E9D5D /* Frameworks */,
 				CD25B3CD80201FF11FB2BEA6 /* Products */,
 			);
 			sourceTree = "<group>";
