@@ -9,6 +9,6 @@ import org.koin.plugin.module.dsl.single
 
 actual val platformModule: Module = module {
     // Classic DSL with lambda for custom construction
-    single { IosDatabaseDriverFactory() } bind DatabaseDriverFactory::class
+//    single { IosDatabaseDriverFactory() } bind DatabaseDriverFactory::class
     single<IosDatabaseDriverFactory>() bind DatabaseDriverFactory::class
 }
