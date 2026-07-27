@@ -8,8 +8,10 @@ import okik.tech.jetcert.api.GitHubApi
 import okik.tech.jetcert.api.NewsApi
 import okik.tech.jetcert.api.NewsResponse
 import okik.tech.jetcert.apollo.generated.SearchTopReposQuery
+import okik.tech.jetcert.db.DatabaseDriverFactory
 
-class MainViewModel : ViewModel() {
+
+class MainViewModel(private val driverFactory: DatabaseDriverFactory) : ViewModel() {
 
 //    private val _uiState = MutableStateFlow(UiState(false, Greeting().greet()))
 //    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
