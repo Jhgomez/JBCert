@@ -61,7 +61,7 @@ fun App() {
                     viewModel.insertNewsToDB()
                 }
             }) {
-                Text("Get News(Rest Client)")
+                Text("Get News(Rest Client)", fontFamily = giffy())
             }
 
             Spacer(Modifier.height(8.dp))
