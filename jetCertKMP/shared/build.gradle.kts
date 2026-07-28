@@ -98,6 +98,7 @@ kotlin {
     
        compilerOptions {
            jvmTarget = JvmTarget.JVM_11
+           optIn.add("kotlin.time.ExperimentalTime")
        }
        androidResources {
            enable = true
@@ -134,17 +135,15 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.apollo.grapql.client)
+            implementation(libs.apollo.adapters)
+
             implementation("app.cash.sqldelight:runtime:2.3.2")
             implementation(libs.sqldelight.coroutines)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.apollo.datetime)
             implementation("app.cash.sqldelight:primitive-adapters:2.3.2")
 
             implementation(project.dependencies.platform(libs.koin.bom))
-//            implementation(libs.koin.core)
             implementation(libs.koin.cmp)
             implementation(libs.koin.cmp.viewmodel)
-//            implementation("io.insert-koin:koin-core-viewmodel")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -223,7 +222,7 @@ apollo {
             // put the generated files(queries and mutations) in the same directory or in a subdirectory(you create them manually, you write them)
         }
 
-        mapScalar("DateTime", "kotlinx.datetime.Instant", "com.apollographql.adapter.datetime.KotlinxInstantAdapter")
+        mapScalar("DateTime", "kotlin.time.Instant", "com.apollographql.adapter.core.KotlinInstantAdapter")
         mapScalar("URI", "kotlin.String")
     }
 }
