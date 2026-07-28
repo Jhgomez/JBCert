@@ -143,7 +143,7 @@ kotlin {
             implementation(libs.sqldelight.primitives)
 
             implementation(project.dependencies.platform(libs.koin.bom))
-            implementation(libs.koin.cmp)
+            implementation(libs.koin.cmp) // you can change this to koin-core
             implementation(libs.koin.cmp.viewmodel)
 
             implementation(libs.kermit)
