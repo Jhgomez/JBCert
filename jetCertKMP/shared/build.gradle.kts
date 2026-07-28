@@ -146,9 +146,10 @@ kotlin {
             implementation(libs.koin.cmp) // you can change this to koin-core
             implementation(libs.koin.cmp.viewmodel)
 
-            implementation(libs.kermit)
-            implementation(libs.kermit.crashalytics)
-            implementation(libs.kermit.crashalytics.ios)
+            // commented out because they require to implement firebase and this project doesn't require creating a project in FIrebase
+            // implementation(libs.kermit)
+            // implementation(libs.kermit.crashalytics)
+            // implementation(libs.kermit.crashalytics.ios)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
