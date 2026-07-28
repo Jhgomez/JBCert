@@ -7,24 +7,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import okik.tech.jetcert.api.GitHubApi
 import okik.tech.jetcert.api.NewsApi
 import okik.tech.jetcert.api.NewsResponse
-import okik.tech.jetcert.apollo.generated.SearchTopReposQuery
-<<<<<<< Updated upstream
-import okik.tech.jetcert.db.DatabaseDriverFactory
-=======
-import okik.tech.jetcert.db.JetcertDB
+import okik.tech.jetcert.apollo.SearchTopReposQuery
+import okik.tech.jetcert.db.Database
 import okik.tech.jetcert.db.News
 import okik.tech.jetcert.db.TopRepo
-import okik.tech.jetcert.db.createDataBase
 import kotlin.time.Clock
->>>>>>> Stashed changes
 
 
-class MainViewModel(private val driverFactory: DatabaseDriverFactory) : ViewModel() {
+class MainViewModel(private val database: Database) : ViewModel() {
 
 //    private val _uiState = MutableStateFlow(UiState(false, Greeting().greet()))
 //    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
@@ -33,9 +27,8 @@ class MainViewModel(private val driverFactory: DatabaseDriverFactory) : ViewMode
 
     val newsApi: NewsApi = NewsApi()
     val gitHubApi: GitHubApi = GitHubApi()
-    val database: JetcertDB = createDataBase()
 
-    fun toggelShowingContent() = uiState.update { state -> state.copy(showContent = !state.showContent) }
+    fun toggleShowingContent() = uiState.update { state -> state.copy(showContent = !state.showContent) }
 
     suspend fun getStories() {
         val topStories = newsApi.getTopStories()
@@ -122,32 +115,34 @@ class MainViewModel(private val driverFactory: DatabaseDriverFactory) : ViewMode
     }
 
     suspend fun getTopReposFromDb(): Flow<List<TopRepo>> =
-        database.topReposQueries.selectAll().asFlow().mapToList(Dispatchers.Default)
+        database.repoQueries.selectAll().asFlow().mapToList(Dispatchers.Default)
 
     suspend fun insertTopRepos() {
-//        val searchResponse =
-//            gitHubApi
-//                .apolloClient
-//                .query(SearchTopReposQuery())
-//                .execute()
-//                .dataAssertNoErrors
-//                .search
-//                .repos
-//                .orEmpty()
-//                .filterNotNull()
+        val searchResponse =
+            gitHubApi
+                .apolloClient
+                .query(SearchTopReposQuery())
+                .execute()
+                .dataAssertNoErrors
+                .search
+                .repos
+                .orEmpty()
+                .filterNotNull()
 
-//        database.transaction {
-//            searchResponse.forEach { search ->
-//                database.topReposQueries.upsert(
-//                    id = null,
-//                    url = search.repo.onRepository.url,
-//                    name = search.repo.onRepository.name,
-//                    stargazerCount = search.repo.onRepository.stargazerCount,
-//                    createdAt = search.repo.onRepository.createdAt,
-//                    updatedAt = search.repo.onRepository.updatedAt
-//                )
-//            }
-//        }
+        database.transaction {
+            searchResponse.forEach { search ->
+                val repo = search.repo!!.onRepository!!
+
+                database.repoQueries.upsert(
+                    id = null,
+                    url = repo.url,
+                    name = repo.name,
+                    stargazerCount = repo.stargazerCount,
+                    createdAt = repo.createdAt.epochSeconds,
+                    updatedAt = repo.updatedAt.epochSeconds
+                )
+            }
+        }
     }
 }
 
