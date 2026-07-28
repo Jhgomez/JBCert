@@ -137,9 +137,9 @@ kotlin {
             implementation(libs.apollo.grapql.client)
             implementation(libs.apollo.adapters)
 
-            implementation("app.cash.sqldelight:runtime:2.3.2")
+            implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines)
-            implementation("app.cash.sqldelight:primitive-adapters:2.3.2")
+            implementation(libs.sqldelight.primitives)
 
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.cmp)
@@ -150,7 +150,7 @@ kotlin {
             implementation(libs.sqldelight.native)
         }
         jvmMain.dependencies {
-//            implementation(libs.kotlinx.swing.coroutines)
+            implementation(libs.kotlinx.swing.coroutines)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.jvm)
         }

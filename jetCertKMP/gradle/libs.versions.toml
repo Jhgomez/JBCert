@@ -49,6 +49,7 @@ compose-components-resources = { module = "org.jetbrains.compose.components:comp
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 wrappers-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-wrappers" }
+
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" } # found in ktor doc and kmp doc
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" } # found in ktor doc, kmp doc seems to suggest to use some ktor-android dep
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" } # found in ktor doc and kmp doc
@@ -57,15 +58,19 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 ktor-client-wasm = { module = "io.ktor:ktor-client-js-wasm-js", version.ref = "ktor"} # found in ktor docs
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" } # found by AI
 kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-js", version.ref = "kotlinx-html"}
+
 apollo-grapql-client = { module = "com.apollographql.apollo:apollo-runtime" }
 kotlinx-swing-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+apollo-adapters = { module = "com.apollographql.adapters:apollo-adapters-core", version.ref = "apollo-adapters" }
+
+sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
 cashapp-sqldelight-dialect = { module = "app.cash.sqldelight:sqlite-3-38-dialect", version.ref = "sqldelight" }
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight"}
 sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-js = { module = "app.cash.sqldelight:web-worker-driver", version.ref = "sqldelight" }
-apollo-adapters = { module = "com.apollographql.adapters:apollo-adapters-core", version.ref = "apollo-adapters" }
+sqldelight-primitives = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
 
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core" }
