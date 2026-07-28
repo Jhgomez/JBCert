@@ -4,32 +4,36 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.apollographql.apollo.ApolloClient
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import okik.tech.jetcert.api.GitHubApi
 import okik.tech.jetcert.api.NewsApi
 import okik.tech.jetcert.api.NewsResponse
 import okik.tech.jetcert.apollo.SearchTopReposQuery
-import okik.tech.jetcert.apollo.type.Repository
 import okik.tech.jetcert.db.Database
 import okik.tech.jetcert.db.News
 import okik.tech.jetcert.db.TopRepo
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import kotlin.time.Clock
 
 
-class MainViewModel(private val database: Database) : ViewModel() {
+class MainViewModel(
+    private val database: Database,
+    private val gitHubApi: ApolloClient
+) : ViewModel(), KoinComponent {
 
-//    private val _uiState = MutableStateFlow(UiState(false, Greeting().greet()))
-//    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+    // private val _uiState = MutableStateFlow(UiState(false, Greeting().greet()))
+    // val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+
+    // prefer constructor injection but just ot show case field injection, btw you have to implement
+    // KoinComponent to do field injection
+    private val newsApi: NewsApi by inject()
     val uiState: StateFlow<UiState>
             field = MutableStateFlow(UiState(false ))
-
-    val newsApi: NewsApi = NewsApi()
-    val gitHubApi: GitHubApi = GitHubApi()
 
     fun toggleShowingContent() = uiState.update { state -> state.copy(showContent = !state.showContent) }
 
@@ -48,7 +52,6 @@ class MainViewModel(private val database: Database) : ViewModel() {
 
     suspend fun getTopRepos() {
         val repos = gitHubApi
-            .apolloClient
             .query(SearchTopReposQuery())
             .execute()
             .dataAssertNoErrors
@@ -131,7 +134,6 @@ class MainViewModel(private val database: Database) : ViewModel() {
     suspend fun insertTopRepos() {
         val searchResponse =
             gitHubApi
-                .apolloClient
                 .query(SearchTopReposQuery())
                 .execute()
                 .dataAssertNoErrors
