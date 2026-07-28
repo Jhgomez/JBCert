@@ -11,10 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.ktor.client.request.invoke
 import org.jetbrains.compose.resources.painterResource
 
 import jetcert.shared.generated.resources.Res
@@ -55,10 +59,9 @@ fun App() {
                 coroutineScope.launch {
 //                    viewModel.getStories()
                     viewModel.insertNewsToDB()
-                    viewModel.insertFakeNews("Hola")
                 }
             }) {
-                Text("Get Stories(Rest Client)")
+                Text("Get News(Rest Client)")
             }
 
             Spacer(Modifier.height(8.dp))
@@ -72,7 +75,23 @@ fun App() {
                 Text("Get Top Repos(Apollo GraphQl Client)")
             }
 
-            AnimatedVisibility(state.value.showContent) {
+            Spacer(Modifier.height(8.dp))
+
+            val input = rememberTextFieldState("")
+            TextField(input, lineLimits = TextFieldLineLimits.MultiLine(1, 1))
+
+            Spacer(Modifier.height(8.dp))
+
+            Button(onClick = {
+                coroutineScope.launch {
+                    viewModel.insertFakeNews(input.text.toString())
+                }
+            }) {
+                Text("Insert Fake News")
+            }
+
+
+            AnimatedVisibility(!state.value.stories.isNullOrEmpty() || !state.value.topRepos.isNullOrEmpty()) {
 //                val greeting = remember { Greeting().greet() }
 
                 Column(
@@ -94,7 +113,7 @@ fun App() {
                             }
                         } else if (!state.value.topRepos.isNullOrEmpty()) {
                             items(state.value.topRepos!!) { repo ->
-                                Text(repo.repo?.onRepository?.name ?: "name was null")
+                                Text(repo.name)
                                 Spacer(Modifier.height(8.dp))
                             }
                         }
