@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,8 +31,17 @@ import io.ktor.client.request.invoke
 import org.jetbrains.compose.resources.painterResource
 
 import jetcert.shared.generated.resources.Res
+import jetcert.shared.generated.resources.allPluralStringResources
+import jetcert.shared.generated.resources.app_name
 import jetcert.shared.generated.resources.compose_multiplatform
+import jetcert.shared.generated.resources.plural_news
+import jetcert.shared.generated.resources.string_template
+import jetcert.shared.generated.resources.top_news
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.pluralStringResource
+import org.jetbrains.compose.resources.stringArrayResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 object Doggy {
@@ -55,6 +65,8 @@ fun App() {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            DemoLocaleStrings()
+
             Button(onClick = {
                 coroutineScope.launch {
 //                    viewModel.getStories()
@@ -123,4 +135,25 @@ fun App() {
             }
         }
     }
+}
+
+@Composable
+fun ColumnScope.DemoLocaleStrings() {
+    Text(text = "String: ${stringResource(resource = Res.string.app_name)}")
+    Spacer(Modifier.height(4.dp))
+
+    Text(text = "Plural == 1: ${pluralStringResource(resource = Res.plurals.plural_news, 1)}")
+    Spacer(Modifier.height(4.dp))
+
+    Text(text = "Plural > 1: ${pluralStringResource(resource = Res.plurals.plural_news, 2, 2)}")
+    Spacer(Modifier.height(4.dp))
+
+    Text(text = "Template: ${stringResource(resource = Res.string.string_template, "Juan", 2)}")
+    Spacer(Modifier.height(4.dp))
+
+    Text(text = "Array[0]: ${stringArrayResource(resource = Res.array.top_news)[0]}")
+    Spacer(Modifier.height(4.dp))
+
+    Text(text = "Array[0]: ${stringArrayResource(resource = Res.array.top_news)[1]}")
+    Spacer(Modifier.height(4.dp))
 }
