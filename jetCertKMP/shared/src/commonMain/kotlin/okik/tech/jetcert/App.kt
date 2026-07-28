@@ -53,7 +53,9 @@ fun App() {
         ) {
             Button(onClick = {
                 coroutineScope.launch {
-                    viewModel.getStories()
+//                    viewModel.getStories()
+                    viewModel.insertNewsToDB()
+                    viewModel.insertFakeNews("Hola")
                 }
             }) {
                 Text("Get Stories(Rest Client)")
@@ -63,7 +65,8 @@ fun App() {
 
             Button(onClick = {
                 coroutineScope.launch {
-                    viewModel.getTopRepos()
+//                    viewModel.getTopRepos()
+                    viewModel.insertTopRepos()
                 }
             }) {
                 Text("Get Top Repos(Apollo GraphQl Client)")
