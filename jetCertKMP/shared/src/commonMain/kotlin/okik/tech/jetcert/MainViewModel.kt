@@ -1,6 +1,7 @@
 package okik.tech.jetcert
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import kotlinx.coroutines.Dispatchers
@@ -8,10 +9,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import okik.tech.jetcert.api.GitHubApi
 import okik.tech.jetcert.api.NewsApi
 import okik.tech.jetcert.api.NewsResponse
 import okik.tech.jetcert.apollo.SearchTopReposQuery
+import okik.tech.jetcert.apollo.type.Repository
 import okik.tech.jetcert.db.Database
 import okik.tech.jetcert.db.News
 import okik.tech.jetcert.db.TopRepo
@@ -38,7 +41,7 @@ class MainViewModel(private val database: Database) : ViewModel() {
         uiState.update { uiState ->
             uiState.copy(
                 showContent = true,
-                topStories
+//                topStories
             )
         }
     }
@@ -55,13 +58,28 @@ class MainViewModel(private val database: Database) : ViewModel() {
         uiState.update {
             UiState(
                 showContent = true,
-                topRepos = repos?.filterNotNull()
+//                topRepos = repos?.filterNotNull()
             )
         }
     }
 
-    suspend fun getNewsFromDB() : Flow<List<News>> =
-        database.newsQueries.selectAll().asFlow().mapToList(Dispatchers.Default)
+    init {
+        viewModelScope.launch {
+            database.newsQueries.selectAll().asFlow().mapToList(Dispatchers.Default).collect { news ->
+                uiState.update {
+                    UiState(true, news, null)
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            database.repoQueries.selectAll().asFlow().mapToList(Dispatchers.Default).collect { repository ->
+                uiState.update {
+                    UiState(true, null, repository)
+                }
+            }
+        }
+    }
 
     suspend fun insertNewsToDB() {
         val news = newsApi.getTopStories()
@@ -82,10 +100,6 @@ class MainViewModel(private val database: Database) : ViewModel() {
                 )
             }
         }
-
-        uiState.update {
-            UiState(showContent = true)
-        }
     }
 
     suspend fun insertFakeNews(title: String) {
@@ -95,7 +109,7 @@ class MainViewModel(private val database: Database) : ViewModel() {
             time = Clock.System.now().epochSeconds,
             by_ = "Fake",
             title = title,
-            score = 1000000,
+            score = 1000001,
             url = "",
             descendants = 0,
             text = title
@@ -113,9 +127,6 @@ class MainViewModel(private val database: Database) : ViewModel() {
             text = "updated"
         )
     }
-
-    suspend fun getTopReposFromDb(): Flow<List<TopRepo>> =
-        database.repoQueries.selectAll().asFlow().mapToList(Dispatchers.Default)
 
     suspend fun insertTopRepos() {
         val searchResponse =
@@ -148,6 +159,6 @@ class MainViewModel(private val database: Database) : ViewModel() {
 
 data class UiState(
     val showContent: Boolean,
-    val stories: List<NewsResponse.Story>? = null,
-    val topRepos: List<SearchTopReposQuery.Repo>? = null
+    val stories: List<News>? = null,
+    val topRepos: List<TopRepo>? = null
 )
