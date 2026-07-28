@@ -6,23 +6,12 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class NewsApi {
-    // should be using Dependency injection here
-    val client = HttpClient {
-        // this gives the capability to handle json by installing the content negotiation module with the below json block
-        install(ContentNegotiation) {
-            json(
-                Json {
-                    encodeDefaults = true
-                    isLenient = true    // doesn't enforce serialization classes to deserealize all properties of a json with its properties, you can handle some properties only
-                    coerceInputValues = true
-                    ignoreUnknownKeys = true
-                    prettyPrint = true
-                }
-            )
-        }
-    }
+class NewsApi : KoinComponent {
+    // Constructor injection may be preferred but just to showcase field injection
+    val client: HttpClient by inject()
 
     suspend fun getTopStories(): List<NewsResponse.Story> {
         val storyIds: List<String> = client.get("https://hacker-news.firebaseio.com/v0/topstories.json").body()
