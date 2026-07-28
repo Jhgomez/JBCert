@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Certification</string>
+    <string name="title">Top Ten</string>
+    <string name="one_more">English</string>
+    <plurals name="plural_news">
+        <item quantity="one">One News</item>
+        <item quantity="other">%1$d News</item>
+    </plurals>
+    <string name="string_template">HI %1$s, You got %2$d news</string>
+    <string-array name="top_news">
+        <item>News 1</item>
+        <item>News 2</item>
+    </string-array>
+</resources>
