@@ -27,6 +27,8 @@ js-worker = "2.3.2"
 sql-js = "1.12.0"
 koin = "4.2.2" # 4.2.0
 koin-compiler = "1.0.1"
+kermit-kmp = "2.0.4"
+kermit-crashalyticis-ios = "0.8.6"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -76,6 +78,10 @@ koin-cmp = { module = "io.insert-koin:koin-compose" }
 koin-cmp-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
 
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit-kmp" }
+kermit-crashalytics = { module = "co.touchlab:kermit-crashlytics", version.ref = "kermit-kmp" }
+kermit-crashalytics-ios = { module = "co.touchlab.crashkios:crashlytics", version.ref = "kermit-crashalyticis-ios" }
+
 ## used in build logic included build to be able to extend KMP extensions
 gradle_kmp = { group = "org.jetbrains.kotlin.multiplatform", name = "org.jetbrains.kotlin.multiplatform.gradle.plugin" , version.ref = "kotlin"} # same as "org.jetbrains.kotlin.multiplatform" plugin
 
@@ -93,6 +99,7 @@ webpack = { id = "copy-webpack-plugin" }
 sqldelight-js-worker = { id = "@cashapp/sqldelight-sqljs-worker"}
 sql-js = { id = "sql.js" }
 koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koin-compiler" }
+kermit-static-frame = { id = "co.touchlab.crashkios.crashlyticslink", version.ref = "kermit-crashalyticis-ios"} # only needed if you are using it over a dynamic linking ios framework/library
 
 # custom plugins
 okik-tech-buildConfig = { id = "okik.tech.kmp.buildConfig", version = "unspecified" }

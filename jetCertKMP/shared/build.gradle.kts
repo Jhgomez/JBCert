@@ -1,3 +1,4 @@
+
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -144,6 +145,10 @@ kotlin {
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.cmp)
             implementation(libs.koin.cmp.viewmodel)
+
+            implementation(libs.kermit)
+            implementation(libs.kermit.crashalytics)
+            implementation(libs.kermit.crashalytics.ios)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
