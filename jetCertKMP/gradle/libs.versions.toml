@@ -60,7 +60,6 @@ ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" } # f
 kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-js", version.ref = "kotlinx-html"}
 
 apollo-grapql-client = { module = "com.apollographql.apollo:apollo-runtime" }
-kotlinx-swing-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 apollo-adapters = { module = "com.apollographql.adapters:apollo-adapters-core", version.ref = "apollo-adapters" }
 
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
@@ -73,7 +72,6 @@ sqldelight-js = { module = "app.cash.sqldelight:web-worker-driver", version.ref 
 sqldelight-primitives = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
 
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
-koin-core = { module = "io.insert-koin:koin-core" }
 koin-cmp = { module = "io.insert-koin:koin-compose" }
 koin-cmp-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }

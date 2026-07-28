@@ -150,7 +150,7 @@ kotlin {
             implementation(libs.sqldelight.native)
         }
         jvmMain.dependencies {
-            implementation(libs.kotlinx.swing.coroutines)
+            implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.jvm)
         }
