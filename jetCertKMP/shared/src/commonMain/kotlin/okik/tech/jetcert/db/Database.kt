@@ -1,5 +1,6 @@
 package okik.tech.jetcert.db
 
+import app.cash.sqldelight.SuspendingTransactionWithoutReturn
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 
 class Database(databaseDriverFactory: DatabaseDriverFactory) {
@@ -13,7 +14,13 @@ class Database(databaseDriverFactory: DatabaseDriverFactory) {
         stargazerCountAdapter = IntColumnAdapter
     )
 
-    private val database = JetcertDB(databaseDriverFactory.createDriver(), newsAdapter, repoAdapter)
-    private val newsQueries = database.newsQueries
-    private val repoQueries = database.topReposQueries
+    val database = JetcertDB(databaseDriverFactory.createDriver(), newsAdapter, repoAdapter)
+    val newsQueries = database.newsQueries
+    val repoQueries = database.topReposQueries
+
+    suspend fun transaction(transaction: suspend SuspendingTransactionWithoutReturn.() -> Unit) {
+        database.transaction {
+            transaction()
+        }
+    }
 }
