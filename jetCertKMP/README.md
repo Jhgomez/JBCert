@@ -1,48 +1,13 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM).
+First, set up your environment, you can search kotlin's official documents that will explain all the process.
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+However kotlin docs don't explain more on how Xcode works, so to be able to see your KMP project in Xcode you need to, assuming you already created the project, click on "Open Exixting Project"(in Xcode), find the `.xcodeproj` file(usually located in your "iosApp" root directory, not the child "iosApp" folder), now the project is opened but no source code files are visible(we should be able to see a configuration folder and the child "iosApp" folder but no source code files), so we will do that, but we will make sure to not copy the files and instead **reference** existing ones, but also we need to make sure to not add them to a **target** since that will attempt to package them redundantly, you do that by right clicking the top icon that seems to be the root of our project files(that actually should "represent" the `.xcodeproj` file we openned) on the left menu that should have your project name which in a generated template should be called "iosApp", the context menu should have an `Add Files to `"iosApp"` and now choose the source code, in a shared UI app at least before the KMP plugin changed the way a KMP project should be structured those file should have been located in the "shared" module called "composeApp", select "src" directoy(this should contain "androidMain", "commonMain", "desktopMain", "iosMain", "wasmJsMain", which are therefore, implicitly, added) and click "add", you are given options to adding the files, you should select "Reference files in place" in the "Action" option, "Create groups" in "Groups", and make sure the "Targets" checkboxes are unchecked(all, you should see one checkbox only, at least at this point). You should also configure your ios project you would set up what its called a "Team" in apple development, that helps you authenticate to apple, this is some configurations apple requires you to do so you can be fully capable of developing and publish an app, it gives you access to install an app in your physicall devices, access remote notifications services(you have to pay for that thought), the team can be a solo developer or an organization, for that click the same Icon we mentioned a second ago, you have a lot of options, first make sure on the left you select your target(you should have just one, at least at this point), and now on the top options select "Signing & Capabilities", in the "Team" option click "Add Account", you can ask questions like "What is Signing & Cabapabilities options used for in Xcode" or "What is a team in Xcode/Apple development/iOS development", you can read [this article](https://medium.com/@divyanshgopal474/apple-developer-portal-xcode-signing-explained-like-a-real-developer-96deaa99c86f). With that in place you can debbug Kotlin and Swift code from Xcode, to run the app from Xcode make sure you select a target emulator and click the "Play" icon button
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+kotlin from swift/objective-c code, the hard part is designing the types of return values in functions or just the types of a variable object that is easy to map from Kotlin to Swift, to learn how to do anything specific in Swift from Kotlin code find the language construct you're trying to use withtin the [kotlin-swift interopedia](https://github.com/kotlin-hands-on/kotlin-swift-interopedia). For example Kotlin Sealed classes and Swift's Enum classes are often compared and they work quite similarly, however, Kotlin Sealed Classes are not neatly translated into Swift Enums, this happens because Kotlin code is transformed, and interpreted as Objective-C, and then this is somehow transformed into Swift code, so there is an Objective-C bridge in between Kotlin and Swift, and Objective-C doesn't have similarly advance concepts as Swift Enums. There is other tools you can use to make it easier to run Kotlin from Swift, for example use `Skie` which is a third-party library by Touchlab, find an example [here](gitHub.com/Kotlin/swift-export-sample), this library inspired the kotlinmultiplatform's support library called `SwiftExport` which is also an alternative for Skie, both provide easier translations between Kotlin and Swift such as Sealed Classes and coroutines. Skie is now open source and it works by modifying code using compiler plugins, at the time my certification course was created Swift Export lib and CMP seemed to not be compatible yet but you can find an example repo called "swift-export-sample", in your shared/common module gradle file check the `swiftExport` DSL, you also might like to open Xcode to verify the correct build phase is getting used, this is so that Swift Export gets called instead of exporting our shared code framework to Objective-C, open the project in Xcode and see the `ContentView` file, build the app(run it in xcode), after it is built you can dive into any shared code like any shared class just(cmd + click, just like in android studio), this is the current way to allow apps use KMP within swift export modules, but at least up to that point(where the course came out) `SwiftExport` was the way to provide business logic to our ios app
 
-### Running the apps
+Integrating SwiftUi inside compose multiplatform is possible, jetbrains has that documentation "Integration with the SwiftUi framework" but Touchlab also has their own support library to make it easier, called `compose-swift-bridge`, there is a sample in a repo which shows you can even use "UiKit"("legacy" ui toolkit used with objective-C) along with SwiftUi
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
-
-- Android app: `./gradlew :androidApp:assembleDebug`
-- Desktop app:
-  - Hot reload: `./gradlew :desktopApp:hotRun --auto`
-  - Standard run: `./gradlew :desktopApp:run`
-- Web app:
-  - Wasm target (faster, modern browsers): `./gradlew :webApp:wasmJsBrowserDevelopmentRun`
-  - JS target (slower, supports older browsers): `./gradlew :webApp:jsBrowserDevelopmentRun`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
-
-### Running tests
-
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
-
-- Android tests: `./gradlew :shared:testAndroidHostTest`
-- Desktop tests: `./gradlew :shared:jvmTest`
-- Web tests:
-  - Wasm target: `./gradlew :shared:wasmJsTest`
-  - JS target: `./gradlew :shared:jsTest`
-- iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
-
----
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
-
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+A very common and effective way to structure your code to ensure is maintainable, scalable, flexible, readable, testable, extensible, etc, is MVVM, you can even use Google's AndroidX Viewmodel API, see documenation on how to add that [here](https://kotlinlang.org/docs/multiplatform/compose-viewmodel.html#set-up-dependencies), however note that documentation doesn't point you to the right dependency to be able to extend a viewmodel, normally, in an Android project, you'd add `androidx.lifecycle:lifecycle-viewmodel-android` however in KMP use `org.jetbrains.androidx.lifecycle:lifecycle-viewmodel`, it seem that jetpack libraries that are available as KMP libraries from a common sourceset should find the library from a Jetrbrain's artifact
 
 Be aware that any autogenerated code by any library could cause conflicts in your iOS project, I has and issue with Apollo, where the generated code collided with the SwiftUI's App class, the generated kotlin APIs to interact with GrapQL APIs generated a class called App also, so I solved it by calling the Swift implementation explicitly "SwiftUI.App"
+
+We are using a crash reporting KMP solution called Kermit which helps us diagnose customer bugs and issues, while developing we usually only need logging locally but in production enviroment we need a reporting solution in the cloud which kermit helps set up(it actually depends on an actual crash reporting solution, kermit is some kind of wrapper that helps us understand crashes in KMP), Kermit allows to strip or hide debug logs in production environments and instead send those logs to any other crash reporting solution, it has support for Google's Crashalyitics, Bug Snag, and Sentry. We will be using Crashalyitics, it requires to set up crashalytics per platform, on iOS there is a few things to note If you're testing a crash on an iOS simulator, you'll need to hit run to build your changes, then close and reopen the app. Otherwise, Xcode will catch and swallow your crash and it won't get reported. You'll also need to reopen the app after crashing it because crash reports are sent at app startup. You'll also need to make sure you aren't crashing the app at app start which can cause it to not get reported. Make sure the crash is triggered by some action like a button click. Also don't forget to setup automatic dSYM uploading so you can see proper stack traces for Swift code(you nedd to set up dSYM only for iOS dynamic frameworks). Since on iOS crash reports(uncaught exceptions) shows the point at which we call into Kotlin from Swift/Objc, we should want to caught the exception and record that instead. We said Kermit relies on an actual reporting solution, so because of this, if we are using Crashalytics, for example, we need to set up and initialize Crashalytics in each platform so Kermit can direct their formatted report to it. It seems there is no desktop nor JS nor WASM support in Kermit yet.
