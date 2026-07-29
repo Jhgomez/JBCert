@@ -4,13 +4,15 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import okik.tech.jetcert.di.initKoinJvm
 
-fun main() = application {
+suspend fun main() {
     initKoinJvm()
 
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "JetCert",
-    ) {
-        App()
+    application {
+        Window(
+            onCloseRequest = ::exitApplication,
+            title = "JetCert",
+        ) {
+            App()
+        }
     }
 }
