@@ -9,6 +9,7 @@ import org.koin.dsl.module
 suspend fun initKoinJvm() {
     val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
 
+    // this is leveraging the generateAsync = true gradlew setting and lets us use an asynchronous schema
     JetcertDB.Schema.create(driver).await()
 
     val jvmModule: Module = module {
