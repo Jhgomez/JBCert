@@ -1,14 +1,35 @@
 package okik.tech.jetcert.di
 
-import okik.tech.jetcert.db.DatabaseDriverFactory
-import okik.tech.jetcert.db.JsDatabaseDriverFactory
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.worker.WebWorkerDriver
 import org.koin.core.module.Module
-import org.koin.dsl.bind
 import org.koin.dsl.module
-import org.koin.plugin.module.dsl.single
+import okik.tech.jetcert.db.JetcertDB
+import org.w3c.dom.MODULE
+import org.w3c.dom.Worker
+import org.w3c.dom.WorkerOptions
+import org.w3c.dom.WorkerType
 
-actual val platformModule: Module = module {
-    // Classic DSL with lambda for custom construction
-//    single { JsDatabaseDriverFactory() } bind DatabaseDriverFactory::class
-    single<JsDatabaseDriverFactory>() bind DatabaseDriverFactory::class
+import kotlin.js.js
+
+
+
+suspend fun initKoinWeb() {
+    val url = js(""""@cashapp/sqldelight-sqljs-worker/sqljs.worker.js", import.meta.url""")
+
+    val worker = Worker(url)
+
+    val sqlDriver = WebWorkerDriver(worker)
+
+
+    JetcertDB.Schema.create(sqlDriver).await()
+
+    val platformModule: Module = module {
+        single<SqlDriver>(definition = { sqlDriver })
+    }
+
+    initKoin {
+        printLogger()
+        modules(platformModule)
+    }
 }
