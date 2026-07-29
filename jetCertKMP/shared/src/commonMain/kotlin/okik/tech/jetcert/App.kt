@@ -151,9 +151,9 @@ fun ColumnScope.DemoLocaleStrings() {
     Text(text = "Template: ${stringResource(resource = Res.string.string_template, "Juan", 2)}")
     Spacer(Modifier.height(4.dp))
 
-    Text(text = "Array[0]: ${stringArrayResource(resource = Res.array.top_news)[0]}")
-    Spacer(Modifier.height(4.dp))
-
-    Text(text = "Array[0]: ${stringArrayResource(resource = Res.array.top_news)[1]}")
-    Spacer(Modifier.height(4.dp))
+//    Text(text = "Array[0]: ${stringArrayResource(resource = Res.array.top_news)[0]}")
+//    Spacer(Modifier.height(4.dp))
+//
+//    Text(text = "Array[0]: ${stringArrayResource(resource = Res.array.top_news)[1]}")
+//    Spacer(Modifier.height(4.dp))
 }

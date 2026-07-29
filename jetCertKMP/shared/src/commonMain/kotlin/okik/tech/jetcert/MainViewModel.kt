@@ -67,21 +67,21 @@ class MainViewModel(
     }
 
     init {
-        viewModelScope.launch {
-            database.newsQueries.selectAll().asFlow().mapToList(Dispatchers.Default).collect { news ->
-                uiState.update {
-                    UiState(true, news, null)
-                }
-            }
-        }
-
-        viewModelScope.launch {
-            database.repoQueries.selectAll().asFlow().mapToList(Dispatchers.Default).collect { repository ->
-                uiState.update {
-                    UiState(true, null, repository)
-                }
-            }
-        }
+//        viewModelScope.launch {
+//            database.newsQueries.selectAll().asFlow().mapToList(Dispatchers.Default).collect { news ->
+//                uiState.update {
+//                    UiState(true, news, null)
+//                }
+//            }
+//        }
+//
+//        viewModelScope.launch {
+//            database.repoQueries.selectAll().asFlow().mapToList(Dispatchers.Default).collect { repository ->
+//                uiState.update {
+//                    UiState(true, null, repository)
+//                }
+//            }
+//        }
     }
 
     suspend fun insertNewsToDB() {

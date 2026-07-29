@@ -2,8 +2,9 @@ package okik.tech.jetcert.db
 
 import app.cash.sqldelight.SuspendingTransactionWithoutReturn
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
+import app.cash.sqldelight.db.SqlDriver
 
-class Database(databaseDriverFactory: DatabaseDriverFactory) {
+class Database(driver: SqlDriver) {
 
     val newsAdapter = News.Adapter(
         scoreAdapter = IntColumnAdapter,
@@ -14,7 +15,7 @@ class Database(databaseDriverFactory: DatabaseDriverFactory) {
         stargazerCountAdapter = IntColumnAdapter
     )
 
-    val database = JetcertDB(databaseDriverFactory.createDriver(), newsAdapter, repoAdapter)
+    val database = JetcertDB(driver, newsAdapter, repoAdapter)
     val newsQueries = database.newsQueries
     val repoQueries = database.topReposQueries
 

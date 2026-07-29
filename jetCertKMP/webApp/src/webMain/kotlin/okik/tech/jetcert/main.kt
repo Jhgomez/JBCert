@@ -5,7 +5,7 @@ import androidx.compose.ui.window.ComposeViewport
 import okik.tech.jetcert.di.di.initKoinWeb
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun main() {
+suspend fun main() {
     initKoinWeb()
 
     ComposeViewport {
