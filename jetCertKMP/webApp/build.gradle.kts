@@ -10,12 +10,14 @@ kotlin {
     js {
         browser()
         binaries.executable()
+        useCommonJs()
     }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         binaries.executable()
+        useCommonJs()
     }
 
     sourceSets {
