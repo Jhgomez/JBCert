@@ -14,22 +14,3 @@ import kotlin.js.js
 
 
 
-suspend fun initKoinWeb() {
-    val url = js(""""@cashapp/sqldelight-sqljs-worker/sqljs.worker.js", import.meta.url""")
-
-    val worker = Worker(url)
-
-    val sqlDriver = WebWorkerDriver(worker)
-
-
-    JetcertDB.Schema.create(sqlDriver).await()
-
-    val platformModule: Module = module {
-        single<SqlDriver>(definition = { sqlDriver })
-    }
-
-    initKoin {
-        printLogger()
-        modules(platformModule)
-    }
-}
