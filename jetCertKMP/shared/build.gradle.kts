@@ -72,6 +72,10 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
+            compilerOptions {
+                optIn.add("kotlin.time.ExperimentalTime")
+            }
+
             baseName = "Shared"
             isStatic = true
         }
