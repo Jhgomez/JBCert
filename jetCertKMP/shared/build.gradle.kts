@@ -182,6 +182,8 @@ kotlin {
 
         webMain.dependencies {
             implementation(libs.sqldelight.js)
+            // it is important to add the webpack.config.d in all directories that are involved in the
+            // web build process
             implementation(
                 devNpm(
                     libs.plugins.webpack.get().pluginId,
