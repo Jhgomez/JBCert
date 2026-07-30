@@ -71,11 +71,11 @@ kotlin {
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            compilerOptions {
-                optIn.add("kotlin.time.ExperimentalTime")
-            }
+        compilerOptions {
+            optIn.add("kotlin.time.ExperimentalTime")
+        }
 
+        iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
         }
@@ -179,8 +179,8 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        wasmJsMain.dependencies {
-            implementation(libs.ktor.client.wasm)
+
+        webMain.dependencies {
             implementation(libs.sqldelight.js)
             implementation(
                 devNpm(
@@ -201,31 +201,15 @@ kotlin {
                 )
             )
         }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.wasm)
+        }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
             implementation(libs.ktor.client.js)
-            implementation(libs.sqldelight.js)
             // It provides a typesafe Domain-Specific Language (DSL) to build HTML and manipulate
             // the Document Object Model (DOM) directly in the browser using Kotlin
             implementation(libs.kotlinx.html)
-            implementation(
-                devNpm(
-                    libs.plugins.webpack.get().pluginId,
-                    libs.versions.webpack.get()
-                )
-            )
-            implementation(
-                npm(
-                    libs.plugins.sqldelight.js.worker.get().pluginId,
-                    libs.versions.js.worker.get()
-                )
-            )
-            implementation(
-                npm(
-                    libs.plugins.sql.js.get().pluginId,
-                    libs.versions.sql.js.get()
-                )
-            )
         }
     }
 }
