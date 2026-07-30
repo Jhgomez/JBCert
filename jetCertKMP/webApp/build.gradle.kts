@@ -11,6 +11,10 @@ kotlin {
         browser()
         binaries.executable()
         useCommonJs()
+
+        compilerOptions {
+            optIn.add("kotlin.time.ExperimentalTime")
+        }
     }
 
     @OptIn(ExperimentalWasmDsl::class)

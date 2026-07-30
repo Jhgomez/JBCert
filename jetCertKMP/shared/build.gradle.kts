@@ -77,12 +77,20 @@ kotlin {
         }
     }
     
-    jvm()
+    jvm {
+        compilerOptions {
+            optIn.add("kotlin.time.ExperimentalTime")
+        }
+    }
     
     js {
         browser()
         binaries.executable()
         useCommonJs()
+
+        compilerOptions {
+            optIn.add("kotlin.time.ExperimentalTime")
+        }
     }
     
     @OptIn(ExperimentalWasmDsl::class)
@@ -90,6 +98,10 @@ kotlin {
         browser()
 //        binaries.executable()
 //        useCommonJs()
+
+        compilerOptions {
+            optIn.add("kotlin.time.ExperimentalTime")
+        }
     }
     
     android {
