@@ -2,7 +2,7 @@ package okik.tech.jetcert
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
-import okik.tech.jetcert.di.di.koinInit
+import okik.tech.jetcert.di.koinInit
 
 @OptIn(ExperimentalComposeUiApi::class)
 suspend fun main() {
