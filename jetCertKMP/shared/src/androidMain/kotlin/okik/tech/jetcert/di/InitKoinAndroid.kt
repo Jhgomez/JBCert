@@ -39,7 +39,7 @@ fun SetUpKoin(config: KoinAppDeclaration? = null) {
         single(named("settingsVault")) {
             KSafe(
                 context = get<Context>(),
-                fileName = "settingsVault"
+                fileName = "settingsvault"
             )
         }
         // you can inject these named koin parameters in different ways, you can do that from the
