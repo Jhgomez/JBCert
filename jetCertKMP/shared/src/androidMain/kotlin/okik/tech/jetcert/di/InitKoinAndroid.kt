@@ -36,10 +36,10 @@ fun SetUpKoin(config: KoinAppDeclaration? = null) {
         }
 
         // Encrypted writes — for secrets (tokens, passwords, PII)
-        single(named("vault")) {
+        single(named("settingsVault")) {
             KSafe(
                 context = get<Context>(),
-                fileName = "vault"
+                fileName = "settingsVault"
             )
         }
         // you can inject these named koin parameters in different ways, you can do that from the

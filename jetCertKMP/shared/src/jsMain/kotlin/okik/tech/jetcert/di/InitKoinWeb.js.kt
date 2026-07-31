@@ -46,9 +46,9 @@ actual suspend fun koinInit() {
         }
 
         // Encrypted writes — for secrets (tokens, passwords, PII)
-        single(named("vault")) {
+        single(named("settingsVault")) {
             KSafe(
-                fileName = "vault",
+                fileName = "settingsVault",
                 config = KSafeConfig( // config is very important in web and desktop because of the effect the namespace causes
                     appNamespace = "okik.tech.jetcert.vault",
                     keyRotationPolicy = KSafeKeyRotationPolicy.MaxAge(2.days),
@@ -78,7 +78,7 @@ actual suspend fun koinInit() {
         }
 
         launch {
-            val ksafe: KSafe = getKoin().get(named("vault"))
+            val ksafe: KSafe = getKoin().get(named("settingsVault"))
             ksafe.awaitCacheReady()
         }
     }

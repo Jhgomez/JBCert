@@ -25,8 +25,8 @@ fun init() {
             KSafe(fileName = "prefs")
         }
 
-        single(named("vault")) {
-            KSafe(fileName = "vault")
+        single(named("settingsVault")) {
+            KSafe(fileName = "settingsVault")
         }
     }
 

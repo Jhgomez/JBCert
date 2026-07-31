@@ -22,8 +22,8 @@ suspend fun initKoinJvm() {
         }
 
         // Encrypted writes — for secrets (tokens, passwords, PII)
-        single(named("vault")) {
-            KSafe(fileName = "vault")
+        single(named("settingsVault")) {
+            KSafe(fileName = "settingsVault")
         }
     }
 
