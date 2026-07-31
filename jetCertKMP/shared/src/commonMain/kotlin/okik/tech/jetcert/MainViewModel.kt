@@ -14,6 +14,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -44,13 +47,15 @@ class MainViewModel(
     // KoinComponent to do field injection
     private val newsApi: NewsApi by inject()
 
+    private val tokenInput = MutableStateFlow("")
+
     // ====================== encrypted and plain tex settings =====================
 
     // The variable name is used as the storage key when no explicit key is supplied.
-    private var hasShownOnboarding: Boolean by settingsPreferences(defaultValue = true, mode = KSafeWriteMode.Plain)
+    private var hasShownOnboarding: Boolean by settingsPreferences(defaultValue = false, mode = KSafeWriteMode.Plain)
         private set // if var was public this would allows us to only update it form this class
 
-    private val token by settingsVault("")  // if changed directly nobody is notified
+    private var token by settingsVault("")  // if changed directly nobody is notified
 
     // I could use this variable inside a composable directly and watch recomposition happening by
     // chnaging it directly, but that would mess my screen state, so Ill make it private
@@ -63,28 +68,96 @@ class MainViewModel(
     private val _reactiveCounterOne by settingsPreferences.asMutableStateFlow<UByte>(0u, scope = viewModelScope, mode = KSafeWriteMode.Plain)
     val reactiveCounterOne = _reactiveCounterOne.asStateFlow()
 
-    suspend fun savePerson(person: Person) = settingsPreferences.put(PERSON_KEY, person, mode = KSafeWriteMode.Plain)
+    fun toggleHashShownOnboarding() {
+        hasShownOnboarding = !hasShownOnboarding
+
+        uiState.update {
+            it.copy(hasShownOnboarding = hasShownOnboarding)
+        }
+    }
+
+    fun updateToken(input: String) {
+        tokenInput.update { input }
+    }
+
+    fun incrementReactiveCounter() {
+        _reactiveCounterOne.value++
+    }
+
+    fun decrementReactiveCounter() {
+        _reactiveCounterOne.value--
+    }
+
+    fun savePerson(input: String): Boolean {
+        val props = input.split(",")
+
+        return if (props.size >= 2) {
+            val age = props[1].trim().toUByteOrNull()
+
+            if (age != null) {
+                val person = Person(props[0], age)
+
+                viewModelScope.launch {
+                    settingsPreferences.put(PERSON_KEY, person, mode = KSafeWriteMode.Plain)
+
+                    uiState.update {
+                        it.copy(person = getPerson())
+                    }
+                }
+
+                true
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    }
 
     suspend fun getPerson() = settingsPreferences.get<Person?>(PERSON_KEY, null)
 
     // 6. Direct API — non-suspend, hot-cache reads, background-flushed writes (~1000x faster for bulk ops)
     fun getCounter() = settingsPreferences.getDirect<Byte>(COUNTER, 0)
 
-    fun incrementCounter() = settingsPreferences.putDirect(
-        COUNTER,
-        getCounter() + 1,
-        mode = KSafeWriteMode.Plain
-    )
+    fun incrementCounter() {
+        settingsPreferences.putDirect(
+            COUNTER,
+            (getCounter() + 1).toByte(),
+            mode = KSafeWriteMode.Plain
+        )
 
-    fun decrementCounter() = settingsPreferences.putDirect(
-        COUNTER,
-        getCounter() - 1,
-        mode = KSafeWriteMode.Plain
-    )
+        uiState.update {
+            it.copy(counter = getCounter())
+        }
+    }
 
-    fun addStar() = stars++
+    fun decrementCounter() {
+        settingsPreferences.putDirect<Byte>(
+            COUNTER,
+            (getCounter() - 1).toByte(),
+            mode = KSafeWriteMode.Plain
+        )
 
-    fun subtractStar() = stars--
+        uiState.update {
+            it.copy(counter = getCounter())
+        }
+    }
+
+    fun addStar() {
+        val localStar = stars++
+
+        uiState.update {
+            it.copy(stars = localStar)
+        }
+    }
+
+    fun subtractStar() {
+        val localStar = stars--
+
+        uiState.update {
+            it.copy(stars = localStar)
+        }
+    }
 
     // ============================================================================
 
@@ -148,6 +221,28 @@ class MainViewModel(
             uiState.update {
                 it.copy(person = getPerson())
             }
+        }
+
+        viewModelScope.launch {
+            reactiveCounterOne.collect { reactCount ->
+                uiState.update {
+                    it.copy(reactiveCounterOne = reactCount)
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            tokenInput
+                .debounce(400)
+                .filter { it.isNotBlank() }
+                .distinctUntilChanged()
+                .collect { input ->
+                    token = input
+
+                    uiState.update {
+                        it.copy(token = token)
+                    }
+                }
         }
     }
 
