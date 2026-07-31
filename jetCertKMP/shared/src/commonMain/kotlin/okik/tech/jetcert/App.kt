@@ -3,21 +3,30 @@ package okik.tech.jetcert
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -82,8 +91,8 @@ fun App() {
                     }
                 },
                 shouldShow = !state.value.stories.isNullOrEmpty() || !state.value.topRepos.isNullOrEmpty(),
-                state.value.stories,
-                state.value.topRepos
+                news = state.value.stories,
+                topRepos = state.value.topRepos
             )
 
             Right(
@@ -129,59 +138,64 @@ fun RowScope.Right(
     Column(
         modifier = Modifier
             .fillMaxHeight()
-            .weight(1f, true),
+            .weight(1f, true)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
+        Spacer(Modifier.height(8.dp))
         Text("Stored HasShownOnBoarding $hasShownOnboarding")
         Button(onClick = onHasShownOnboardingToggle) {
             Text("Toggle HasShownOnBoarding")
         }
 
+        Spacer(Modifier.height(16.dp))
         var tokenInput = rememberTextFieldState("")
-        Text("token Stored Value $token")
+        Text("Stored Token $token")
         TextField(
             onValueChange = { input ->
                 tokenInput.setTextAndPlaceCursorAtEnd(input)
                 onTokenChange(input)
             },
-            value = tokenInput.text.toString()
+            value = tokenInput.text.toString(),
+            placeholder = {
+                Text("Token to save")
+            }
         )
 
+        Spacer(Modifier.height(16.dp))
         Text("Stored Stars $stars")
-        Row {
-            Button(onClick = onStarDecrement) {
-                Text("Star--")
-            }
-            Button(onClick = onStarIncrement) {
-                Text("Star++")
-            }
+        Button(onClick = onStarDecrement) {
+            Text("Star--")
+        }
+        Button(onClick = onStarIncrement) {
+            Text("Star++")
         }
 
+        Spacer(Modifier.height(16.dp))
         Text("Stored Counter $counter")
-        Row {
-            Button(onClick = onCounterDecrement) {
-                Text("Count--")
-            }
-            Button(onClick = onCounterIncrement) {
-                Text("Count++")
-            }
+        Button(onClick = onCounterDecrement) {
+            Text("Count--")
+        }
+        Button(onClick = onCounterIncrement) {
+            Text("Count++")
         }
 
+        Spacer(Modifier.height(16.dp))
         Text("Stored Reactive Count $reactiveCounterOne")
-        Row {
-            Button(onClick = onReactiveCounterOneDecrement) {
-                Text("ReactCount--")
-            }
-            Button(onClick = onReactiveCounterOneIncrement) {
-                Text("ReactCount++")
-            }
+        Button(onClick = onReactiveCounterOneDecrement) {
+            Text("ReactCount--")
+        }
+        Button(onClick = onReactiveCounterOneIncrement) {
+            Text("ReactCount++")
         }
 
+        Spacer(Modifier.height(16.dp))
         Text("Stored Person $person")
         val personInput = rememberTextFieldState()
         val isError = rememberSaveable { mutableStateOf(false) }
         TextField(
-            state = personInput, 
+            state = personInput,
             isError = isError.value,
             placeholder = {
                 Text("Person properties(name, age), use comma")
@@ -204,86 +218,101 @@ fun RowScope.Left(
     news: List<News>?,
     topRepos: List<TopRepo>?
 ) {
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
             .weight(1f, true),
-        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        DemoLocaleStrings()
-
-        Button(onClick = onGetNews) {
-            Text("Get News(Rest Client)", fontFamily = giffy())
+        item {
+            DemoLocaleStrings()
         }
 
-        Spacer(Modifier.height(8.dp))
-
-        Button(onClick = onGetRepos) {
-            Text("Get Top Repos(Apollo GraphQl Client)")
-        }
-
-        Spacer(Modifier.height(8.dp))
-
-        val input = rememberTextFieldState("")
-        TextField(input, lineLimits = TextFieldLineLimits.MultiLine(1, 1))
-
-        Spacer(Modifier.height(8.dp))
-
-        Button(onClick = { onInsertNews(input.text.toString()) }) {
-            Text("Insert Fake News")
-        }
-
-
-        AnimatedVisibility(shouldShow) {
-            //                val greeting = remember { Greeting().greet() }
-
+        item {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f, true),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Image(
-                    painterResource(Res.drawable.compose_multiplatform),
-                    null,
-                    modifier = Modifier.size(80.dp, 80.dp)
-                )
-                LazyColumn {
-                    item {
-                        Text("Top 10", fontSize = 30.sp)
-                        HorizontalDivider()
-                        Spacer(Modifier.height(16.dp))
-                    }
-
-                    if (!news.isNullOrEmpty()) {
-                        items(news) { story ->
-                            Text(story.title.orEmpty())
-                            Spacer(Modifier.height(8.dp))
-                        }
-                    } else if (!topRepos.isNullOrEmpty()) {
-                        items(topRepos) { repo ->
-                            Text(repo.name)
-                            Spacer(Modifier.height(8.dp))
-                        }
-                    }
-
+                Button(onClick = onGetNews) {
+                    Text("Get News(Rest Client)", fontFamily = giffy())
                 }
+
+                Spacer(Modifier.height(8.dp))
+
+                Button(onClick = onGetRepos) {
+                    Text("Get Top Repos(Apollo GraphQl Client)")
+                }
+
+                Spacer(Modifier.height(8.dp))
+
+                val input = rememberTextFieldState("")
+                TextField(input, lineLimits = TextFieldLineLimits.MultiLine(1, 1))
+
+                Spacer(Modifier.height(8.dp))
+
+                Button(onClick = { onInsertNews(input.text.toString()) }) {
+                    Text("Insert Fake News")
+                }
+
+            }
+
+        }
+
+        item {
+            AnimatedVisibility(shouldShow) {
+                //                val greeting = remember { Greeting().greet() }
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Image(
+                        painterResource(Res.drawable.compose_multiplatform),
+                        null,
+                        modifier = Modifier.size(80.dp, 80.dp)
+                    )
+
+                    Text("Top 10", fontSize = 30.sp)
+                    HorizontalDivider()
+                    Spacer(Modifier.height(16.dp))
+                }
+            }
+        }
+
+        if (!news.isNullOrEmpty()) {
+            items(news) { story ->
+                Text(story.title.orEmpty())
+                Spacer(Modifier.height(8.dp))
+            }
+        } else if (!topRepos.isNullOrEmpty()) {
+            items(topRepos) { repo ->
+                Text(repo.name)
+                Spacer(Modifier.height(8.dp))
             }
         }
     }
 }
 
 @Composable
-fun ColumnScope.DemoLocaleStrings() {
-    Text(text = "String: ${stringResource(resource = Res.string.app_name)}")
-    Spacer(Modifier.height(4.dp))
+fun DemoLocaleStrings() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "String: ${stringResource(resource = Res.string.app_name)}")
+        Spacer(Modifier.height(4.dp))
 
-    Text(text = "Plural == 1: ${pluralStringResource(resource = Res.plurals.plural_news, 1)}")
-    Spacer(Modifier.height(4.dp))
+        Text(text = "Plural == 1: ${pluralStringResource(resource = Res.plurals.plural_news, 1)}")
+        Spacer(Modifier.height(4.dp))
 
-    Text(text = "Plural > 1: ${pluralStringResource(resource = Res.plurals.plural_news, 2, 2)}")
-    Spacer(Modifier.height(4.dp))
+        Text(text = "Plural > 1: ${pluralStringResource(resource = Res.plurals.plural_news, 2, 2)}")
+        Spacer(Modifier.height(4.dp))
 
-    Text(text = "Template: ${stringResource(resource = Res.string.string_template, "Juan", 2)}")
-    Spacer(Modifier.height(4.dp))
+        Text(text = "Template: ${stringResource(resource = Res.string.string_template, "Juan", 2)}")
+        Spacer(Modifier.height(4.dp))
+    }
 
 //    Text(text = "Array[0]: ${stringArrayResource(resource = Res.array.top_news)[0]}")
 //    Spacer(Modifier.height(4.dp))
