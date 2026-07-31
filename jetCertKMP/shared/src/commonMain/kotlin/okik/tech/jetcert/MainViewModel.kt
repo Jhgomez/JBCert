@@ -43,32 +43,32 @@ class MainViewModel(
     // prefer constructor injection but just ot show case field injection, btw you have to implement
     // KoinComponent to do field injection
     private val newsApi: NewsApi by inject()
-    val uiState: StateFlow<UiState>
-            field = MutableStateFlow(UiState(false ))
 
     // ====================== encrypted and plain tex settings =====================
 
     // The variable name is used as the storage key when no explicit key is supplied.
-    var hasShownOnboarding: Boolean by settingsPreferences(defaultValue = true, mode = KSafeWriteMode.Plain)
-        private set // so we can only update it form this class
+    private var hasShownOnboarding: Boolean by settingsPreferences(defaultValue = true, mode = KSafeWriteMode.Plain)
+        private set // if var was public this would allows us to only update it form this class
 
-    val token by settingsVault("")  // if changed directly nobody is notified
+    private val token by settingsVault("")  // if changed directly nobody is notified
 
-    var stars by settingsPreferences.mutableStateOf(0, mode = KSafeWriteMode.Plain)
-        private set
+    // I could use this variable inside a composable directly and watch recomposition happening by
+    // chnaging it directly, but that would mess my screen state, so Ill make it private
+    private var stars by settingsPreferences.mutableStateOf<UByte>(0U, mode = KSafeWriteMode.Plain)
+        private set // if var was public this would allows us to only update it form this class
 
     val PERSON_KEY = "PERSON"
     val COUNTER = "COUNTER"
 
-    private val _reactiveCounterOne by settingsPreferences.asMutableStateFlow(0, scope = viewModelScope, mode = KSafeWriteMode.Plain)
+    private val _reactiveCounterOne by settingsPreferences.asMutableStateFlow<UByte>(0u, scope = viewModelScope, mode = KSafeWriteMode.Plain)
     val reactiveCounterOne = _reactiveCounterOne.asStateFlow()
 
     suspend fun savePerson(person: Person) = settingsPreferences.put(PERSON_KEY, person, mode = KSafeWriteMode.Plain)
 
-    suspend fun getPerson() = settingsPreferences.get(PERSON_KEY, null)
+    suspend fun getPerson() = settingsPreferences.get<Person?>(PERSON_KEY, null)
 
     // 6. Direct API — non-suspend, hot-cache reads, background-flushed writes (~1000x faster for bulk ops)
-    fun getCounter() = settingsPreferences.getDirect(COUNTER, 0)
+    fun getCounter() = settingsPreferences.getDirect<Byte>(COUNTER, 0)
 
     fun incrementCounter() = settingsPreferences.putDirect(
         COUNTER,
@@ -87,6 +87,19 @@ class MainViewModel(
     fun subtractStar() = stars--
 
     // ============================================================================
+
+    val uiState: StateFlow<UiState>
+        field = MutableStateFlow(
+            UiState(
+                showContent = false,
+                hasShownOnboarding = hasShownOnboarding,
+                token = token,
+                stars = stars,
+                counter = getCounter(),
+                reactiveCounterOne = reactiveCounterOne.value,
+                person = null
+            )
+        )
 
     suspend fun getStories() {
         val topStories = newsApi.getTopStories()
@@ -110,10 +123,7 @@ class MainViewModel(
             .repos
 
         uiState.update {
-            UiState(
-                showContent = true,
-//                topRepos = repos?.filterNotNull()
-            )
+            it.copy(showContent = true)
         }
     }
 
@@ -121,7 +131,7 @@ class MainViewModel(
         viewModelScope.launch {
             database.newsQueries.selectAll().asFlow().mapToList(Dispatchers.Default).collect { news ->
                 uiState.update {
-                    UiState(true, news, null)
+                    it.copy(showContent = true, stories = news, topRepos = null)
                 }
             }
         }
@@ -129,8 +139,14 @@ class MainViewModel(
         viewModelScope.launch {
             database.repoQueries.selectAll().asFlow().mapToList(Dispatchers.Default).collect { repository ->
                 uiState.update {
-                    UiState(true, null, repository)
+                    it.copy(showContent = true, stories = null, topRepos = repository)
                 }
+            }
+        }
+
+        viewModelScope.launch {
+            uiState.update {
+                it.copy(person = getPerson())
             }
         }
     }
@@ -213,7 +229,13 @@ class MainViewModel(
 data class UiState(
     val showContent: Boolean,
     val stories: List<News>? = null,
-    val topRepos: List<TopRepo>? = null
+    val topRepos: List<TopRepo>? = null,
+    val hasShownOnboarding: Boolean,
+    val token: String,
+    val stars: UByte,
+    val counter: Byte,
+    val reactiveCounterOne: UByte,
+    val person: Person?
 )
 
 @Serializable
