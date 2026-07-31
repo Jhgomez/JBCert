@@ -1,16 +1,14 @@
 package okik.tech.jetcert.di
 
 import com.apollographql.apollo.ApolloClient
-import eu.anifantakis.lib.ksafe.KSafe
 import io.ktor.client.HttpClient
 import okik.tech.jetcert.MainViewModel
-import okik.tech.jetcert.SettingsRepository
 import okik.tech.jetcert.api.NewsApi
 import okik.tech.jetcert.api.clients.apolloClient
 import okik.tech.jetcert.api.clients.ktorClient
 import okik.tech.jetcert.db.Database
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -26,10 +24,10 @@ val sharedModule = module {
 //    single<Database>() // compiler plugign DSL
     singleOf(::Database) // classic DSL
 
-    single {
-        SettingsRepository(get(named("settingsVault")))
-    }
+////    viewModel<MainViewModel>()
+//    viewModelOf(::MainViewModel) // classic DSL
 
-//    viewModel<MainViewModel>()
-    viewModelOf(::MainViewModel)
+    viewModel {  // also classic DSL
+        MainViewModel(get(), get(), get(named("settingsVault")))
+    }
 }
