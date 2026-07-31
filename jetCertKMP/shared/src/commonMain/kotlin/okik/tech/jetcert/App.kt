@@ -1,6 +1,10 @@
 package okik.tech.jetcert
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -8,6 +12,7 @@ import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -17,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,6 +42,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,8 +77,11 @@ fun App() {
 //        var showContent by remember { mutableStateOf(false) }
 
 
-        Row(Modifier.background(MaterialTheme.colorScheme.primaryContainer)
-            .safeContentPadding()) {
+        Row(
+            Modifier
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .safeContentPadding()
+        ) {
             Left(
                 onGetNews = {
                     coroutineScope.launch {
@@ -143,7 +153,6 @@ fun RowScope.Right(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Spacer(Modifier.height(8.dp))
         Text("Stored HasShownOnBoarding $hasShownOnboarding")
         Button(onClick = onHasShownOnboardingToggle) {
             Text("Toggle HasShownOnBoarding")
@@ -220,99 +229,107 @@ fun RowScope.Left(
 ) {
     LazyColumn(
         modifier = Modifier
-            .fillMaxHeight()
-            .weight(1f, true),
+            .fillMaxSize()
+            .weight(1f, true)
+            .padding(vertical = 16.dp, horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
             DemoLocaleStrings()
+
+            Spacer(Modifier.height(24.dp))
+
+            DbAndApiInteractions(onGetNews, onGetRepos, onInsertNews)
         }
 
         item {
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f, true),
-                horizontalAlignment = Alignment.CenterHorizontally,
+            AnimatedVisibility(
+                visible = shouldShow,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
             ) {
-                Button(onClick = onGetNews) {
-                    Text("Get News(Rest Client)", fontFamily = giffy())
-                }
-
-                Spacer(Modifier.height(8.dp))
-
-                Button(onClick = onGetRepos) {
-                    Text("Get Top Repos(Apollo GraphQl Client)")
-                }
-
-                Spacer(Modifier.height(8.dp))
-
-                val input = rememberTextFieldState("")
-                TextField(input, lineLimits = TextFieldLineLimits.MultiLine(1, 1))
-
-                Spacer(Modifier.height(8.dp))
-
-                Button(onClick = { onInsertNews(input.text.toString()) }) {
-                    Text("Insert Fake News")
-                }
-
-            }
-
-        }
-
-        item {
-            AnimatedVisibility(shouldShow) {
-                //                val greeting = remember { Greeting().greet() }
-
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                Box(
+                    Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painterResource(Res.drawable.compose_multiplatform),
                         null,
                         modifier = Modifier.size(80.dp, 80.dp)
                     )
+                }
 
-                    Text("Top 10", fontSize = 30.sp)
-                    HorizontalDivider()
-                    Spacer(Modifier.height(16.dp))
+                Text("Top 10", fontSize = 30.sp)
+                HorizontalDivider()
+                Spacer(Modifier.height(16.dp))
+
+                if (!news.isNullOrEmpty()) {
+                    this@LazyColumn.items(news) { story ->
+                        Text(
+                            text = story.title.orEmpty(),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(end = 16.dp)
+                        )
+                        Spacer(Modifier.height(16.dp))
+                    }
+                } else if (!topRepos.isNullOrEmpty()) {
+                    this@LazyColumn.items(topRepos) { repo ->
+                        Text(
+                            text = repo.name,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(end = 16.dp)
+                        )
+                        Spacer(Modifier.height(16.dp))
+                    }
                 }
             }
         }
 
-        if (!news.isNullOrEmpty()) {
-            items(news) { story ->
-                Text(story.title.orEmpty())
-                Spacer(Modifier.height(8.dp))
-            }
-        } else if (!topRepos.isNullOrEmpty()) {
-            items(topRepos) { repo ->
-                Text(repo.name)
-                Spacer(Modifier.height(8.dp))
-            }
-        }
+
+    }
+}
+
+@Composable
+private fun DbAndApiInteractions(
+    onGetNews: () -> Unit,
+    onGetRepos: () -> Unit,
+    onInsertNews: (String) -> Unit
+) {
+    Button(onClick = onGetNews) {
+        Text("Get News(Rest Client)", fontFamily = giffy())
+    }
+
+    Spacer(Modifier.height(8.dp))
+
+    Button(onClick = onGetRepos) {
+        Text("Get Top Repos(Apollo GraphQl Client)")
+    }
+
+    Spacer(Modifier.height(8.dp))
+
+    val input = rememberTextFieldState("")
+    TextField(input, lineLimits = TextFieldLineLimits.MultiLine(1, 1))
+
+    Spacer(Modifier.height(8.dp))
+
+    Button(onClick = { onInsertNews(input.text.toString()) }) {
+        Text("Insert Fake News")
     }
 }
 
 @Composable
 fun DemoLocaleStrings() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "String: ${stringResource(resource = Res.string.app_name)}")
-        Spacer(Modifier.height(4.dp))
+    Text(text = "String: ${stringResource(resource = Res.string.app_name)}")
+    Spacer(Modifier.height(4.dp))
 
-        Text(text = "Plural == 1: ${pluralStringResource(resource = Res.plurals.plural_news, 1)}")
-        Spacer(Modifier.height(4.dp))
+    Text(text = "Plural == 1: ${pluralStringResource(resource = Res.plurals.plural_news, 1)}")
+    Spacer(Modifier.height(4.dp))
 
-        Text(text = "Plural > 1: ${pluralStringResource(resource = Res.plurals.plural_news, 2, 2)}")
-        Spacer(Modifier.height(4.dp))
+    Text(text = "Plural > 1: ${pluralStringResource(resource = Res.plurals.plural_news, 2, 2)}")
+    Spacer(Modifier.height(4.dp))
 
-        Text(text = "Template: ${stringResource(resource = Res.string.string_template, "Juan", 2)}")
-        Spacer(Modifier.height(4.dp))
-    }
+    Text(text = "Template: ${stringResource(resource = Res.string.string_template, "Juan", 2)}")
+    Spacer(Modifier.height(4.dp))
 
 //    Text(text = "Array[0]: ${stringArrayResource(resource = Res.array.top_news)[0]}")
 //    Spacer(Modifier.height(4.dp))
