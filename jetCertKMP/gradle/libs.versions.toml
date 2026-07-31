@@ -14,6 +14,7 @@ junit = "4.13.2"
 kotlin = "2.4.10"
 kotlin-wrappers = "2026.7.2"
 kotlinx-coroutines = "1.11.0"
+ksafe = "3.0.0"
 material3 = "1.11.0-alpha07"
 ktor = "3.5.1"
 apollo = "5.0.1"
@@ -89,6 +90,9 @@ settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "set
 # this is deprecated as part of the security-crypto suite, you could still use it but it is recommended to use DataStore in combination with Google Tink
 androidx-security-cypto = { module = "androidx.security:security-crypto-ktx", version.ref = "security" }
 credential-storage-jvm = { module = "com.microsoft:credential-secure-storage", version.ref = "desktop-credendtial-storage" }
+
+ksafe = { module = "eu.anifantakis:ksafe", version.ref = "ksafe" }
+ksafe-compose = { module = "eu.anifantakis:ksafe-compose", version.ref = "ksafe" }
 
 ## used in build logic included build to be able to extend KMP extensions
 gradle_kmp = { group = "org.jetbrains.kotlin.multiplatform", name = "org.jetbrains.kotlin.multiplatform.gradle.plugin" , version.ref = "kotlin"} # same as "org.jetbrains.kotlin.multiplatform" plugin

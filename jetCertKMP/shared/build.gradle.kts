@@ -162,10 +162,8 @@ kotlin {
             implementation(libs.koin.cmp) // you can change this to koin-core
             implementation(libs.koin.cmp.viewmodel)
 
-            implementation("androidx.datastore:datastore-core:1.2.1")
-            implementation("androidx.datastore:datastore-preferences-core:1.2.1")
-//            implementation("androidx.datastore:datastore-tink:1.2.1")
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+            implementation(libs.ksafe) // Note: kotlinx-serialization-json comes in transitively — don't add it yourself.
+            implementation(libs.ksafe.compose)     // ← Compose state (optional)
 
             // commented out because they require to implement firebase and this project doesn't require creating a project in FIrebase
             // implementation(libs.kermit)
