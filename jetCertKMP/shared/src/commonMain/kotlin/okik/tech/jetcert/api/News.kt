@@ -42,6 +42,9 @@ sealed interface NewsResponse {
     @Serializable
     data object NullResponse: NewsResponse
 
+    // this one is only needed because the API we are going to use returns a polymorphic json, so it can
+    // return different type of objects, we will only accept a story object all other objects will be parsed as
+    // null response
     private object NewResponseSerializer:
         JsonContentPolymorphicSerializer<NewsResponse>(NewsResponse::class) {
         override fun selectDeserializer(element: JsonElement): DeserializationStrategy<NewsResponse> = when {
