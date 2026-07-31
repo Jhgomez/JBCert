@@ -153,18 +153,19 @@ fun RowScope.Right(
         modifier = Modifier
             .fillMaxHeight()
             .weight(1f, true)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .padding(start = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Stored HasShownOnBoarding $hasShownOnboarding")
+        Text("Stored HasShownOnBoarding $hasShownOnboarding", textAlign = TextAlign.Center)
         Button(onClick = onHasShownOnboardingToggle) {
-            Text("Toggle HasShownOnBoarding")
+            Text("Toggle HasShownOnBoarding", textAlign = TextAlign.Center)
         }
 
         Spacer(Modifier.height(16.dp))
         var tokenInput = rememberTextFieldState("")
-        Text("Stored Token $token")
+        Text("Stored Token $token", textAlign = TextAlign.Center)
         TextField(
             onValueChange = { input ->
                 tokenInput.setTextAndPlaceCursorAtEnd(input)
@@ -172,12 +173,12 @@ fun RowScope.Right(
             },
             value = tokenInput.text.toString(),
             placeholder = {
-                Text("Token to save")
+                Text("Token to save", textAlign = TextAlign.Center)
             }
         )
 
         Spacer(Modifier.height(16.dp))
-        Text("Stored Stars $stars")
+        Text("Stored Stars $stars", textAlign = TextAlign.Center)
         Button(onClick = onStarDecrement) {
             Text("Star--")
         }
@@ -195,16 +196,16 @@ fun RowScope.Right(
         }
 
         Spacer(Modifier.height(16.dp))
-        Text("Stored Reactive Count $reactiveCounterOne")
+        Text("Stored Reactive Count $reactiveCounterOne", textAlign = TextAlign.Center)
         Button(onClick = onReactiveCounterOneDecrement) {
-            Text("ReactCount--")
+            Text("ReactCount--", textAlign = TextAlign.Center)
         }
         Button(onClick = onReactiveCounterOneIncrement) {
-            Text("ReactCount++")
+            Text("ReactCount++", textAlign = TextAlign.Center)
         }
 
         Spacer(Modifier.height(16.dp))
-        Text("Stored Person $person")
+        Text("Stored Person $person", textAlign = TextAlign.Center)
         val personInput = rememberTextFieldState()
         val isError = rememberSaveable { mutableStateOf(false) }
         TextField(
@@ -234,7 +235,8 @@ fun RowScope.Left(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .weight(1f, true),
+            .weight(1f, true)
+            .padding(end = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
@@ -348,13 +350,13 @@ private fun DbAndApiInteractions(
     onInsertNews: (String) -> Unit
 ) {
     Button(onClick = onGetNews) {
-        Text("Get News(Rest Client)", fontFamily = giffy())
+        Text("Get News(Rest Client)", fontFamily = giffy(), textAlign = TextAlign.Center)
     }
 
     Spacer(Modifier.height(8.dp))
 
     Button(onClick = onGetRepos) {
-        Text("Get Top Repos(Apollo GraphQl Client)")
+        Text("Get Top Repos(Apollo GraphQl Client)", textAlign = TextAlign.Center)
     }
 
     Spacer(Modifier.height(8.dp))
