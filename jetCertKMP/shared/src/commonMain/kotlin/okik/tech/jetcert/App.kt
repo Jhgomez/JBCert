@@ -1,6 +1,9 @@
 package okik.tech.jetcert
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -81,6 +84,7 @@ fun App() {
             Modifier
                 .background(MaterialTheme.colorScheme.primaryContainer)
                 .safeContentPadding()
+                .padding(vertical = 16.dp, horizontal = 16.dp)
         ) {
             Left(
                 onGetNews = {
@@ -230,8 +234,7 @@ fun RowScope.Left(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .weight(1f, true)
-            .padding(vertical = 16.dp, horizontal = 16.dp),
+            .weight(1f, true),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
@@ -242,50 +245,99 @@ fun RowScope.Left(
             DbAndApiInteractions(onGetNews, onGetRepos, onInsertNews)
         }
 
-        item {
-            AnimatedVisibility(
-                visible = shouldShow,
-                enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically()
-            ) {
-                Box(
-                    Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+        if (shouldShow) {
+            item {
+                AnimatedVisibility(
+                    visible = shouldShow,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
                 ) {
-                    Image(
-                        painterResource(Res.drawable.compose_multiplatform),
-                        null,
-                        modifier = Modifier.size(80.dp, 80.dp)
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Image(
+                            painterResource(Res.drawable.compose_multiplatform),
+                            null,
+                            modifier = Modifier
+                                .size(80.dp, 80.dp)
+                        )
+                    }
+                }
+            }
+
+            item(key = 1) {
+                AnimatedVisibility(
+                    visible = shouldShow,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    Text(
+                        text = "Top 10",
+                        fontSize = 30.sp,
+                        modifier = Modifier
                     )
                 }
+            }
 
-                Text("Top 10", fontSize = 30.sp)
-                HorizontalDivider()
+            item(key = 2) {
+                AnimatedVisibility(
+                    visible = shouldShow,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    HorizontalDivider()
+                }
+            }
+
+            this@LazyColumn.item(key = 3) {
                 Spacer(Modifier.height(16.dp))
+            }
 
-                if (!news.isNullOrEmpty()) {
-                    this@LazyColumn.items(news) { story ->
-                        Text(
-                            text = story.title.orEmpty(),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(end = 16.dp)
-                        )
-                        Spacer(Modifier.height(16.dp))
+            if (!news.isNullOrEmpty()) {
+
+                items(
+                    items = news,
+                    key = { currentNews -> currentNews.id }
+                ) { story ->
+                    AnimatedVisibility(
+                        visible = shouldShow,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        Column {
+                            Text(
+                                text = story.title.orEmpty(),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(end = 16.dp)
+                            )
+                            Spacer(Modifier.height(16.dp))
+                        }
                     }
-                } else if (!topRepos.isNullOrEmpty()) {
-                    this@LazyColumn.items(topRepos) { repo ->
-                        Text(
-                            text = repo.name,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(end = 16.dp)
-                        )
-                        Spacer(Modifier.height(16.dp))
+                }
+            } else if (!topRepos.isNullOrEmpty()) {
+                this@LazyColumn.items(
+                    items = topRepos,
+                    key = { currentRepo -> currentRepo.id }
+                ) { repo ->
+                    AnimatedVisibility(
+                        visible = shouldShow,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        Column {
+                            Text(
+                                text = repo.name,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(end = 16.dp)
+                            )
+                            Spacer(Modifier.height(16.dp))
+                        }
                     }
                 }
             }
         }
-
-
     }
 }
 
