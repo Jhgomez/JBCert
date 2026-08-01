@@ -17,6 +17,11 @@ SELECT *
 FROM News
 ORDER BY score DESC;
 
+select:
+SELECT *
+FROM News
+WHERE id = ?;
+
 upsert:
 INSERT INTO News (id, type, time, by, title, score, url, descendants, text)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
