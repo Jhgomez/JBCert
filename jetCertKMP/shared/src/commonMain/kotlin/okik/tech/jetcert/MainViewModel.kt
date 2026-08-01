@@ -329,8 +329,16 @@ class MainViewModel(
             viewModelScope.launch {
                 val time = Instant.fromEpochSeconds(result.time).plus(4.hours).epochSeconds
 
-                database.newsQueries.insert(
-                    result.copy(time = time)
+                database.newsQueries.upsert(
+                    id = result.id,
+                    type = result.type,
+                    time = time,
+                    by_ = result.by_,
+                    title = result.title,
+                    score = result.score,
+                    url = result.url,
+                    descendants = result.descendants,
+                    text = result.text
                 )
             }
         }
