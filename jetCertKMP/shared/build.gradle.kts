@@ -30,8 +30,6 @@ sqldelight {
             // other dialects like, postgres, MySql, etc
             dialect(libs.cashapp.sqldelight.dialect)
 
-            generateAsync.set(true)
-
             schemaOutputDirectory = file("src/main/sqldelight/migrations")
 
             deriveSchemaFromMigrations = false
