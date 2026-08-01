@@ -24,18 +24,22 @@ fun Application.configureStatusPages() {
         exception<Throwable> { call, cause ->
             call.application.log.error("Unhandled exception", cause)
             call.respond(
-                HttpStatusCode.InternalServerError,
-                ErrorResponse(
+                status = HttpStatusCode.InternalServerError,
+                message = ErrorResponse(
                     HttpStatusCode.InternalServerError.value,
                     "An internal error occurred. Please try again later."
                 )
             )
         }
 
+        // if your service responds with a NotFound status code(404), that response is intercepted here
         status(HttpStatusCode.NotFound) { call, _ ->
             call.respond(
                 HttpStatusCode.NotFound,
-                ErrorResponse(HttpStatusCode.NotFound.value, "The requested resource was not found")
+                ErrorResponse(
+                    HttpStatusCode.NotFound.value,
+                    "The requested resource was not found"
+                )
             )
         }
     }
