@@ -11,7 +11,7 @@ fun Application.configureMonitoring() {
     install (CallLogging) {
         level = Level.INFO
         filter { call ->
-            call.request.path().startsWith("/api/")
+            call.request.path().startsWith("/api/") // /api/ matches our endpoints so we can monitor incomming request
         }
     }
 }

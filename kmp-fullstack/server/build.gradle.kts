@@ -17,6 +17,7 @@ dependencies {
     implementation(libs.ktor.serverCore)
     implementation(libs.ktor.serverNetty)
     implementation(libs.ktor.negotiation)
+    implementation(libs.ktor.json)
     implementation(libs.ktor.logging)
 
     testImplementation(libs.ktor.serverTestHost)
