@@ -2,6 +2,7 @@ package okik.tech.jetcert
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.cash.sqldelight.async.coroutines.awaitAsOne
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.apollographql.apollo.ApolloClient
@@ -323,10 +324,10 @@ class MainViewModel(
     }
 
     fun addFourHours(id: Long) {
-        val result = database.newsQueries.select(id).executeAsOneOrNull()
-
-        if (result != null) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            val result = database.newsQueries.select(id).awaitAsOne()
+//
+            if (result != null) {
                 val time = Instant.fromEpochSeconds(result.time).plus(4.hours).epochSeconds
 
                 database.newsQueries.upsert(
