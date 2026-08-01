@@ -15,6 +15,7 @@ kotlin = "2.4.10"
 kotlin-wrappers = "2026.7.2"
 kotlinx-coroutines = "1.11.0"
 ktor = "3.5.1"
+koin = "4.2.2"
 logback = "1.5.38"
 material3 = "1.11.0-alpha07"
 kotlinx-serialization = "2.3.20"
@@ -47,6 +48,9 @@ ktor-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version
 ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
 ktor-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
+ktor-koin = {  module = "io.insert-koin:koin-ktor" , version.ref = "koin"}
+ktor-koin-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin"}
+
 
 wrappers-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-wrappers" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-lib" }

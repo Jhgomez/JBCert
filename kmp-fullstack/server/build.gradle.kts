@@ -20,6 +20,8 @@ dependencies {
     implementation(libs.ktor.json)
     implementation(libs.ktor.logging)
     implementation(libs.ktor.status.pages)
+    implementation(libs.ktor.koin)
+    implementation(libs.ktor.koin.slf4j)
 
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
