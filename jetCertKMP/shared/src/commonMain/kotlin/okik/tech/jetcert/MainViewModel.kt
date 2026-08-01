@@ -30,6 +30,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Instant
 
 class MainViewModel(
     private val database: Database,
@@ -315,6 +317,20 @@ class MainViewModel(
                     stargazerCount = repo.stargazerCount,
                     createdAt = repo.createdAt.epochSeconds,
                     updatedAt = repo.updatedAt.epochSeconds
+                )
+            }
+        }
+    }
+
+    fun addFourHours(id: Long) {
+        val result = database.newsQueries.select(id).executeAsOneOrNull()
+
+        if (result != null) {
+            viewModelScope.launch {
+                val time = Instant.fromEpochSeconds(result.time).plus(4.hours).epochSeconds
+
+                database.newsQueries.insert(
+                    result.copy(time = time)
                 )
             }
         }
