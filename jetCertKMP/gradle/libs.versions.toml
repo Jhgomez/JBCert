@@ -14,6 +14,7 @@ junit = "4.13.2"
 kotlin = "2.4.10"
 kotlin-wrappers = "2026.7.2"
 kotlinx-coroutines = "1.11.0"
+kotlinxDatetime = "0.8.0"
 ksafe = "3.0.0"
 material3 = "1.11.0-alpha07"
 ktor = "3.5.1"
@@ -54,6 +55,7 @@ compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMul
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 wrappers-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-wrappers" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" } # found in ktor doc and kmp doc

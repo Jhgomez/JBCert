@@ -165,6 +165,8 @@ kotlin {
             implementation(libs.ksafe) // Note: kotlinx-serialization-json comes in transitively — don't add it yourself.
             implementation(libs.ksafe.compose)     // ← Compose state (optional)
 
+            implementation(libs.kotlinx.datetime)
+
             // commented out because they require to implement firebase and this project doesn't require creating a project in FIrebase
             // implementation(libs.kermit)
             // implementation(libs.kermit.crashalytics)
