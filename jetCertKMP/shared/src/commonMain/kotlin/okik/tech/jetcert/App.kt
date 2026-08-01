@@ -58,11 +58,15 @@ import jetcert.shared.generated.resources.compose_multiplatform
 import jetcert.shared.generated.resources.plural_news
 import jetcert.shared.generated.resources.string_template
 import kotlinx.coroutines.launch
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.byUnicodePattern
 import okik.tech.jetcert.db.News
 import okik.tech.jetcert.db.TopRepo
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.time.Instant
 
 object Doggy {
     const val hola = "hola"
@@ -78,7 +82,6 @@ fun App() {
         val coroutineScope = rememberCoroutineScope()
         val state = viewModel.uiState.collectAsStateWithLifecycle()
 //        var showContent by remember { mutableStateOf(false) }
-        kotlin.time.Clock.
 
         Row(
             Modifier
@@ -104,6 +107,7 @@ fun App() {
                         viewModel.insertFakeNews(news)
                     }
                 },
+                onAddHours = viewModel::addFourHours,
                 shouldShow = !state.value.stories.isNullOrEmpty() || !state.value.topRepos.isNullOrEmpty(),
                 news = state.value.stories,
                 topRepos = state.value.topRepos
@@ -228,6 +232,7 @@ fun RowScope.Left(
     onGetNews: () -> Unit,
     onGetRepos: () -> Unit,
     onInsertNews: (String) -> Unit,
+    onAddHours: (Long) -> Unit,
     shouldShow: Boolean,
     news: List<News>?,
     topRepos: List<TopRepo>?
@@ -308,12 +313,21 @@ fun RowScope.Left(
                         enter = fadeIn() + expandVertically(),
                         exit = fadeOut() + shrinkVertically()
                     ) {
-                        Column {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            val dateTimeFormat = DateTimeComponents.Format {
+                                byUnicodePattern("MM-d-yyyy HH:mm")
+                            }
+
+                            val dateTimeString = Instant.fromEpochSeconds(story.time).format(dateTimeFormat)
+
                             Text(
-                                text = story.title.orEmpty(),
+                                text = "${story.title.orEmpty()} $dateTimeString",
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(end = 16.dp)
                             )
+                            Button(onClick = { onAddHours(story.id) }) {
+                                Text("Add 4h")
+                            }
                             Spacer(Modifier.height(16.dp))
                         }
                     }
