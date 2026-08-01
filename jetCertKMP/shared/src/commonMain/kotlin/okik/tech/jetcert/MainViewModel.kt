@@ -34,7 +34,7 @@ import kotlin.time.Clock
 class MainViewModel(
     private val database: Database,
     private val gitHubApi: ApolloClient,
-    private val settingsVault: KSafe
+    private val settingsVault: KSafe // you can delete all values with the funciton .clearAll()
 ) : ViewModel(), KoinComponent {
 
     // private val _uiState = MutableStateFlow(UiState(false, Greeting().greet()))
