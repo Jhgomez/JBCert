@@ -46,6 +46,8 @@ ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.re
 ktor-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
+ktor-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
+
 wrappers-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-wrappers" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-lib" }
 

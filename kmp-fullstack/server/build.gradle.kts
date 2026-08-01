@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.ktor.negotiation)
     implementation(libs.ktor.json)
     implementation(libs.ktor.logging)
+    implementation(libs.ktor.status.pages)
 
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
