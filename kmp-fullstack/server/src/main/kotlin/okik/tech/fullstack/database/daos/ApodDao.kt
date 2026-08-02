@@ -44,6 +44,26 @@ class ApodDao(id: EntityID<LocalDate>) : Entity<LocalDate>(id) {
         return "Apd(id=$id, title=$title)"
     }
 
+    suspend fun getByDate(date: LocalDate): ApodResponse? =
+        suspendTransaction {
+            withContext(Dispatchers.IO) {
+                findById(date)?.let { entry ->
+                    ApodResponse(
+                        date = entry.date.toString(), // no formatting as of right now, it will output iso format yyyy-MM-dd by default,
+                        title = entry.title,
+                        explanation = entry.explanation,
+                        url = entry.url,
+                        hdUrl = entry.hdUrl,
+                        mediaType = entry.media_type,
+                        copyright = entry.copyright,
+                        thumbnailUrl = entry.thumbnailUrl,
+                        fetchedAt = entry.fetchedAt
+                    )
+                }
+            }
+        }
+
+
     suspend fun save(apod: ApodResponse): ApodResponse =
         suspendTransaction {
             withContext(Dispatchers.IO) {
@@ -93,14 +113,17 @@ class ApodDao(id: EntityID<LocalDate>) : Entity<LocalDate>(id) {
 
     }
 
-    suspend fun deleteOlderThan(cutoffDate: LocalDate) {
+    suspend fun deleteOlderThan(cutoffDate: LocalDate): Int =
         suspendTransaction {
             withContext(Dispatchers.IO) {
-                find { Apod.date less cutoffDate }
-                    .forEach { entry -> entry.delete() }
+                val entries = find { Apod.date less cutoffDate }
+                val count = entries.count().toInt()
+
+                entries.forEach { entry -> entry.delete() }
+
+                count
             }
         }
-    }
 
     suspend fun getTotalCount() = suspendTransaction {
         withContext(Dispatchers.IO) {
