@@ -6,6 +6,8 @@ import kotlinx.coroutines.selects.whileSelect
 import kotlinx.coroutines.withContext
 import okik.tech.fullstack.database.tables.Apod
 import okik.tech.fullstack.models.ApodResponse
+import okik.tech.fullstack.models.PaginatedResponse
+import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.eq
@@ -14,6 +16,7 @@ import org.jetbrains.exposed.v1.core.less
 import org.jetbrains.exposed.v1.core.lessEq
 import org.jetbrains.exposed.v1.dao.Entity
 import org.jetbrains.exposed.v1.dao.EntityClass
+import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.jetbrains.exposed.v1.jdbc.upsert
 import java.time.LocalDate
@@ -29,7 +32,6 @@ class ApodDao(id: EntityID<LocalDate>) : Entity<LocalDate>(id) {
 //    companion object : IntEntityClass<Task>(Tasks)
 
     var date by Apod.date
-    var position by Apod.position
     var copyright by Apod.copyright
     var fetchedAt by Apod.fetchedAt
     var explanation by Apod.explanation
@@ -86,31 +88,29 @@ class ApodDao(id: EntityID<LocalDate>) : Entity<LocalDate>(id) {
             }
         }
 
-      suspend fun getRandom(): ApodResponse? = 
+      suspend fun getRandom(): ApodResponse? =
           suspendTransaction {
               withContext(Dispatchers.IO) {
-                  val randomIndex = Random.nextLong(0, count())
-                  
-                  return@withContext find { Apod.position eq randomIndex }
-                      .map { apod -> 
-                          ApodResponse(
-                              date = apod.date.toString(), // no formatting as of right now, it will output iso format yyyy-MM-dd by default,
-                              title = apod.title,
-                              explanation = apod.explanation,
-                              url = apod.url,
-                              hdUrl = apod.hdUrl,
-                              mediaType = apod.media_type,
-                              copyright = apod.copyright,
-                              thumbnailUrl = apod.thumbnailUrl,
-                              fetchedAt = apod.fetchedAt
-                          )
-                      }
+                  val randomIndex = Random.nextLong(0, count() - 1)
+
+                  all()
+                      .offset(randomIndex)
+                      .limit(1)
+                      .map(ApodDao::toApodResponse)
                       .firstOrNull()
               }
           }
 
-    suspend fun getPaginated(page: UByte, pageSize: UByte) {
+    suspend fun getPaginated(page: UByte, pageSize: UByte): Pair<List<ApodResponse>, UShort> {
+        val totalIndex = (page * pageSize).toUShort()
 
+        val page = all()
+            .orderBy(Apod.id to SortOrder.ASC)
+            .offset((totalIndex - pageSize).toLong())
+            .limit(pageSize.toInt())
+            .map(ApodDao::toApodResponse)
+
+        return Pair(page, count().toUShort())
     }
 
     suspend fun deleteOlderThan(cutoffDate: LocalDate): Int =
@@ -136,4 +136,17 @@ class ApodDao(id: EntityID<LocalDate>) : Entity<LocalDate>(id) {
             find { Apod.date greaterEq startDate and(Apod.date lessEq  endDate) }.count()
         }
     }
+
+    private inline fun toApodResponse(): ApodResponse =
+        ApodResponse(
+            date = date.toString(), // no formatting as of right now, it will output iso format yyyy-MM-dd by default,
+            title = title,
+            explanation = explanation,
+            url = url,
+            hdUrl = hdUrl,
+            mediaType = media_type,
+            copyright = copyright,
+            thumbnailUrl = thumbnailUrl,
+            fetchedAt = fetchedAt
+        )
 }
