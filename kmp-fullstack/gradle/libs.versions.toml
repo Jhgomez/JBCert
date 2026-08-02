@@ -50,7 +50,10 @@ ktor-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "kto
 ktor-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
 ktor-koin = {  module = "io.insert-koin:koin-ktor" , version.ref = "koin"}
 ktor-koin-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin"}
-
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio-engine = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-negotiation-client = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-logging-client = { module = "io.ktor:ktor-client-logging", version.ref = "ktor"}
 
 wrappers-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-wrappers" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-lib" }

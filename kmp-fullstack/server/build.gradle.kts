@@ -22,6 +22,10 @@ dependencies {
     implementation(libs.ktor.status.pages)
     implementation(libs.ktor.koin)
     implementation(libs.ktor.koin.slf4j)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio.engine)
+    implementation(libs.ktor.negotiation.client)
+    implementation(libs.ktor.logging.client)
 
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
