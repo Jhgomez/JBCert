@@ -3,8 +3,9 @@ package okik.tech.fullstack
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import okik.tech.fullstack.config.DatabaseConfig.databaseModule
+import okik.tech.fullstack.config.appConfigModule
+import okik.tech.fullstack.config.initializeDatabase
 import okik.tech.fullstack.plugins.configureMonitoring
 import okik.tech.fullstack.plugins.configureRouting
 import okik.tech.fullstack.plugins.configureSerialization
@@ -25,22 +26,15 @@ fun main() {
 }
 
 fun Application.module() {
-//    install(koin) {
-//        slf4jLogger()
-//        modules(appConfigModule, databaseModule, appModule)
-//    }
     install(Koin) {
         slf4jLogger()
-//        fileProperties("/application.conf")
-//        modules(
-//            networkModule,
-//            repositoryModule,
-//            serviceModule
-//        )
-
+        //        fileProperties("/application.conf")
+        modules(appConfigModule, databaseModule,
+//            appModule
+        )
     }
 //
-//    initializeDatabase()
+    initializeDatabase()
     configureSerialization()
     configureStatusPages()
     configureMonitoring()
