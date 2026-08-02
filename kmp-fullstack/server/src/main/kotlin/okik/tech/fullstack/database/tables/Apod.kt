@@ -6,9 +6,8 @@ import org.jetbrains.exposed.v1.core.dao.id.IdTable
 import org.jetbrains.exposed.v1.javatime.date
 import java.time.LocalDate
 
-internal object Apod: IdTable<LocalDate>("apod") {
+object Apod: IdTable<LocalDate>("apod") {
     val date = date("date").uniqueIndex()
-    val position = long("position").uniqueIndex().autoIncrement()
     val copyright = varchar("copyright", 255).nullable()
     val fetchedAt = long("fetched_at").default(0)
     val explanation = text("explanation")
