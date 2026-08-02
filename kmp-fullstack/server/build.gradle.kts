@@ -29,6 +29,7 @@ dependencies {
 
     implementation(libs.exposed.core)
     implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.dao)
     implementation(libs.h2)
     implementation(libs.sqlite.and.jdbc.driver)
     implementation(libs.hikari.connection.pool)
