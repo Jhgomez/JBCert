@@ -27,6 +27,12 @@ dependencies {
     implementation(libs.ktor.negotiation.client)
     implementation(libs.ktor.logging.client)
 
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.h2)
+    implementation(libs.sqlite.and.jdbc.driver)
+    implementation(libs.hikari.connection.pool)
+    
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
 }
