@@ -1,9 +1,19 @@
 package okik.tech.fullstack.database.tables
 
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.ColumnType
 import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.dao.id.IdTable
+import org.jetbrains.exposed.v1.dao.Entity
+import org.jetbrains.exposed.v1.dao.EntityClass
+import org.jetbrains.exposed.v1.dao.IntEntity
+import org.jetbrains.exposed.v1.dao.IntEntityClass
+import org.jetbrains.exposed.v1.javatime.Date
 import org.jetbrains.exposed.v1.javatime.date
+import java.time.LocalDate
 
-object Apod: Table("apod") {
+private object ApodTable: IdTable<LocalDate>("apod") {
     val date = date("date").uniqueIndex()
     val copyright = varchar("copyright", 255).nullable()
     val fetchedAt = long("fetched_at").default(0)
@@ -15,5 +25,29 @@ object Apod: Table("apod") {
     val thumbnailUrl = varchar("thumbnail_url", 500).nullable()
 
     override val primaryKey = PrimaryKey(date)
+    override val id: Column<EntityID<LocalDate>>
+        get() = date.entityId()
 }
 
+/**
+ *  using the DAO pattern https://www.jetbrains.com/help/exposed/get-started-with-exposed-dao.html
+  */
+class Apod(id: EntityID<LocalDate>) : Entity<LocalDate>(id) {
+    companion object : EntityClass<LocalDate, Apod>(ApodTable)
+//    companion object : IntEntityClass<Task>(Tasks)
+
+    var date by ApodTable.date
+    var copyright by ApodTable.copyright
+    var fetchedAt by ApodTable.fetchedAt
+    var explanation by ApodTable.explanation
+    var url by ApodTable.url
+    var hdUrl by ApodTable.hdUrl
+    var media_type by ApodTable.media_type
+    var title by ApodTable.title
+    var thumbnailUrl by ApodTable.thumbnailUrl
+
+
+    override fun toString(): String {
+        return "Apd(id=$id, title=$title)"
+    }
+}
