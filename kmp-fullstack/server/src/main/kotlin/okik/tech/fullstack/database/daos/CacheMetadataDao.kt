@@ -14,7 +14,7 @@ class CacheMetadataDao {
     object Dao : EntityClass<String, CacheMetadataEntity>(CacheMetadata)
 
     class CacheMetadataEntity(id: EntityID<String>) : Entity<String>(id) {
-        var key by CacheMetadata.key
+        var key by CacheMetadata.id
         var value by CacheMetadata.value
         var updatedAt by CacheMetadata.updatedAt
 
