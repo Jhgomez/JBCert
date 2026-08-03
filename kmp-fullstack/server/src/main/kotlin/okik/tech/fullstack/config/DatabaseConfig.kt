@@ -12,6 +12,7 @@ import okik.tech.fullstack.database.tables.CacheMetadata
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import java.io.File
 
 object DatabaseConfig {
     val databaseModule = module {
@@ -31,12 +32,11 @@ object DatabaseConfig {
     }
 
     private fun createHikariDataSource(dbFilePath: String): HikariDataSource {
-//        File(dbFilePath).parentFile?.mkdirs()
+        File(dbFilePath).parentFile?.mkdirs()
 
         val config = HikariConfig().apply {
             driverClassName = "org.sqlite.JDBC"
-//            jdbcUrl = "jdbc:sqlite:$dbFilePath"
-            jdbcUrl = "jdbc:sqlite:apod.db"
+            jdbcUrl = "jdbc:sqlite:$dbFilePath"
             username = "user"
             password = "password"
             maximumPoolSize = 5
