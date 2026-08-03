@@ -26,7 +26,7 @@ class ApodDao {
 
     class ApodEntity(id: EntityID<LocalDate>) : Entity<LocalDate>(id) {
 
-        var date by Apod.date
+        var date by Apod.id
         var copyright by Apod.copyright
         var fetchedAt by Apod.fetchedAt
         var explanation by Apod.explanation
@@ -62,7 +62,7 @@ class ApodDao {
     suspend fun save(apod: ApodResponse): ApodResponse = dbQuery {
         val date = LocalDate.parse(apod.date)
 
-        Apod.upsert(Apod.date) {
+        Apod.upsert(Apod.id) {
             it[id] = date
             it[copyright] = apod.copyright
             it[fetchedAt] = apod.fetchedAt
@@ -103,7 +103,7 @@ class ApodDao {
     }
 
     suspend fun deleteOlderThan(cutoffDate: LocalDate): Int = dbQuery {
-        val entries = Dao.find { Apod.date less cutoffDate }
+        val entries = Dao.find { Apod.id less cutoffDate }
         val count = entries.count().toInt()
 
         entries.forEach { entry -> entry.delete() }
@@ -119,7 +119,7 @@ class ApodDao {
 
     suspend fun countInDateRange(startDate: LocalDate, endDate: LocalDate): Long = dbQuery {
             Dao
-                .find { Apod.date greaterEq startDate and (Apod.date lessEq endDate) }
+                .find { Apod.id greaterEq startDate and (Apod.id lessEq endDate) }
                 .count()
         }
 }
