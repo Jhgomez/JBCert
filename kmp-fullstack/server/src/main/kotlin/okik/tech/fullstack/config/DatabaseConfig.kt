@@ -3,6 +3,8 @@ package okik.tech.fullstack.config
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
+import okik.tech.fullstack.database.daos.ApodDao
+import okik.tech.fullstack.database.daos.CacheMetadataDao
 import org.koin.dsl.module
 import org.koin.ktor.ext.inject
 import okik.tech.fullstack.database.tables.Apod
@@ -21,6 +23,11 @@ object DatabaseConfig {
             val dataSource = get<HikariDataSource>()
             createDatabase(dataSource)
         }
+
+        single { ApodDao() }
+
+        single { CacheMetadataDao() }
+
     }
 
     private fun createHikariDataSource(dbFilePath: String): HikariDataSource {
