@@ -12,11 +12,16 @@ import org.jetbrains.exposed.v1.core.lessEq
 import org.jetbrains.exposed.v1.dao.Entity
 import org.jetbrains.exposed.v1.dao.EntityClass
 import org.jetbrains.exposed.v1.jdbc.upsert
+import org.slf4j.LoggerFactory
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import kotlin.math.abs
 import kotlin.random.Random
 
 class ApodDao {
+    private val logger = LoggerFactory.getLogger(ApodDao::class.java)
+
     suspend fun getByDate(date: LocalDate): ApodResponse? = dbQuery {
         val apod = ApodEntity.Dao.findById(date)
 
@@ -28,11 +33,12 @@ class ApodDao {
 
     suspend fun save(apod: ApodResponse): ApodResponse = dbQuery {
         val date = LocalDate.parse(apod.date)
+        val exists = ApodEntity.Dao.findById(LocalDate.parse(apod.date)) != null
 
-        Apod.upsert(Apod.id) {
+        Apod.upsert(Apod.id, onUpdateExclude = listOf(Apod.id, Apod.fetchedAt)) {
             it[id] = date
             it[copyright] = apod.copyright
-            it[fetchedAt] = apod.fetchedAt
+            it[fetchedAt] = LocalDateTime.now(ZoneOffset.UTC)
             it[explanation] = apod.explanation
             it[url] = apod.url
             it[hdUrl] = apod.hdUrl
@@ -41,6 +47,11 @@ class ApodDao {
             it[thumbnailUrl] = apod.thumbnailUrl
 
         }
+
+        val formattedString = if (exists) "Cached apod entry with id/date ${apod.date} was updated" else
+            "Caching new apod record with id/date ${apod.date}"
+
+        logger.info(formattedString)
 
         apod
     }
@@ -67,6 +78,19 @@ class ApodDao {
             .map(ApodEntity::toApodResponse)
 
         Pair(page, ApodEntity.Dao.count().toUShort())
+    }
+
+    suspend fun getWindowHistory(page: UByte, pageSize: UByte, star: LocalDate, end: LocalDate): List<ApodResponse> = dbQuery {
+        val offset = abs(
+            ((page - 1U) * pageSize).toLong()
+        )
+
+        ApodEntity.Dao
+            .find { Apod.id greaterEq star and(Apod.id lessEq end) }
+            .orderBy(Apod.id to SortOrder.ASC)
+            .offset(offset)
+            .limit(pageSize.toInt())
+            .map(ApodEntity::toApodResponse)
     }
 
     suspend fun deleteOlderThan(cutoffDate: LocalDate): Int = dbQuery {
@@ -121,6 +145,6 @@ class ApodEntity(id: EntityID<LocalDate>) : Entity<LocalDate>(id) {
             mediaType = media_type,
             copyright = copyright,
             thumbnailUrl = thumbnailUrl,
-            fetchedAt = fetchedAt
+            fetchedAt = fetchedAt.toInstant(ZoneOffset.UTC).toEpochMilli()
         )
 }
