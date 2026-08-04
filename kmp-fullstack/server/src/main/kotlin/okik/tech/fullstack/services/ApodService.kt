@@ -7,7 +7,9 @@ import okik.tech.fullstack.models.ApodResponse
 import okik.tech.fullstack.models.PaginatedResponse
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Month
+import java.time.ZoneOffset
 import java.time.format.DateTimeParseException
 
 class ApodService(
@@ -75,6 +77,21 @@ class ApodService(
             apodDao.save(apod.copy(fetchedAt = System.currentTimeMillis()))
             apod
         }
+    }
+
+    suspend fun getApodHistory(
+        page: UByte,
+        pageSize: UByte,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): List<ApodResponse> {
+
+        validateDate(startDate)
+        validateDate(endDate)
+
+        val items = apodDao.getWindowHistory(page, pageSize, startDate, endDate)
+
+        return items
     }
 
     suspend fun getApodHistory(page: UByte, pageSize: UByte): PaginatedResponse<ApodResponse> {
@@ -146,6 +163,9 @@ class ApodService(
         return count
     }
 
+    /**
+     * Cleans cache and fills it up every single day
+     */
     suspend fun runDailyCacheMaintenanceJob() {
         logger.info("Running daily cache maintenance job")
 
@@ -160,7 +180,7 @@ class ApodService(
             val addedCount = fillMissingEntries(oldestDate, today)
             logger.info("Added $addedCount missing entries to cache")
 
-            cacheMetadataDao.set("daily_maintenance_last_run", System.currentTimeMillis().toString())
+            cacheMetadataDao.set("daily_maintenance_last_run", LocalDateTime.now(ZoneOffset.UTC))
 
             logger.info("Daily cache maintenance completed successfully")
         } catch (e: Exception) {
