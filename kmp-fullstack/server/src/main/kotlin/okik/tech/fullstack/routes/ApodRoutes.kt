@@ -13,6 +13,7 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.koin.ktor.ext.inject
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
+import java.time.format.DateTimeParseException
 
 /**
  * Routes implements some patterns, DI, clean structure(try-catch), early validation, and utility
@@ -72,6 +73,8 @@ fun Route.apodRoutes() {
                 val page = call.parameters["page"]?.toUByteOrNull() ?: 1U
                 val pageSize = call.parameters["pageSize"]?.toUByteOrNull() ?: 10U
 
+                // ad start date and end date if start date is after end date and respond with 400 clear message
+
                 if (page <= 0U || pageSize <= 0U || pageSize > 100U) {
                     call.respondError(
                         HttpStatusCode.BadRequest,
@@ -80,8 +83,41 @@ fun Route.apodRoutes() {
                     return@get
                 }
 
-                val history = apodService.getApodHistory(page, pageSize)
-                call.respond(history)
+                val startDateParam = call.parameters["startDate"]
+                val endDateParam = call.parameters["endDate"]
+
+                if (startDateParam == null && endDateParam == null) {
+                    val history = apodService.getApodHistory(page, pageSize, null, null)
+                    call.respond(history)
+                    return@get
+                }
+
+                if (startDateParam == null || endDateParam == null) {
+                    call.respondError(
+                        HttpStatusCode.BadRequest,
+                        "Invalid state. Either pass both start and end dates or pass neither"
+                    )
+
+                    return@get
+                }
+
+                val startDate = LocalDate.parse(startDateParam)
+                val endDate = LocalDate.parse(endDateParam)
+
+                if (startDate.isAfter(endDate)) {
+                    call.respondError(
+                        HttpStatusCode.BadRequest,
+                        "Invalid state. Start date can not be before end date"
+                    )
+
+                    return@get
+                }
+
+                val histories = apodService.getApodHistory(page, pageSize, startDate, endDate)
+
+                call.respond(histories)
+            } catch (e: DateTimeParseException) {
+                call.respondError(HttpStatusCode.InternalServerError, "Failed to fetch APOD history: ${e.message}")
             } catch (e: Exception) {
                 call.respondError(HttpStatusCode.InternalServerError, "Failed to fetch APOD history: ${e.message}")
             }

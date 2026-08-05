@@ -17,8 +17,9 @@ to test your APIs happy path or simulate edge cases, making sure your API works 
 as errors being communicated/formatted correctly. You can alos write integration test using Ktor's 
 test application engine which lets you simulate http requests inside a test environment, check response 
 status code, and make assertions on the response's body. Clear routes, consistent error
-and easy testing tools contribute to developers experience.  
-
+and easy testing tools contribute to developers experience. As of today ktor seems to support OpenApi 
+and Swagger with some official dependencies, however they don't support Scalar yet, if you want to use
+it then you need to create an end endpoint that exposes the generated yaml file
 
 ### Running the apps
 
