@@ -1,24 +1,21 @@
 package okik.tech.fullstack.services
 
-import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.delay
 import okik.tech.fullstack.database.daos.ApodDao
 import okik.tech.fullstack.database.daos.CacheMetadataDao
 import okik.tech.fullstack.models.ApodResponse
 import okik.tech.fullstack.models.PaginatedResponse
-import okik.tech.fullstack.routes.respondError
 import org.slf4j.LoggerFactory
+import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.Month
-import java.time.ZoneOffset
 import java.time.format.DateTimeParseException
 
 class ApodService(
     private val nasaApiClient: NasaApiClient,
     private val apodDao: ApodDao,
     private val cacheMetadataDao: CacheMetadataDao,
-    private val cacheDays: Int = 90
+    private val cacheDays: Int
 ) {
     private val logger = LoggerFactory.getLogger(ApodService::class.java)
 
@@ -198,7 +195,7 @@ class ApodService(
             val addedCount = fillMissingEntries(oldestDate, today)
             logger.info("Added $addedCount missing entries to cache")
 
-            cacheMetadataDao.set("daily_maintenance_last_run", LocalDateTime.now(ZoneOffset.UTC))
+            cacheMetadataDao.set("daily_maintenance_last_run", Instant.now().toEpochMilli())
 
             logger.info("Daily cache maintenance completed successfully")
         } catch (e: Exception) {
@@ -257,16 +254,16 @@ class ApodService(
         try {
             val totalCount = apodDao.getTotalCount()
 
-            if (totalCount < 50) {
+            if (totalCount < 10) {
                 logger.info("Database has only $totalCount entries. Historical fetch needed.")
                 return true
             }
 
             val today = LocalDate.now()
-            val thirtyDaysAgo = today.minusDays(30)
-            val recentCount = apodDao.countInDateRange(thirtyDaysAgo, today)
+            val fiveDaysAgo = today.minusDays(5)
+            val recentCount = apodDao.countInDateRange(fiveDaysAgo, today)
 
-            if (recentCount < 25) {
+            if (recentCount < 5) {
                 logger.info("Database has only $recentCount recent entries. Historical fetch needed.")
                 return true
             }
