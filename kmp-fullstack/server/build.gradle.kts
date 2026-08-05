@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.ktor)
-    alias(libs.plugins.kotlinx.serialization)
 }
 
 group = "okik.tech.fullstack"
@@ -13,7 +12,6 @@ application {
 dependencies {
     api(project(":core"))
     implementation(libs.logback)
-    implementation(libs.kotlinx.serialization)
     implementation(libs.ktor.serverCore)
     implementation(libs.ktor.serverNetty)
     implementation(libs.ktor.negotiation)
@@ -22,6 +20,7 @@ dependencies {
     implementation(libs.ktor.status.pages)
     implementation(libs.ktor.koin)
     implementation(libs.ktor.koin.slf4j)
+
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio.engine)
     implementation(libs.ktor.negotiation.client)
