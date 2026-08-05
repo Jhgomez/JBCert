@@ -153,7 +153,7 @@ fun Route.apodRoutes() {
             val result = mapOf(
                 "status" to "success",
                 "message" to "Database connected successfully",
-                "dbPath" to "data/randomspace.db",
+                "dbPath" to "generated-db/apod.db",
                 "tableCount" to tables.size.toString(),
                 "tables" to tables.joinToString(", ")
             )
