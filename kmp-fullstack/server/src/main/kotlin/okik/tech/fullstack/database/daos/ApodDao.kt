@@ -66,16 +66,31 @@ class ApodDao {
             ?.let(ApodEntity::toApodResponse)
     }
 
-    suspend fun getPaginated(page: UByte, pageSize: UByte): Pair<List<ApodResponse>, UShort> = dbQuery {
+    suspend fun getPaginated(
+        page: UByte,
+        pageSize: UByte,
+        star: LocalDate?,
+        end: LocalDate?
+    ): Pair<List<ApodResponse>, UShort> = dbQuery {
         val offset = abs(
             ((page - 1U) * pageSize).toLong()
         )
 
-        val page = ApodEntity.Dao.all()
-            .orderBy(Apod.id to SortOrder.ASC)
+        val page = if (star != null && end != null) {
+
+            ApodEntity.Dao
+                .find { Apod.id greaterEq star and(Apod.id lessEq end) }
+                .orderBy(Apod.id to SortOrder.ASC)
+
+        } else {
+
+            ApodEntity.Dao.all().orderBy(Apod.id to SortOrder.ASC)
+
+        }
             .offset(offset)
             .limit(pageSize.toInt())
             .map(ApodEntity::toApodResponse)
+
 
         Pair(page, ApodEntity.Dao.count().toUShort())
     }

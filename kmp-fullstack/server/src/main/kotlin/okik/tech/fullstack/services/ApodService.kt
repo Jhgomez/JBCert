@@ -1,10 +1,12 @@
 package okik.tech.fullstack.services
 
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.delay
 import okik.tech.fullstack.database.daos.ApodDao
 import okik.tech.fullstack.database.daos.CacheMetadataDao
 import okik.tech.fullstack.models.ApodResponse
 import okik.tech.fullstack.models.PaginatedResponse
+import okik.tech.fullstack.routes.respondError
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -82,33 +84,49 @@ class ApodService(
     suspend fun getApodHistory(
         page: UByte,
         pageSize: UByte,
-        startDate: LocalDate,
-        endDate: LocalDate
-    ): List<ApodResponse> {
-
-        validateDate(startDate)
-        validateDate(endDate)
-
-        val items = apodDao.getWindowHistory(page, pageSize, startDate, endDate)
-
-        return items
-    }
-
-    suspend fun getApodHistory(page: UByte, pageSize: UByte): PaginatedResponse<ApodResponse> {
+        start: LocalDate?,
+        end: LocalDate?
+    ): PaginatedResponse<ApodResponse> {
         require(page > 0U) { "Page must be greater than 0" }
         require(pageSize > 0U) { "Page size must be greater than 0" }
         require(pageSize <= 100U) { "Page size cannot exceed 100" }
 
-        val (items, totalCount) = apodDao.getPaginated(page, pageSize)
+        if (start != null && end != null) {
+            validateDate(start)
+            validateDate(end)
+        }
+
+        val (items, totalCount) = apodDao.getPaginated(page, pageSize, start, end)
 
         if (items.isEmpty() && totalCount == 0.toUShort()) {
             val today = LocalDate.now()
-            val startDate = today.minusDays(minOf(30, cacheDays.toLong()))
+            var startDate = today.minusDays(minOf(30, cacheDays.toLong()))
 
-            fillHistoricalCache(startDate, today)
+            var endDate = today
 
-            Short.MAX_VALUE
-            val (newItems, newTotalCount) = apodDao.getPaginated(page, pageSize)
+            if (start != null && end != null) {
+                val offset = pageSize * (page - 1U)
+
+                startDate = start.plusDays(offset.toLong())
+
+                if (startDate.isAfter(today)) {
+                    throw IllegalStateException("Page can not start in the future")
+                }
+
+                val offsetEndDate = startDate.plusDays(pageSize.toLong())
+
+                if (offsetEndDate.isAfter(end)) {
+                    endDate = end
+                }
+            }
+
+            fillHistoricalCache(
+                startDate,
+                endDate
+            )
+
+            val (newItems, newTotalCount) = apodDao.getPaginated(page, pageSize, startDate, endDate)
+
             return PaginatedResponse(
                 items = newItems,
                 page = page,
