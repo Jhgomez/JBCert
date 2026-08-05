@@ -11,5 +11,12 @@ val serviceModule = module {
         NasaApiClient(apiKey = config.nasaApiKey)
     }
 
-    single { ApodService(nasaApiClient = get(), apodDao = get(), cacheMetadataDao = get() ) }
+    single {
+        ApodService(
+            nasaApiClient = get(),
+            apodDao = get(),
+            cacheMetadataDao = get(),
+            cacheDays = get<AppConfig>().cacheDays
+        )
+    }
 }
