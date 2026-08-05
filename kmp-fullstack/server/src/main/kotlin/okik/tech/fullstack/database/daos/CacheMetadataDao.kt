@@ -4,10 +4,16 @@ import okik.tech.fullstack.database.tables.CacheMetadata
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.Entity
 import org.jetbrains.exposed.v1.dao.EntityClass
+import org.jetbrains.exposed.v1.jdbc.upsert
+import java.time.LocalDateTime
 
 class CacheMetadataDao {
-    suspend fun set(type: String, currentMillis: String) {
-//        "daily_maintenance_last_run"
+    // we only store the last time we run a job in case we need to check later
+    fun set(type: String, updatedAt: Long) {
+        CacheMetadata.upsert(CacheMetadata.id) {
+            it[CacheMetadata.id] = type
+            it[CacheMetadata.updatedAt] = updatedAt
+        }
     }
 }
 
