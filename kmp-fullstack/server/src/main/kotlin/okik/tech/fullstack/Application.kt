@@ -4,9 +4,11 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import okik.tech.fullstack.config.DatabaseConfig.databaseModule
+import okik.tech.fullstack.config.apodConfigModule
 import okik.tech.fullstack.config.appConfigModule
 import okik.tech.fullstack.config.initializeDatabase
 import okik.tech.fullstack.config.serviceModule
+import okik.tech.fullstack.plugins.configureBackgroundJobs
 import okik.tech.fullstack.plugins.configureMonitoring
 import okik.tech.fullstack.plugins.configureRouting
 import okik.tech.fullstack.plugins.configureSerialization
@@ -29,14 +31,14 @@ fun main() {
 fun Application.module() {
     install(Koin) {
         slf4jLogger() // slf4j is a logging facade
-        //        fileProperties("/application.conf")
-        modules(appConfigModule, databaseModule, serviceModule)
+        // fileProperties("/application.conf")
+        modules(appConfigModule, databaseModule, serviceModule, apodConfigModule)
     }
-//
+
     initializeDatabase()
     configureSerialization()
     configureStatusPages()
     configureMonitoring()
     configureRouting()
-//    configureBacgroundJobs()
+    configureBackgroundJobs()
 }
