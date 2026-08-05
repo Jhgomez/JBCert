@@ -12,17 +12,17 @@ data class ApodResponse(
     @SerialName("hdurl") val hdUrl: String? = null,
     @SerialName("media_type") val mediaType: String,
     val copyright: String? = null,
-    val thumbnailUrl: String? = null,
+    @SerialName("thumbnail_url") val thumbnailUrl: String? = null,
     val fetchedAt: Long = 0
 )
 
 @Serializable
 data class PaginatedResponse<T>(
     val items: List<T>,
-    val page: Int,
-    val pageSize: Int,
-    val totalItems: Int,
-    val totalPages: Int
+    val page: UByte,
+    val pageSize: UByte,
+    val totalItems: UShort,
+    val totalPages: UByte
 )
 
 @Serializable
