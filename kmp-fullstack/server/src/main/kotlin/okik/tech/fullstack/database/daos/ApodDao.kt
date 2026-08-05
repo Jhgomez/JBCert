@@ -13,6 +13,7 @@ import org.jetbrains.exposed.v1.dao.Entity
 import org.jetbrains.exposed.v1.dao.EntityClass
 import org.jetbrains.exposed.v1.jdbc.upsert
 import org.slf4j.LoggerFactory
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -38,7 +39,7 @@ class ApodDao {
         Apod.upsert(Apod.id, onUpdateExclude = listOf(Apod.id, Apod.fetchedAt)) {
             it[id] = date
             it[copyright] = apod.copyright
-            it[fetchedAt] = LocalDateTime.now(ZoneOffset.UTC)
+            it[fetchedAt] = Instant.parse(apod.fetchedAt).toEpochMilli()
             it[explanation] = apod.explanation
             it[url] = apod.url
             it[hdUrl] = apod.hdUrl
@@ -160,6 +161,6 @@ class ApodEntity(id: EntityID<LocalDate>) : Entity<LocalDate>(id) {
             mediaType = media_type,
             copyright = copyright,
             thumbnailUrl = thumbnailUrl,
-            fetchedAt = fetchedAt.toInstant(ZoneOffset.UTC).toEpochMilli()
+            fetchedAt = Instant.ofEpochMilli(fetchedAt).toString()
         )
 }

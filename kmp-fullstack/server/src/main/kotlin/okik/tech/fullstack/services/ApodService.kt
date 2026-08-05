@@ -34,7 +34,7 @@ class ApodService(
         try {
             logger.info("Fetching today's APOD from NASA API")
             val apod = nasaApiClient.getTodayApod()
-            apodDao.save(apod.copy(fetchedAt = System.currentTimeMillis()))
+            apodDao.save(apod)
             return apod
         } catch (e: NasaApiException) {
             logger.warn("Rate limit hit when fetching today's APOD. Trying yesterday's as fallback.")
@@ -62,7 +62,7 @@ class ApodService(
         } else {
             logger.info("Fetching APOD for $date from NASA API")
             val apod = nasaApiClient.getApodByDate(date.toString())
-            apodDao.save(apod.copy(fetchedAt = System.currentTimeMillis()))
+            apodDao.save(apod)
             apod
         }
     }
@@ -76,7 +76,7 @@ class ApodService(
         } else {
             logger.info("Fetching random APOD from NASA API")
             val apod = nasaApiClient.getRandomApod()
-            apodDao.save(apod.copy(fetchedAt = System.currentTimeMillis()))
+            apodDao.save(apod)
             apod
         }
     }
@@ -158,7 +158,7 @@ class ApodService(
                 if (apodDao.getByDate(currentDate) == null) {
                     try {
                         val apod = nasaApiClient.getApodByDate(currentDate.toString())
-                        apodDao.save(apod.copy(fetchedAt = System.currentTimeMillis()))
+                        apodDao.save(apod)
                         count++
                         delay(1500)
                     } catch (e: NasaApiException) {
@@ -214,7 +214,7 @@ class ApodService(
             try {
                 if (apodDao.getByDate(currentDate) == null) {
                     val apod = nasaApiClient.getApodByDate(currentDate.toString())
-                    apodDao.save(apod.copy(fetchedAt = System.currentTimeMillis()))
+                    apodDao.save(apod)
                     count++
                 }
             } catch (e: Exception) {

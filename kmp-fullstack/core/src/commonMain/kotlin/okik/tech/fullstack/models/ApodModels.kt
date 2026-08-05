@@ -2,6 +2,7 @@ package okik.tech.fullstack.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
 
 @Serializable
 data class ApodResponse(
@@ -13,7 +14,7 @@ data class ApodResponse(
     @SerialName("media_type") val mediaType: String,
     val copyright: String? = null,
     @SerialName("thumbnail_url") val thumbnailUrl: String? = null,
-    val fetchedAt: Long = 0
+    val fetchedAt: String = Clock.System.now().toString()
 )
 
 @Serializable
