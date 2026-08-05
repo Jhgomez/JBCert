@@ -21,6 +21,24 @@ and easy testing tools contribute to developers experience. As of today ktor see
 and Swagger with some official dependencies, however they don't support Scalar yet, if you want to use
 it then you need to create an end endpoint that exposes the generated yaml file
 
+Useful Gradle commands, list 
+all tasks available `./gradlew tasks --all` this will list all task in all modules, you can get them 
+by module(use the same module names registered in the project's settings) 
+`./gradlew :androidApp:tasks --all`. You can check what task where executed to execute a task,
+for example in android `installDebug` and `installRelease`, NOTE: the latter is only visible from 
+gradle tasks if you have created a signing config for release explicitly or assign the debug one to 
+the release build type, debug signing config is automatically created
+`signingConfig = signingConfigs.getByName("release")`, those are just examples,
+once you have those names you can check the Directed Acyclic Graph(DAG) created by gradle which is 
+a graph of task that your project has, but you'd want to check the path the task you're debugging is
+taking, you do that with `/gradlew <task_name> --dry-run`, it prints the full ordered task graph 
+without executing anything. `./gradlew build --scan`, uploads to a hosted report (free tier) with a 
+browsable timeline, per-task duration, up-to-date/cached status, and dependency relationships. When 
+you're trying to understand why something ran or why a build is slow, this is the most informative 
+option by a wide margin. You can use scans reports for sharing console logs with peers, viewing test
+execution results(if your task ran test, `build` runs tests), analyze build performance, it helps you
+visualize build dependencies.
+
 ### Running the apps
 
 Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
