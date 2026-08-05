@@ -77,7 +77,7 @@ kotlin {
             implementation(libs.ktor.client.cio.engine)
             implementation(libs.ktor.negotiation.client)
             implementation(libs.ktor.json)
-            implementation(libs.ktor.logging)
+            implementation(libs.ktor.logging.client)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
