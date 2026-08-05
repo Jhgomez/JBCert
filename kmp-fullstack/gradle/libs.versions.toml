@@ -46,19 +46,27 @@ compose-components-resources = { module = "org.jetbrains.compose.components:comp
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
 ktor-serverCore = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-serverNetty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
 ktor-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+# ktor-json transitively adds ktor-serialization-kotlinx, and is used in backend and frontend
 ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
 ktor-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
 ktor-koin = {  module = "io.insert-koin:koin-ktor" , version.ref = "koin"}
 ktor-koin-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin"}
-ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ktor-client-cio-engine = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
-ktor-negotiation-client = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+
 ktor-logging-client = { module = "io.ktor:ktor-client-logging", version.ref = "ktor"}
+ktor-server-cors-jvm = { module = "io.ktor:ktor-server-cors-jvm", version.ref = "ktor" } #  for interacting with the web client.
+#ktor-server-content-negotiation-jvm = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
+#ktor-serialization-kotlinx-json-jvm = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
+
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio-engine = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" } # this engine supports all platforms at once so we don't need to add different engines for each platform
+ktor-negotiation-client = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core" }
