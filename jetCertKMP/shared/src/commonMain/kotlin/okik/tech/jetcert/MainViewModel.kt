@@ -173,9 +173,12 @@ class MainViewModel(
     // ============================================================================
 
     private val reposFlow = database.repoQueries.selectAll().asFlow()
+        .distinctUntilChanged()
         .mapToList(Dispatchers.Default)
         .map { DatabaseFlow.ReposFlow(it) }
+
     private val newsFlow = database.newsQueries.selectAll().asFlow()
+        .distinctUntilChanged()
         .mapToList(Dispatchers.Default)
         .map { DatabaseFlow.NewsFlow(it) }
 
