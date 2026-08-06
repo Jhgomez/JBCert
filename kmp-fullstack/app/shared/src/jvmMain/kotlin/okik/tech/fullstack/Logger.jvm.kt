@@ -10,6 +10,6 @@ actual object Logger {
     }
 
     actual fun logError(tag: String, message: String) {
-        jvmLogger.severe("%s - %s".format(tag, message))g
+        jvmLogger.severe("%s - %s".format(tag, message))
     }
 }

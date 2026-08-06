@@ -35,7 +35,8 @@ fun App() {
                 Text("Click me!")
             }
             AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
+                Logger.logError("app composable", "se dejó ver")
+                val greeting = remember { "Greeting().greet()" }
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
