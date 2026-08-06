@@ -108,7 +108,7 @@ fun App() {
                     }
                 },
                 onAddHours = viewModel::addFourHours,
-                shouldShow = !state.value.stories.isNullOrEmpty() || !state.value.topRepos.isNullOrEmpty(),
+                shouldShow = state.value.showContent,
                 news = state.value.stories,
                 topRepos = state.value.topRepos
             )
