@@ -15,6 +15,10 @@ import okik.tech.fullstack.getPlatform
 object NetworkConfig {
     val DEFAULT_BASE_URL = getPlatform().getBaseUrl()
 
+    // Ktor doesn't handle non Http responses with non 2xx http status codes, in kotlin Retrofit
+    // throws an exception automatically when code is not a 2xx, Ktor client offers us a similar
+    // functionality but also a very nice way to customize them, both are documented here:
+    // https://ktor.io/docs/client-response-validation.html
     fun createHttpClient(): HttpClient {
         return HttpClient(CIO) {
             install(ContentNegotiation) {
@@ -35,6 +39,8 @@ object NetworkConfig {
                 requestTimeoutMillis = 10000  // 10 seconds
                 connectTimeoutMillis = 5000   // 5 seconds
             }
+
+            configureHttpResponseValidator()
         }
     }
 }
