@@ -13,11 +13,18 @@ import eu.anifantakis.lib.ksafe.compose.mutableStateOf
 import eu.anifantakis.lib.ksafe.invoke
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -30,6 +37,7 @@ import okik.tech.jetcert.db.TopRepo
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
+import kotlin.jvm.JvmInline
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
@@ -74,7 +82,7 @@ class MainViewModel(
     fun toggleHashShownOnboarding() {
         hasShownOnboarding = !hasShownOnboarding
 
-        uiState.update {
+        userState.update {
             it.copy(hasShownOnboarding = hasShownOnboarding)
         }
     }
@@ -103,7 +111,7 @@ class MainViewModel(
                 viewModelScope.launch {
                     settingsPreferences.put(PERSON_KEY, person, mode = KSafeWriteMode.Plain)
 
-                    uiState.update {
+                    userState.update {
                         it.copy(person = getPerson())
                     }
                 }
@@ -129,7 +137,7 @@ class MainViewModel(
             mode = KSafeWriteMode.Plain
         )
 
-        uiState.update {
+        userState.update {
             it.copy(counter = getCounter())
         }
     }
@@ -141,7 +149,7 @@ class MainViewModel(
             mode = KSafeWriteMode.Plain
         )
 
-        uiState.update {
+        userState.update {
             it.copy(counter = getCounter())
         }
     }
@@ -149,7 +157,7 @@ class MainViewModel(
     fun addStar() {
         val localStar = stars++
 
-        uiState.update {
+        userState.update {
             it.copy(stars = localStar)
         }
     }
@@ -157,33 +165,79 @@ class MainViewModel(
     fun subtractStar() {
         val localStar = stars--
 
-        uiState.update {
+        userState.update {
             it.copy(stars = localStar)
         }
     }
 
     // ============================================================================
 
-    val uiState: StateFlow<UiState>
+    private val reposFlow = database.repoQueries.selectAll().asFlow()
+        .mapToList(Dispatchers.Default)
+        .map { DatabaseFlow.ReposFlow(it) }
+    private val newsFlow = database.newsQueries.selectAll().asFlow()
+        .mapToList(Dispatchers.Default)
+        .map { DatabaseFlow.NewsFlow(it) }
+
+    private val dbFlow = merge(
+        reposFlow.onStart { DatabaseFlow.ReposFlow(emptyList()) },
+        newsFlow.onStart { DatabaseFlow.NewsFlow(emptyList()) }
+    )
+
+    // this all should be private, I'm only using it to showcase explicit backing fields
+    val userState: StateFlow<UserState>
         field = MutableStateFlow(
-            UiState(
-                showContent = false,
-                hasShownOnboarding = hasShownOnboarding,
-                token = token,
-                stars = stars,
-                counter = getCounter(),
-                reactiveCounterOne = reactiveCounterOne.value,
-                person = null
+            UserState(
+                        showContent = false,
+                        hasShownOnboarding = hasShownOnboarding,
+                        token = token,
+                        stars = stars,
+                        counter = getCounter(),
+                        person = null
             )
         )
+
+    val uiState: StateFlow<UiState> = combine(
+        dbFlow,
+        userState,
+        reactiveCounterOne
+    ) { dbUpdates, userUpdates, counterUpdates ->
+
+        val isRepo = dbUpdates is DatabaseFlow.ReposFlow
+
+        UiState(
+            showContent = userUpdates.showContent,
+            hasShownOnboarding = userUpdates.hasShownOnboarding,
+            token = userUpdates.token,
+            stars = userUpdates.stars,
+            counter = userUpdates.counter,
+            reactiveCounterOne = counterUpdates,
+            person = userUpdates.person,
+            stories = if (isRepo) null else if(userUpdates.showContent)(dbUpdates as DatabaseFlow.NewsFlow).getValues() else null,
+            topRepos = if (isRepo) if (userUpdates.showContent) dbUpdates.getValues() else null else null
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = UiState(
+            showContent = false,
+            hasShownOnboarding = hasShownOnboarding,
+            token = token,
+            stars = stars,
+            counter = getCounter(),
+            reactiveCounterOne = reactiveCounterOne.value,
+            person = null
+        )
+    )
+
 
     suspend fun getStories() {
         val topStories = newsApi.getTopStories()
 
         println("Top stories are ${topStories.map(NewsResponse.Story::title)}")
 
-        uiState.update { uiState ->
-            uiState.copy(
+        userState.update { userState ->
+            userState.copy(
                 showContent = true,
 //                topStories
             )
@@ -198,39 +252,15 @@ class MainViewModel(
             .search
             .repos
 
-        uiState.update {
+        userState.update {
             it.copy(showContent = true)
         }
     }
 
     init {
         viewModelScope.launch {
-            database.newsQueries.selectAll().asFlow().mapToList(Dispatchers.Default).collect { news ->
-                uiState.update {
-                    it.copy(showContent = true, stories = news, topRepos = null)
-                }
-            }
-        }
-
-        viewModelScope.launch {
-            database.repoQueries.selectAll().asFlow().mapToList(Dispatchers.Default).collect { repository ->
-                uiState.update {
-                    it.copy(showContent = true, stories = null, topRepos = repository)
-                }
-            }
-        }
-
-        viewModelScope.launch {
-            uiState.update {
+            userState.update {
                 it.copy(person = getPerson())
-            }
-        }
-
-        viewModelScope.launch {
-            reactiveCounterOne.collect { reactCount ->
-                uiState.update {
-                    it.copy(reactiveCounterOne = reactCount)
-                }
             }
         }
 
@@ -242,7 +272,7 @@ class MainViewModel(
                 .collect { input ->
                     token = input
 
-                    uiState.update {
+                    userState.update {
                         it.copy(token = token)
                     }
                 }
@@ -250,22 +280,31 @@ class MainViewModel(
     }
 
     suspend fun insertNewsToDB() {
-        val news = newsApi.getTopStories()
-        val newsQueries = database.newsQueries
+        if (uiState.value.stories == null && uiState.value.topRepos == null ||
+            uiState.value.stories != null) {
+            userState.update {
+                it.copy(showContent = !it.showContent)
+            }
+        }
 
-        database.transaction {
-            news.forEach { story ->
-                newsQueries.upsert(
-                    id = story.id,
-                    type = story.type,
-                    time = story.time,
-                    by_ = story.by,
-                    title = story.title,
-                    score = story.score,
-                    url = story.url,
-                    descendants = story.descendants,
-                    text = story.text
-                )
+        if (!userState.value.showContent || uiState.value.stories == null) {
+            val news = newsApi.getTopStories()
+            val newsQueries = database.newsQueries
+
+            database.transaction {
+                news.forEach { story ->
+                    newsQueries.upsert(
+                        id = story.id,
+                        type = story.type,
+                        time = story.time,
+                        by_ = story.by,
+                        title = story.title,
+                        score = story.score,
+                        url = story.url,
+                        descendants = story.descendants,
+                        text = story.text
+                    )
+                }
             }
         }
     }
@@ -297,28 +336,37 @@ class MainViewModel(
     }
 
     suspend fun insertTopRepos() {
-        val searchResponse =
-            gitHubApi
-                .query(SearchTopReposQuery())
-                .execute()
-                .dataAssertNoErrors
-                .search
-                .repos
-                .orEmpty()
-                .filterNotNull()
+        if (uiState.value.stories == null && uiState.value.topRepos == null ||
+            uiState.value.topRepos != null) {
+            userState.update {
+                it.copy(showContent = !it.showContent)
+            }
+        }
 
-        database.transaction {
-            searchResponse.forEach { search ->
-                val repo = search.repo!!.onRepository!!
+        if (!userState.value.showContent || uiState.value.topRepos == null) {
+            val searchResponse =
+                gitHubApi
+                    .query(SearchTopReposQuery())
+                    .execute()
+                    .dataAssertNoErrors
+                    .search
+                    .repos
+                    .orEmpty()
+                    .filterNotNull()
 
-                database.repoQueries.upsert(
-                    id = null,
-                    url = repo.url,
-                    name = repo.name,
-                    stargazerCount = repo.stargazerCount,
-                    createdAt = repo.createdAt.epochSeconds,
-                    updatedAt = repo.updatedAt.epochSeconds
-                )
+            database.transaction {
+                searchResponse.forEach { search ->
+                    val repo = search.repo!!.onRepository!!
+
+                    database.repoQueries.upsert(
+                        id = null,
+                        url = repo.url,
+                        name = repo.name,
+                        stargazerCount = repo.stargazerCount,
+                        createdAt = repo.createdAt.epochSeconds,
+                        updatedAt = repo.updatedAt.epochSeconds
+                    )
+                }
             }
         }
     }
@@ -346,15 +394,38 @@ class MainViewModel(
     }
 }
 
+sealed interface DatabaseFlow<T> {
+    fun getValues(): List<T>
+
+    @JvmInline
+    value class NewsFlow(private val news: List<News>): DatabaseFlow<News> {
+        override fun getValues(): List<News> = news
+    }
+
+    @JvmInline
+    value class ReposFlow(private val repos: List<TopRepo>): DatabaseFlow<TopRepo> {
+        override fun getValues(): List<TopRepo> = repos
+    }
+}
+
 data class UiState(
-    val showContent: Boolean,
     val stories: List<News>? = null,
     val topRepos: List<TopRepo>? = null,
+    val showContent: Boolean,
     val hasShownOnboarding: Boolean,
     val token: String,
     val stars: UByte,
     val counter: Byte,
     val reactiveCounterOne: UByte,
+    val person: Person?
+)
+
+data class UserState(
+    val showContent: Boolean,
+    val hasShownOnboarding: Boolean,
+    val token: String,
+    val stars: UByte,
+    val counter: Byte,
     val person: Person?
 )
 
