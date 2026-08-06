@@ -19,6 +19,8 @@ object NetworkConfig {
                 json(Json {
                     ignoreUnknownKeys = true
                     isLenient = true
+                    explicitNulls = false
+                    coerceInputValues = true
                 })
             }
 
