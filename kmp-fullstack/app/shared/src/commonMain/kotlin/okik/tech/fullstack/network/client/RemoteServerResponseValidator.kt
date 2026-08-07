@@ -5,8 +5,12 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIOEngineConfig
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.RedirectResponseException
+import io.ktor.client.plugins.ServerResponseException
 import io.ktor.http.HttpStatusCode
+import kotlinx.io.IOException
 import okik.tech.fullstack.models.ErrorResponse
+import kotlin.Exception
 
 
 // Exactly how this is handled really depends on the client library you're using, but what should
@@ -26,7 +30,9 @@ import okik.tech.fullstack.models.ErrorResponse
 // just create one more class, and also more classes to wrap the bodies of the responses for
 // something that we already can handle with this exceptions approach, in this approach we can
 // centralize the error handling which is how we are going to communicate the result to the next layer
-// we catch excepntions and turn them into proper models.
+// we catch excepntions and turn them into proper models.  We could remove this validator and catch
+// the exceptions in the http call site but Ktor is already handling concurrency here, for example
+// "exceptionResponse.body" is suspend so we dont suspend the wrong coroutine we trust Ktor
 fun HttpClientConfig<CIOEngineConfig>.configureHttpResponseValidator() {
     // this will make the client to throw exceptions if response doesn't have a 2xx http status code
     expectSuccess = true
@@ -38,23 +44,25 @@ fun HttpClientConfig<CIOEngineConfig>.configureHttpResponseValidator() {
         // non 2xx http status code, since we are sharing the models in the core module, we already
         // know its format
         handleResponseExceptionWithRequest { exception, request ->
-            when (exception) {
-                is ClientRequestException -> {
+            throw when (exception) {
+                is ClientRequestException, is RedirectResponseException, is ServerResponseException -> {
                     val exceptionResponse = exception.response
                     val exceptionResponseText = exceptionResponse.body<ErrorResponse>()
 
                     // Ktor client will throw timeout exceptions, in which case we can
                     // offer the user to retry
                     when (exceptionResponse.status) {
-                        HttpStatusCode.NotFound -> {
-                            throw NotFound(exceptionResponseText)
-                        }
-
-                        HttpStatusCode.Unauthorized -> {
-                            throw Unauthorized(exceptionResponseText)
-                        }
+                        HttpStatusCode.NotFound -> NotFound(exceptionResponseText)
+                        HttpStatusCode.Unauthorized -> Unauthorized(exceptionResponseText)
+                        else ->  UnknownException(exceptionResponseText)
                     }
                 }
+                is IOException -> Timeout(ErrorResponse(
+                        0,
+                        exception.message ?: ""
+                    )
+                )
+                else -> UnknownException(ErrorResponse(0, exception.message ?: ""))
             }
         }
     }
@@ -62,3 +70,5 @@ fun HttpClientConfig<CIOEngineConfig>.configureHttpResponseValidator() {
 
 data class NotFound(val reason: ErrorResponse): Exception(message = reason.message)
 data class Unauthorized(val reason: ErrorResponse): Exception(message = reason.message)
+data class Timeout(val reason: ErrorResponse): Exception(message = reason.message) // any type of time out
+data class UnknownException(val reason: ErrorResponse): Exception(message = reason.message)
