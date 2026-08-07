@@ -54,21 +54,25 @@ fun HttpClientConfig<CIOEngineConfig>.configureHttpResponseValidator() {
                     when (exceptionResponse.status) {
                         HttpStatusCode.NotFound -> NotFound(exceptionResponseText)
                         HttpStatusCode.Unauthorized -> Unauthorized(exceptionResponseText)
-                        else ->  UnknownException(exceptionResponseText)
+                        else ->  UnhandledHttpCode(exceptionResponseText)
                     }
                 }
-                is IOException -> Timeout(ErrorResponse(
+                is IOException -> NetworkError(ErrorResponse(
                         0,
                         exception.message ?: ""
                     )
                 )
-                else -> UnknownException(ErrorResponse(-1, exception.message ?: ""))
+                else -> UnknownException(ErrorResponse(0, exception.message ?: ""))
             }
         }
     }
 }
 
+data class UnhandledHttpCode(val reason: ErrorResponse): Exception()
 data class NotFound(val reason: ErrorResponse): Exception()
 data class Unauthorized(val reason: ErrorResponse): Exception()
-data class Timeout(val reason: ErrorResponse): Exception() // any type of time out
+
+// any type of time out, or newtork error which means user could retry
+data class NetworkError(val reason: ErrorResponse): Exception()
+// any parsing error, or client misconfiguration we need to take care
 data class UnknownException(val reason: ErrorResponse): Exception()
