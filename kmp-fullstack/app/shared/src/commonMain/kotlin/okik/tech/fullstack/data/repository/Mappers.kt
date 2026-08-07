@@ -36,9 +36,10 @@ fun ErrorResponse.toDomainModel() = DomainError(
 )
 
 fun <T, R> ApiResult<T>.toDomainModel(successMapper: (dataModel: T) -> R): DomainResult<R> = when(this) {
-    is ApiResult.NotFound<T> -> DomainResult.NotFound(errorResponse.toDomainModel())
+    is ApiResult.NotFound<T> -> DomainResult.DomainErrorResult.NotFound(errorResponse.toDomainModel())
     is ApiResult.Success<T> -> DomainResult.Success(successMapper.invoke(this.result))
-    is ApiResult.TimeOut<T> -> DomainResult.TimeOut(errorResponse.toDomainModel())
-    is ApiResult.Unauthorized<T> -> DomainResult.Unauthorized(errorResponse.toDomainModel())
-    is ApiResult.UnknownResult<T> -> DomainResult.UnknownResult(errorResponse.toDomainModel())
+    is ApiResult.NetworkError<T> -> DomainResult.DomainErrorResult.NetworkError(errorResponse.toDomainModel())
+    is ApiResult.Unauthorized<T> -> DomainResult.DomainErrorResult.Unauthorized(errorResponse.toDomainModel())
+    is ApiResult.UnknownResult<T> -> DomainResult.DomainErrorResult.UnknownResult(errorResponse.toDomainModel())
+    is ApiResult.UnhandledHttpCode<*> -> DomainResult.DomainErrorResult.UnhandledHttpCode(errorResponse.toDomainModel())
 }
