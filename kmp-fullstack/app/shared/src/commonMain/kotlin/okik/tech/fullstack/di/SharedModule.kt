@@ -1,9 +1,9 @@
 package okik.tech.fullstack.di
 
-import okik.tech.fullstack.network.ApodApiService
-import okik.tech.fullstack.network.NetworkConfig
-import okik.tech.fullstack.repository.ApodRepository
-import okik.tech.fullstack.repository.ApodRepositoryImpl
+import okik.tech.fullstack.data.network.restapi.services.ApodApiService
+import okik.tech.fullstack.data.network.client.NetworkConfig
+import okik.tech.fullstack.data.repository.ApodRepositoryImpl
+import okik.tech.fullstack.domain.ApodRepository
 import okik.tech.fullstack.ui.ApodViewModel
 import org.koin.dsl.module
 
