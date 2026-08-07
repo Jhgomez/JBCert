@@ -28,8 +28,16 @@ data class DomainError(
 )
 sealed interface DomainResult<out T> {
     data class Success<R>(val result: R): DomainResult<R>
-    data class TimeOut<R>(val domainError: DomainError): DomainResult<R>
-    data class NotFound<R>(val domainError: DomainError): DomainResult<R>
-    data class Unauthorized<R>(val domainError: DomainError): DomainResult<R>
-    data class UnknownResult<R>(val domainError: DomainError): DomainResult<R>
+
+    sealed interface DomainErrorResult<R>: DomainResult<R> {
+        val domainError: DomainError
+
+        // any type of time out, or newtork error which means user could retry
+        data class NetworkError<M>(override val domainError: DomainError): DomainErrorResult<M>
+        data class NotFound<M>(override val domainError: DomainError): DomainErrorResult<M>
+        data class Unauthorized<M>(override val domainError: DomainError): DomainErrorResult<M>
+        // any parsing error, or client misconfiguration we need to take care
+        data class UnknownResult<M>(override val domainError: DomainError): DomainErrorResult<M>
+        data class UnhandledHttpCode<M>(override val domainError: DomainError): DomainErrorResult<M>
+    }
 }
