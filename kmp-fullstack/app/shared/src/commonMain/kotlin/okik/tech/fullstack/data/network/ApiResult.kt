@@ -5,8 +5,11 @@ import okik.tech.fullstack.models.ErrorResponse
 // this class should implement a class for whatever codes you expect to receive from your backend
 sealed interface ApiResult<out T> {
     data class Success<R>(val result: R): ApiResult<R>
-    data class TimeOut<R>(val errorResponse: ErrorResponse): ApiResult<R>
+    // any type of time out or network error which means user could retry
+    data class NetworkError<R>(val errorResponse: ErrorResponse): ApiResult<R>
     data class NotFound<R>(val errorResponse: ErrorResponse): ApiResult<R>
     data class Unauthorized<R>(val errorResponse: ErrorResponse): ApiResult<R>
+    // means any parsing error, or client misconfiguration we need to take care
     data class UnknownResult<R>(val errorResponse: ErrorResponse): ApiResult<R>
+    data class UnhandledHttpCode<R>(val errorResponse: ErrorResponse): ApiResult<R>
 }
