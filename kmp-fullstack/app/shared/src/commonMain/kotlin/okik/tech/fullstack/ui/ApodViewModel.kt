@@ -6,26 +6,30 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import okik.tech.fullstack.domain.Apod
+import okik.tech.fullstack.domain.ApodRepository
+import okik.tech.fullstack.domain.DomainResult
+import okik.tech.fullstack.domain.Paging
 import okik.tech.fullstack.models.ApodResponse
-import okik.tech.fullstack.repository.ApodRepository
 
 data class HomeUiState(
     val isLoading: Boolean = false,
-    val apodList: List<ApodResponse> = emptyList(),
+    val apodList: List<Apod> = emptyList(),
     val error: String? = null,
     val currentPage: Int = 1,
-    val hasMorePages: Boolean = true
+    val hasMorePages: Boolean = true,
+    val shouldShowRetry: Boolean = false,
 )
 
 data class TodayUiState(
     val isLoading: Boolean = false,
-    val todayApod: ApodResponse? = null,
+    val todayApod: Apod? = null,
     val error: String? = null
 )
 
 data class FindUiState(
     val isLoading: Boolean = false,
-    val foundApod: ApodResponse? = null,
+    val foundApod: Apod? = null,
     val error: String? = null,
     val searchDate: String = ""
 )
@@ -56,28 +60,36 @@ class ApodViewModel(
         viewModelScope.launch {
             _homeUiState.value = _homeUiState.value.copy(isLoading = true, error = null)
 
-            repository.getApodHistory(_homeUiState.value.currentPage, pageSize)
-                .onSuccess { paginatedResponse ->
-                    val currentList = _homeUiState.value.apodList
-                    val newList = if (_homeUiState.value.currentPage == 1) {
-                        paginatedResponse.items
-                    } else {
-                        currentList + paginatedResponse.items
-                    }
+            with(repository.getApodHistory(_homeUiState.value.currentPage, pageSize)) {
+                when (this) {
+                    is DomainResult.Success<Paging<Apod>> -> {
+                        val currentList = _homeUiState.value.apodList
+                        val newList = if (_homeUiState.value.currentPage == 1) {
+                            result.items
+                        } else {
+                            currentList + result.items
+                        }
 
-                    _homeUiState.value = _homeUiState.value.copy(
-                        isLoading = false,
-                        apodList = newList,
-                        hasMorePages = paginatedResponse.page < paginatedResponse.totalPages,
-                        currentPage = _homeUiState.value.currentPage + 1
-                    )
+                        _homeUiState.value = _homeUiState.value.copy(
+                            isLoading = false,
+                            apodList = newList,
+                            hasMorePages = result.page < result.totalPages,
+                            currentPage = _homeUiState.value.currentPage + 1
+                        )
+                    }
+                    is DomainResult.DomainErrorResult.UnknownResult<Paging<Apod>>,
+                    is DomainResult.DomainErrorResult.NotFound<Paging<Apod>>,
+                    is DomainResult.DomainErrorResult.NetworkError<Paging<Apod>>,
+                    is DomainResult.DomainErrorResult.Unauthorized<Paging<Apod>>,
+                    is DomainResult.DomainErrorResult.UnhandledHttpCode ->
+                        _homeUiState.value = _homeUiState.value.copy(
+                            isLoading = false,
+                            error = "$this",
+                            shouldShowRetry = this is DomainResult.DomainErrorResult.NetworkError<Paging<Apod>>
+                        )
+
                 }
-                .onFailure { error ->
-                    _homeUiState.value = _homeUiState.value.copy(
-                        isLoading = false,
-                        error = error.message ?: "Unknown error occurred"
-                    )
-                }
+            }
         }
     }
 
@@ -94,22 +106,29 @@ class ApodViewModel(
 
     fun loadTodayApod() {
         viewModelScope.launch {
-            _todayUiState.value = _todayUiState.value.copy(isLoading = true, error = null)
+            _homeUiState.value = _homeUiState.value.copy(isLoading = true, error = null)
 
-            repository.getTodayApod() // Use the correct method name from your repository
-                .onSuccess { apod ->
-                    _todayUiState.value = _todayUiState.value.copy(
-                        isLoading = false,
-                        todayApod = apod,
-                        error = null
-                    )
+            with(repository.getTodayApod()) {
+                when (this) {
+                    is DomainResult.Success<Apod> -> {
+                        _todayUiState.value = _todayUiState.value.copy(
+                            isLoading = false,
+                            todayApod = result,
+                            error = null
+                        )
+                    }
+                    is DomainResult.DomainErrorResult.UnknownResult<Apod>,
+                    is DomainResult.DomainErrorResult.NotFound<Apod>,
+                    is DomainResult.DomainErrorResult.NetworkError<Apod>,
+                    is DomainResult.DomainErrorResult.Unauthorized<Apod>,
+                    is DomainResult.DomainErrorResult.UnhandledHttpCode ->
+                        _homeUiState.value = _homeUiState.value.copy(
+                            isLoading = false,
+                            error = "$this",
+                            shouldShowRetry = this is DomainResult.DomainErrorResult.NetworkError<Apod>
+                        )
                 }
-                .onFailure { error ->
-                    _todayUiState.value = _todayUiState.value.copy(
-                        isLoading = false,
-                        error = error.message ?: "Failed to load today's picture"
-                    )
-                }
+            }
         }
     }
 
@@ -137,20 +156,28 @@ class ApodViewModel(
         viewModelScope.launch {
             _findUiState.value = _findUiState.value.copy(isLoading = true, error = null)
 
-            repository.getApodByDate(date)
-                .onSuccess { apod ->
-                    _findUiState.value = _findUiState.value.copy(
-                        isLoading = false,
-                        foundApod = apod,
-                        error = null
-                    )
+            with(repository.getApodByDate(date)) {
+                when (this) {
+                    is DomainResult.Success<Apod> ->
+                        _findUiState.value = _findUiState.value.copy(
+                            isLoading = false,
+                            foundApod = result,
+                            error = null
+                        )
+                    is DomainResult.DomainErrorResult.NetworkError<Apod>,
+                    is DomainResult.DomainErrorResult.NotFound<Apod>,
+                    is DomainResult.DomainErrorResult.Unauthorized<Apod>,
+                    is DomainResult.DomainErrorResult.UnhandledHttpCode<Apod>,
+                    is DomainResult.DomainErrorResult.UnknownResult<Apod> -> {
+
+                        _homeUiState.value = _homeUiState.value.copy(
+                            isLoading = false,
+                            error = "$this",
+                            shouldShowRetry = this is DomainResult.DomainErrorResult.NetworkError<Apod>
+                        )
+                    }
                 }
-                .onFailure { error ->
-                    _findUiState.value = _findUiState.value.copy(
-                        isLoading = false,
-                        error = error.message ?: "Failed to find picture for that date"
-                    )
-                }
+            }
         }
     }
 
@@ -172,13 +199,5 @@ class ApodViewModel(
         } catch (e: Exception) {
             false
         }
-    }
-
-    suspend fun getTodayApod(): ApodResponse {
-        return repository.getTodayApod().getOrThrow() // Use correct method name
-    }
-
-    suspend fun getApodByDate(date: String): ApodResponse {
-        return repository.getApodByDate(date).getOrThrow()
     }
 }
