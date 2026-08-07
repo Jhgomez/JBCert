@@ -1,4 +1,4 @@
-package okik.tech.fullstack.network
+package okik.tech.fullstack.network.restapi.services
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

@@ -1,12 +1,15 @@
-package okik.tech.fullstack.network
+package okik.tech.fullstack.network.client
 
 import io.ktor.client.HttpClient
+import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.HttpTimeoutConfig
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.logging.LoggingConfig
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
@@ -21,7 +24,7 @@ object NetworkConfig {
     // https://ktor.io/docs/client-response-validation.html
     fun createHttpClient(): HttpClient {
         return HttpClient(CIO) {
-            install(ContentNegotiation) {
+            HttpClientConfig.install(ContentNegotiation) {
                 json(Json {
                     ignoreUnknownKeys = true
                     isLenient = true
@@ -30,14 +33,14 @@ object NetworkConfig {
                 })
             }
 
-            install(Logging) {
-                logger = Logger.SIMPLE // logs straight to the web console
-                level = LogLevel.INFO
+            HttpClientConfig.install(Logging) {
+                LoggingConfig.logger = Logger.SIMPLE // logs straight to the web console
+                LoggingConfig.level = LogLevel.INFO
             }
 
-            install(HttpTimeout) {
-                requestTimeoutMillis = 10000  // 10 seconds
-                connectTimeoutMillis = 5000   // 5 seconds
+            HttpClientConfig.install(HttpTimeout) {
+                HttpTimeoutConfig.requestTimeoutMillis = 10000  // 10 seconds
+                HttpTimeoutConfig.connectTimeoutMillis = 5000   // 5 seconds
             }
 
             configureHttpResponseValidator()
