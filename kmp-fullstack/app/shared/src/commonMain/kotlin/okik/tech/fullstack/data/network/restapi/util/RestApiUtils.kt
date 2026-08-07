@@ -6,7 +6,7 @@ import okik.tech.fullstack.network.client.Unauthorized
 import okik.tech.fullstack.network.client.UnknownException
 import okik.tech.fullstack.network.restapi.ApiResult
 
-suspend inline fun <T>safeRequest(block: () -> T): ApiResult<T> {
+inline fun <T>safeRequest(block: () -> T): ApiResult<T> {
     return try {
         ApiResult.Success(block())
     } catch (exception: NotFound) {

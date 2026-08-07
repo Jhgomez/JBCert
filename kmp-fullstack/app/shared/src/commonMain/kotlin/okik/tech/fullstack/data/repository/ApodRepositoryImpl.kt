@@ -4,7 +4,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okik.tech.fullstack.models.ApodResponse
 import okik.tech.fullstack.models.PaginatedResponse
-import okik.tech.fullstack.network.ApodApiService
+import okik.tech.fullstack.network.restapi.ApiResult
+import okik.tech.fullstack.network.restapi.services.ApodApiService
 
 interface ApodRepository {
     suspend fun getTodayApod(): Result<ApodResponse>
@@ -27,11 +28,17 @@ class ApodRepositoryImpl(
     }
 
     override suspend fun getApodHistory(page: Int, pageSize: Int): Result<PaginatedResponse<ApodResponse>> {
-        return try {
-            val response = apiService.getApodHistory(page, pageSize)
-            Result.success(response)
+        try {
+            when(val response = apiService.getApodHistory(page, pageSize)) {
+                is ApiResult.Success<PaginatedResponse<ApodResponse>> -> TODO()
+                is ApiResult.TimeOut<*> -> TODO()
+                is ApiResult.NotFound<*> -> TODO()
+                is ApiResult.Unauthorized<*> -> TODO()
+                is ApiResult.UnknownResult<*> -> TODO()
+            }
+//            Result.success(response)
         } catch (e: Exception) {
-            Result.failure(e)
+//            Result.failure(e)
         }
     }
 
@@ -48,3 +55,10 @@ class ApodRepositoryImpl(
         emit(getTodayApod())
     }
 }
+
+// this class should implement a class for whatever codes you expect to receive from your backend
+//sealed interface ApiResult<T> {
+//    data class Success<R>(val data: R): ApiResult<R>
+//    data class NotFound(val message: String): ApiResult<Unit>
+//    data class Unauthorized(val message: String): ApiResult<Unit>
+//}
