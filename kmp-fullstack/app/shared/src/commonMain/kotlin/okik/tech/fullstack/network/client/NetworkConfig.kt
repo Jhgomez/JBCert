@@ -24,7 +24,7 @@ object NetworkConfig {
     // https://ktor.io/docs/client-response-validation.html
     fun createHttpClient(): HttpClient {
         return HttpClient(CIO) {
-            HttpClientConfig.install(ContentNegotiation) {
+            install(ContentNegotiation) {
                 json(Json {
                     ignoreUnknownKeys = true
                     isLenient = true
@@ -33,14 +33,14 @@ object NetworkConfig {
                 })
             }
 
-            HttpClientConfig.install(Logging) {
-                LoggingConfig.logger = Logger.SIMPLE // logs straight to the web console
-                LoggingConfig.level = LogLevel.INFO
+            install(Logging) {
+                logger = Logger.SIMPLE // logs straight to the web console
+                level = LogLevel.INFO
             }
 
-            HttpClientConfig.install(HttpTimeout) {
-                HttpTimeoutConfig.requestTimeoutMillis = 10000  // 10 seconds
-                HttpTimeoutConfig.connectTimeoutMillis = 5000   // 5 seconds
+            install(HttpTimeout) {
+                requestTimeoutMillis = 10000  // 10 seconds
+                connectTimeoutMillis = 5000   // 5 seconds
             }
 
             configureHttpResponseValidator()

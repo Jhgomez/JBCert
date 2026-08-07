@@ -68,7 +68,7 @@ fun HttpClientConfig<CIOEngineConfig>.configureHttpResponseValidator() {
     }
 }
 
-data class NotFound(val reason: ErrorResponse): Exception(message = reason.message)
-data class Unauthorized(val reason: ErrorResponse): Exception(message = reason.message)
-data class Timeout(val reason: ErrorResponse): Exception(message = reason.message) // any type of time out
-data class UnknownException(val reason: ErrorResponse): Exception(message = reason.message)
+data class NotFound(val reason: ErrorResponse): Exception()
+data class Unauthorized(val reason: ErrorResponse): Exception()
+data class Timeout(val reason: ErrorResponse): Exception() // any type of time out
+data class UnknownException(val reason: ErrorResponse): Exception()
