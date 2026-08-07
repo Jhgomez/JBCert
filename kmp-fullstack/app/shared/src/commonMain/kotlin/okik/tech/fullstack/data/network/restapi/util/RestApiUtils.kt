@@ -1,10 +1,10 @@
-package okik.tech.fullstack.network.restapi.util
+package okik.tech.fullstack.data.network.restapi.util
 
-import okik.tech.fullstack.network.client.NotFound
-import okik.tech.fullstack.network.client.Timeout
-import okik.tech.fullstack.network.client.Unauthorized
-import okik.tech.fullstack.network.client.UnknownException
-import okik.tech.fullstack.network.restapi.ApiResult
+import okik.tech.fullstack.data.network.ApiResult
+import okik.tech.fullstack.data.network.client.NotFound
+import okik.tech.fullstack.data.network.client.Timeout
+import okik.tech.fullstack.data.network.client.Unauthorized
+import okik.tech.fullstack.data.network.client.UnknownException
 
 inline fun <T>safeRequest(block: () -> T): ApiResult<T> {
     return try {

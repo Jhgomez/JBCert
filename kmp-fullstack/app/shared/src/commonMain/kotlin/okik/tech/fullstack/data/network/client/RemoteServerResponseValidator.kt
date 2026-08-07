@@ -1,4 +1,4 @@
-package okik.tech.fullstack.network.client
+package okik.tech.fullstack.data.network.client
 
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
@@ -62,7 +62,7 @@ fun HttpClientConfig<CIOEngineConfig>.configureHttpResponseValidator() {
                         exception.message ?: ""
                     )
                 )
-                else -> UnknownException(ErrorResponse(0, exception.message ?: ""))
+                else -> UnknownException(ErrorResponse(-1, exception.message ?: ""))
             }
         }
     }
