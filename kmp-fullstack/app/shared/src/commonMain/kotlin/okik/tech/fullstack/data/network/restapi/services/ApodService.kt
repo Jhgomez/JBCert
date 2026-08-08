@@ -9,24 +9,21 @@ import okik.tech.fullstack.models.ApodResponse
 import okik.tech.fullstack.models.PaginatedResponse
 import okik.tech.fullstack.data.network.restapi.util.safeRequest
 
-class ApodApiService(
-    private val httpClient: HttpClient,
-    private val baseUrl: String
-) {
+class ApodApiService(private val httpClient: HttpClient) {
 
     suspend fun getTodaysApod(): ApiResult<ApodResponse> = safeRequest {
-        httpClient.get("$baseUrl/api/apod/today").body()
+        httpClient.get("api/apod/today").body()
     }
 
     suspend fun getApodHistory(page: Int, pageSize: Int): ApiResult<PaginatedResponse<ApodResponse>> =
         safeRequest {
-            httpClient.get("$baseUrl/api/apod/history") {
+            httpClient.get("api/apod/history") {
                 parameter("page", page)
                 parameter("pageSize", pageSize)
             }.body()
         }
 
     suspend fun getApodByDate(date: String): ApiResult<ApodResponse> = safeRequest {
-        httpClient.get("$baseUrl/api/apod/date/$date").body()
+        httpClient.get("api/apod/date/$date").body()
     }
 }
