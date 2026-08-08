@@ -1,37 +1,24 @@
 package okik.tech.fullstack
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
-import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
 
 import fullstack.app.shared.generated.resources.Res
-import fullstack.app.shared.generated.resources.compose_multiplatform
 import fullstack.app.shared.generated.resources.gallery
 import fullstack.app.shared.generated.resources.home
 import fullstack.app.shared.generated.resources.info
@@ -39,7 +26,6 @@ import fullstack.app.shared.generated.resources.refresh
 import fullstack.app.shared.generated.resources.search
 import fullstack.app.shared.generated.resources.today
 import okik.tech.fullstack.ui.ApodViewModel
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -52,11 +38,11 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
     }
 }
 
-private var cachedColors: NavigationBarItemColors? = null
+private var cachedNavItemColors: NavigationBarItemColors? = null
 
 val ColorScheme.navigationBatItemColors: NavigationBarItemColors
     @Composable
-    get() =  cachedColors ?:
+    get() =  cachedNavItemColors ?:
         NavigationBarItemColors(
             selectedIconColor = Color.White,
             selectedTextColor = Color.White,
@@ -66,7 +52,23 @@ val ColorScheme.navigationBatItemColors: NavigationBarItemColors
             disabledIconColor = Color.DarkGray,
             disabledTextColor = Color.DarkGray
         ).also {
-            cachedColors = it
+            cachedNavItemColors = it
+        }
+
+private var cachedTopBarColors: TopAppBarColors? = null
+
+val ColorScheme.topAppBarCustomColors: TopAppBarColors
+    @Composable
+    get() = cachedTopBarColors ?:
+        TopAppBarColors(
+            containerColor = primary,
+            scrolledContainerColor = primaryContainer,
+            navigationIconContentColor = onPrimary,
+            titleContentColor = onPrimary,
+            actionIconContentColor = onPrimary,
+            subtitleContentColor = onPrimary,
+        ).also {
+            cachedTopBarColors = it
         }
 
 @Composable
@@ -154,7 +156,8 @@ fun FullStackApp() {
                             contentDescription = null
                         )
                     }
-                }
+                },
+                colors = MaterialTheme.colorScheme.topAppBarCustomColors
             )
         }
     ) {
