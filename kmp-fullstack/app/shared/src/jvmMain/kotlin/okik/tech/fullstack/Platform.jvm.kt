@@ -1,8 +1,6 @@
 package okik.tech.fullstack
 
-@JvmInline
-value class DesktopPlatform(private val baseUrl: String): Platform {
-    override fun getBaseUrl(): String = baseUrl
-}
+import okik.tech.fullstack.data.network.client.RemoteServerConfig
 
-actual fun getPlatform(): Platform = DesktopPlatform(RemoteServerConfig.DESKTOP_URL)
+
+actual fun getPlatform(): Platform = Platform(RemoteServerConfig.DESKTOP_URL)

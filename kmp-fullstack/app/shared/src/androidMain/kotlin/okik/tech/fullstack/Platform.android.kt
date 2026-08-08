@@ -1,12 +1,9 @@
 package okik.tech.fullstack
 
 import android.os.Build
+import okik.tech.fullstack.data.network.client.RemoteServerConfig
 import kotlin.String
 
-@JvmInline
-value class AndroidPlatform(private val baseUrl: String) : Platform {
-    override fun getBaseUrl(): String = baseUrl
-}
 
 actual fun getPlatform(): Platform {
     val isEmulator = Build.FINGERPRINT.startsWith("generic") ||
@@ -20,7 +17,7 @@ actual fun getPlatform(): Platform {
             Build.HARDWARE.contains("goldfish") ||
             Build.HARDWARE.contains("ranchu")
 
-    return AndroidPlatform(
+    return Platform(
         if (isEmulator) {
             RemoteServerConfig.EMULATOR_URL
         } else {

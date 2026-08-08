@@ -1,17 +1,13 @@
 package okik.tech.fullstack
 
+import okik.tech.fullstack.data.network.client.RemoteServerConfig
 import platform.Foundation.NSProcessInfo
-
-value class IOSPlatform(private val baseUrl: String) : Platform {
-
-    override fun getBaseUrl(): String = baseUrl
-}
 
 actual fun getPlatform(): Platform {
     val processInfo = NSProcessInfo.processInfo
     val isSimulator = processInfo.environment["SIMULATOR_DEVICE_NAME"] != null
 
-    return IOSPlatform(
+    return Platform(
         if (isSimulator) {
             RemoteServerConfig.IOS_SIMULATOR_URL
         } else {

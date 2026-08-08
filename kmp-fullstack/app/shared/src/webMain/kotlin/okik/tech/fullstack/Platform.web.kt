@@ -1,10 +1,6 @@
 package okik.tech.fullstack
 
+import okik.tech.fullstack.data.network.client.RemoteServerConfig
 import kotlin.jvm.JvmInline
 
-@JvmInline
-value class WebPlatform(private val baseUrl: String): Platform {
-    override fun getBaseUrl(): String = baseUrl
-}
-
-actual fun getPlatform(): Platform = WebPlatform(RemoteServerConfig.WEB_URL)
+actual fun getPlatform(): Platform = Platform(RemoteServerConfig.WEB_URL)
