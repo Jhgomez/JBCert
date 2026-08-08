@@ -7,44 +7,76 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 
 import fullstack.app.shared.generated.resources.Res
 import fullstack.app.shared.generated.resources.compose_multiplatform
+import fullstack.app.shared.generated.resources.gallery
+import fullstack.app.shared.generated.resources.home
+import fullstack.app.shared.generated.resources.refresh
+import okik.tech.fullstack.ui.ApodViewModel
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
-fun App() {
+fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+        FullStackApp()
+    }
+}
+
+@Composable
+fun FullStackApp() {
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize(),
+        bottomBar = {
+            NavigationBar(
+                modifier = Modifier.fillMaxWidth(),
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+
             }
-            AnimatedVisibility(showContent) {
-                Logger.logError("app composable", "se dejó ver")
-                val greeting = remember { "Greeting().greet()" }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+        },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(stringResource(Res.string.gallery))
+                },
+                actions = {
+                    IconButton(
+                        onClick = {}
+                    ) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.refresh),
+                            contentDescription = null
+                        )
+                    }
                 }
-            }
+            )
         }
+    ) {
+
     }
 }
