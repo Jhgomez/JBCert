@@ -1,0 +1,9 @@
+<resources>
+    <string name="home">Home</string>
+    <string name="today">Today</string>
+    <string name="find">Find</string>
+    <string name="about">About</string>
+    <string name="gallery">APOD Gallery</string>
+<!--    <string name=""></string>-->
+<!--    <string name=""></string>-->
+</resources>
