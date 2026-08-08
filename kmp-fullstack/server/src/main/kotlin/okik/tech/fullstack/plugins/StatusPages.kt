@@ -6,6 +6,7 @@ import io.ktor.server.application.install
 import io.ktor.server.application.log
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
+import okik.tech.fullstack.models.ErrorResponse
 
 /**
  * lets you catch exceptions and translate into well-formed http responses, instead of returning a
@@ -17,7 +18,10 @@ fun Application.configureStatusPages() {
         exception<IllegalArgumentException> { call, cause ->
             call.respond(
                 status = HttpStatusCode.BadRequest,
-                message = ErrorResponse(HttpStatusCode.BadRequest.value, cause.message ?: "Invalid request")
+                message = ErrorResponse(
+                    HttpStatusCode.BadRequest.value,
+                    cause.message ?: "Invalid request"
+                )
             )
         }
 

@@ -6,7 +6,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
-import okik.tech.fullstack.plugins.ErrorResponse
+import okik.tech.fullstack.models.ErrorResponse
 import okik.tech.fullstack.services.ApodService
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction

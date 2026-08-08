@@ -11,6 +11,8 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.format.DateTimeParseException
 
+// I would actually call this a "repository" in an client Android app, a service in an Android client
+// would actually be the one making http calls using a rest client, that service would then be
 class ApodService(
     private val nasaApiClient: NasaApiClient,
     private val apodDao: ApodDao,
