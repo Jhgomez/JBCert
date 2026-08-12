@@ -18,89 +18,10 @@ import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSe
 import androidx.savedstate.serialization.SavedStateConfiguration
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.plus
 import kotlinx.serialization.modules.polymorphic
 import okik.tech.fullstack.domain.Apod
 
-private val homeSerializerConfig = SerializersModule {
-    polymorphic(NavKey::class) {
-        subclass(subclass = Home::class, serializer = Home.serializer())
-    }
-}
-
-private val todaySerializerConfig = SerializersModule {
-    polymorphic(NavKey::class) {
-        subclass(subclass = Today::class, serializer = Today.serializer())
-    }
-}
-
-private val searchSerializerConfig = SerializersModule {
-    polymorphic(NavKey::class) {
-        subclass(subclass = Search::class, serializer = Search.serializer())
-    }
-}
-
-// careful, these should have the same order of the topLevel array param in RememberExitThroughHomeAppNavState
-private val configs = arrayOf(homeSerializerConfig, todaySerializerConfig, searchSerializerConfig)
-
-@Composable
-fun rememberExitThroughHomeAppNavState(
-    homeKey: NavKey,
-    topLevelKeys: Array<NavKey>
-): ExitThroughHomeAppNavState {
-    val nestedStack = Array<Stack>(size = topLevelKeys.size) { index ->
-        val navStack = rememberNavBackStack(
-            configuration = SavedStateConfiguration {
-                serializersModule = configs[index]
-            },
-            topLevelKeys[index]
-        )
-
-        Stack(
-            key = topLevelKeys[index],
-            nestedStack = navStack
-        )
-    }
-
-    // I could switch to `rememberNavBackStack`
-    val topLevelStack = rememberSerializable(serializer = SnapshotStateListSerializer()) {
-        mutableStateListOf<NavKey>(HomeList)
-    }
-
-    return remember {
-        ExitThroughHomeAppNavState(
-            homeKey = homeKey,
-            topLevelStack = topLevelStack,
-            nestedStack = nestedStack,
-            topLevelKeys = topLevelKeys
-        )
-    }
-}
-
-class ExitThroughHomeAppNavState(
-    val homeKey: NavKey,
-    val topLevelStack: SnapshotStateList<NavKey>,
-    val nestedStack: Array<Stack>,
-    val topLevelKeys: Array<NavKey>
-) {
-
-    @Composable
-    fun decorateAndReturnNavEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): SnapshotStateList<NavEntry<NavKey>> {
-        val navEntries = nestedStack.associate { stack ->
-            val decorators = listOf(
-                rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
-                rememberViewModelStoreNavEntryDecorator<NavKey>(),
-            )
-
-            stack.key to rememberDecoratedNavEntries(
-                backStack = stack.nestedStack,
-                entryDecorators = decorators,
-                entryProvider = entryProvider
-            )
-        }
-
-        return topLevelStack.flatMap { key -> navEntries[key] ?: emptyList() }.toMutableStateList()
-    }
-}
 
 class Stack(
     val key: NavKey,
@@ -134,9 +55,106 @@ object SearchHome: Search
 @Serializable
 class SearchDetail(val apod: Apod): Search
 
+@Serializable
+sealed interface About: NavKey
+
+@Serializable
+object AboutHome: About
+
+
+private val homeSerializerConfig = SerializersModule {
+    polymorphic(NavKey::class) {
+        subclassesOfSealed<Home>()
+    }
+}
+
+private val todaySerializerConfig = SerializersModule {
+    polymorphic(NavKey::class) {
+        subclassesOfSealed<Today>()
+    }
+}
+
+private val searchSerializerConfig = SerializersModule {
+    polymorphic(NavKey::class) {
+        subclassesOfSealed<Search>()
+    }
+}
+
+private val aboutSerializerConfig = SerializersModule {
+    polymorphic(NavKey::class) {
+        subclassesOfSealed<About>()
+    }
+}
+
+// careful, these should have the same order of the topLevel array param in RememberExitThroughHomeAppNavState
+private val configs = arrayOf(homeSerializerConfig, todaySerializerConfig, searchSerializerConfig, aboutSerializerConfig)
+
+@Composable
+fun rememberExitThroughHomeAppNavState(
+    homeKey: NavKey,
+    topLevelKeys: Array<NavKey>
+): ExitThroughHomeAppNavState {
+    val nestedStack = Array<Stack>(size = topLevelKeys.size) { index ->
+        val navStack = rememberNavBackStack(
+            configuration = SavedStateConfiguration {
+                serializersModule = configs[index]
+            },
+            topLevelKeys[index]
+        )
+
+        Stack(
+            key = topLevelKeys[index],
+            nestedStack = navStack
+        )
+    }
+
+    // I could switch to `rememberNavBackStack`
+    val topLevelStack = rememberNavBackStack(
+        configuration = SavedStateConfiguration {
+            serializersModule = homeSerializerConfig + todaySerializerConfig + searchSerializerConfig + aboutSerializerConfig
+        },
+        HomeList
+    )
+
+    return remember {
+        ExitThroughHomeAppNavState(
+            homeKey = homeKey,
+            topLevelStack = topLevelStack,
+            nestedStack = nestedStack,
+            topLevelKeys = topLevelKeys
+        )
+    }
+}
+
+class ExitThroughHomeAppNavState(
+    val homeKey: NavKey,
+    val topLevelStack: NavBackStack<NavKey>,
+    val nestedStack: Array<Stack>,
+    val topLevelKeys: Array<NavKey>
+) {
+
+    @Composable
+    fun decorateAndReturnNavEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): SnapshotStateList<NavEntry<NavKey>> {
+        val navEntries = nestedStack.associate { stack ->
+            val decorators = listOf(
+                rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
+                rememberViewModelStoreNavEntryDecorator<NavKey>(),
+            )
+
+            stack.key to rememberDecoratedNavEntries(
+                backStack = stack.nestedStack,
+                entryDecorators = decorators,
+                entryProvider = entryProvider
+            )
+        }
+
+        return topLevelStack.flatMap { key -> navEntries[key] ?: emptyList() }.toMutableStateList()
+    }
+}
+
 class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
 
-    fun naviGate(key: NavKey) {
+    fun navigate(key: NavKey) {
 //        val stack = rememberNavBackStack(
 //            configuration = SavedStateConfiguration {
 //                serializersModule = homeSerializerConfig + todaySerializerConfig + searchSerializerConfig
