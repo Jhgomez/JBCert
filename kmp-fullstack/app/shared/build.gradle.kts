@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.koin.compiler)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
@@ -78,9 +79,16 @@ kotlin {
             implementation(libs.ktor.negotiation.client)
             implementation(libs.ktor.json)
             implementation(libs.ktor.logging.client)
+
+            implementation(libs.jetbrains.navigation3.ui)
+            implementation(libs.jetbrains.material3.adaptiveNavigation3)
+            implementation(libs.jetbrains.lifecycle.viewmodelNavigation3)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+        webMain.dependencies {
+            implementation(libs.navigation3.browser)
         }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
