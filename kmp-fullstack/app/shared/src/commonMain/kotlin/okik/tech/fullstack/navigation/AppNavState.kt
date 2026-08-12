@@ -111,7 +111,14 @@ fun rememberExitThroughHomeAppNavState(
     // I could switch to `rememberNavBackStack`
     val topLevelStack = rememberNavBackStack(
         configuration = SavedStateConfiguration {
-            serializersModule = homeSerializerConfig + todaySerializerConfig + searchSerializerConfig + aboutSerializerConfig
+            serializersModule = SerializersModule {
+                polymorphic(NavKey::class) {
+                    subclass(HomeList::class, HomeList.serializer())
+                    subclass(TodayHome::class, TodayHome.serializer())
+                    subclass(SearchHome::class, SearchHome.serializer())
+                    subclass(AboutHome::class, AboutHome.serializer())
+                }
+            }
         },
         HomeList
     )
@@ -155,11 +162,6 @@ class ExitThroughHomeAppNavState(
 class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
 
     fun navigate(key: NavKey) {
-//        val stack = rememberNavBackStack(
-//            configuration = SavedStateConfiguration {
-//                serializersModule = homeSerializerConfig + todaySerializerConfig + searchSerializerConfig
-//            }
-//        )
         state.topLevelStack.clear()
 
         if (key in state.topLevelKeys) {
