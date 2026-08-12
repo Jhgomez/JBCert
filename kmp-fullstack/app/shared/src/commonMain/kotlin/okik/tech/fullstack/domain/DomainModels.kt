@@ -1,7 +1,9 @@
 package okik.tech.fullstack.domain
 
+import kotlinx.serialization.Serializable
 import kotlin.time.Clock
 
+@Serializable
 data class Apod(
     val date: String,
     val title: String,
