@@ -1,7 +1,6 @@
-package okik.tech.fullstack.navigation.ExitThroughHome
+package okik.tech.fullstack.navigation.exitthroughhome
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
@@ -83,7 +82,7 @@ private val aboutSerializerConfig = SerializersModule {
 }
 
 // careful, these should have the same order of the topLevel array param in RememberExitThroughHomeAppNavState
-private val configs = arrayOf(homeSerializerConfig, todaySerializerConfig, searchSerializerConfig, aboutSerializerConfig)
+val configs = arrayOf(homeSerializerConfig, todaySerializerConfig, searchSerializerConfig, aboutSerializerConfig)
 
 @Composable
 fun rememberExitThroughHomeAppNavState(
@@ -195,10 +194,4 @@ class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
         }
     }
 }
-
-class AppNavState(
-    val currentStack: NavBackStack<NavKey>,
-    val nestedStacks: Map<NavKey, NavBackStack<NavKey>>,
-    var currentTopRoute: MutableState<NavKey>
-)
 
