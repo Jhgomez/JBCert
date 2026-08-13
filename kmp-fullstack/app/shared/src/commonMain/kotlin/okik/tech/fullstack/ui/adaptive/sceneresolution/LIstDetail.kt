@@ -25,7 +25,7 @@ fun listPane(placeHolder: @Composable () -> Unit) = metadata {
 }
 
 fun detailPane() = metadata {
-    put(ListDetailStrategy.DetailKey, true)
+    put(ListDetailStrategy.DetailKey, Unit)
 }
 
 private class ListDetailScene(
@@ -89,5 +89,5 @@ class ListDetailStrategy(private val windowSizeClass: WindowSizeClass) : SceneSt
     }
 
     object ListKey : NavMetadataKey<@Composable () -> Unit>
-    object DetailKey : NavMetadataKey<Boolean>
+    object DetailKey : NavMetadataKey<Unit>
 }
