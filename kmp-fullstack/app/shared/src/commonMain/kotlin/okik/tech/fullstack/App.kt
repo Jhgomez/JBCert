@@ -224,7 +224,7 @@ fun App(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Button(onClick = {
-                            navigator.navBack()
+                            navigator.goBack()
                         }) {
                             Text("Apod detail - bac")
                         }
@@ -252,7 +252,7 @@ fun App(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Button(onClick = {
-                            navigator.navBack()
+                            navigator.goBack()
                         }) {
                             Text("Back to today home")
                         }
@@ -281,7 +281,7 @@ fun App(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Button(onClick = {
-                            navigator.navBack()
+                            navigator.goBack()
                         }) {
                             Text("to search home")
                         }
@@ -302,7 +302,7 @@ fun App(
             NavDisplay(
                 modifier = Modifier.padding(innerPadding).consumeWindowInsets(WindowInsets.safeDrawing),
                 entries = backStackState.decorateAndReturnNavEntries(entries),
-                onBack = navigator::navBack,
+                onBack = navigator::goBack,
             )
         }
     }

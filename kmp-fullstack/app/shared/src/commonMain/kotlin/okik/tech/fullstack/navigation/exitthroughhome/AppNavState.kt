@@ -179,7 +179,7 @@ class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
 
     }
 
-    fun navBack() {
+    fun goBack() {
         val currentTopLevelKey = state.topLevelStack.last()
 
         val currentNestedStack = state
