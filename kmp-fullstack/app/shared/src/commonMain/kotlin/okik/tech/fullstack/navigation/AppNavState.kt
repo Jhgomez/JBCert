@@ -2,9 +2,7 @@ package okik.tech.fullstack.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -14,11 +12,9 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
-import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSerializer
 import androidx.savedstate.serialization.SavedStateConfiguration
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.plus
 import kotlinx.serialization.modules.polymorphic
 import okik.tech.fullstack.domain.Apod
 
@@ -35,7 +31,7 @@ sealed interface Home: NavKey
 object HomeList: Home
 
 @Serializable
-class HomeApodDetail(val apod: Apod): Home
+class HomeApodDetail(val apod: Apod?): Home
 
 @Serializable
 sealed interface Today: NavKey
@@ -44,7 +40,7 @@ sealed interface Today: NavKey
 object TodayHome: Today
 
 @Serializable
-class TodayDetail(val apod: Apod): Today
+class TodayDetail(val apod: Apod?): Today
 
 @Serializable
 sealed interface Search: NavKey
@@ -53,7 +49,7 @@ sealed interface Search: NavKey
 object SearchHome: Search
 
 @Serializable
-class SearchDetail(val apod: Apod): Search
+class SearchDetail(val apod: Apod?): Search
 
 @Serializable
 sealed interface About: NavKey
@@ -120,7 +116,7 @@ fun rememberExitThroughHomeAppNavState(
                 }
             }
         },
-        HomeList
+        homeKey
     )
 
     return remember {
@@ -162,23 +158,23 @@ class ExitThroughHomeAppNavState(
 class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
 
     fun navigate(key: NavKey) {
-        state.topLevelStack.clear()
-
         if (key in state.topLevelKeys) {
-            if (key != state.homeKey) {
+            state.topLevelStack.clear()
+
+            if (key == state.homeKey) {
                 state.topLevelStack.add(key)
             } else {
                 state.topLevelStack.add(state.homeKey)
                 state.topLevelStack.add(key)
             }
         } else {
-            val nestedStack = state
+            val currentNestedStack = state
                 .nestedStack
-                .firstOrNull { stack ->  key::class.isInstance(stack.key)  }!!
+                .firstOrNull { stack ->  stack.key == state.topLevelStack.lastOrNull()  }!!
                 .nestedStack
 
 //            nestedStack.remove(key)
-            nestedStack.add(key)
+            currentNestedStack.add(key)
         }
 
 
