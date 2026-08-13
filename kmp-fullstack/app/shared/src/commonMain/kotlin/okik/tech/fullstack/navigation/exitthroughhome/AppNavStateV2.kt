@@ -59,6 +59,15 @@ fun rememberExitThroughHomeAppNavStateV2(
     }
 }
 
+/**
+ * Exists through home, if select home and there is other top level entry stack, the other
+ * stack is removed and only home is left, so if I navigate from A->B->A, then only A stack exists
+ * after navigating, if I navigate from one top level entry other that home the newest top level
+ * entry replaces the previous one, so navigating from A->B->C only leaves us with A and X
+ * stacks, the nested stack are not cleared but only removed from the available stacks when
+ * navigating back, if you have interacted with a stack that is not currently available when
+ * you select it back its nested stack state is preserved
+ */
 class ExitThroughHomeAppNavStateV2(
     val startRoute: NavKey,
     currentTopLevelRoute: MutableState<NavKey>,

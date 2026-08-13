@@ -62,7 +62,10 @@ fun rememberExitThroughHomeAppNavStateV3(
 
 /**
  * This one also exists through home but it doesn't remove other top level entries backstack
- * unless home is tapped again
+ * unless home is tapped again, removed nested stacks don't lose its state they are just not
+ * available when going back, so If I navigate to A-B-C I have all three stacks and navigating back
+ * goes through all three stacks before exiting app, but if I go A-B-C-A, I only end up with A
+ * and if I navigate back I will exit app until all entries in that stack are popped out
  */
 class ExitThroughHomeAppNavStateV3(
     val startKey: NavKey,
