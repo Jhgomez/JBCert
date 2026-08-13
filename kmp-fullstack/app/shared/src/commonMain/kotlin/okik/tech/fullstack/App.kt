@@ -1,6 +1,7 @@
 package okik.tech.fullstack
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -55,6 +56,7 @@ import fullstack.app.shared.generated.resources.refresh
 import fullstack.app.shared.generated.resources.search
 import fullstack.app.shared.generated.resources.today
 import okik.tech.fullstack.navigation.exitthroughhome.AboutHome
+import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeAppNavState
 import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
 import okik.tech.fullstack.navigation.exitthroughhome.HomeApodDetail
 import okik.tech.fullstack.navigation.exitthroughhome.HomeList
@@ -64,6 +66,7 @@ import okik.tech.fullstack.navigation.exitthroughhome.TodayDetail
 import okik.tech.fullstack.navigation.exitthroughhome.TodayHome
 import okik.tech.fullstack.navigation.exitthroughhome.rememberExitThroughHomeAppNavState
 import okik.tech.fullstack.ui.ApodViewModel
+import okik.tech.fullstack.ui.adaptive.scenedecorators.rememberDecoratorStrategy
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -104,115 +107,74 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 
 
     MaterialTheme {
-        val backStackState = rememberExitThroughHomeAppNavState(
-            HomeList,
-            TopLevelRoute.entries.map { route -> route.homeKey }.toTypedArray()
-        )
+        SharedTransitionLayout {
+            val backStackState = rememberExitThroughHomeAppNavState(
+                HomeList,
+                TopLevelRoute.entries.map { route -> route.homeKey }.toTypedArray()
+            )
+            val navigator = remember { ExitThroughHomeNavigator(backStackState) }
 
-        // my own list-detail strategy
-        // val listDetailStrategy = rememberListDetailStrategy()
+            // my own list-detail strategy
+            // val listDetailStrategy = rememberListDetailStrategy()
 
-        // cmp built-in layout strategies, demonstrated here
-        // https://github.com/terrakok/nav3-recipes/blob/master/sharedUI/src/commonMain/kotlin/com/example/nav3recipes/material/listdetail/MaterialListDetailActivity.kt
-        val windowAdaptiveInfo = currentWindowAdaptiveInfoV2()
-        val directive = remember(windowAdaptiveInfo) {
-            calculatePaneScaffoldDirective(windowAdaptiveInfo)
-                .copy(horizontalPartitionSpacerSize = 0.dp)
-        }
+            // cmp built-in layout strategies, demonstrated here
+            // https://github.com/terrakok/nav3-recipes/blob/master/sharedUI/src/commonMain/kotlin/com/example/nav3recipes/material/listdetail/MaterialListDetailActivity.kt
+            val windowAdaptiveInfo = currentWindowAdaptiveInfoV2()
+            val directive = remember(windowAdaptiveInfo) {
+                calculatePaneScaffoldDirective(windowAdaptiveInfo)
+                    .copy(horizontalPartitionSpacerSize = 0.dp)
+            }
+            val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>(
+                directive = directive,
+                paneExpansionDragHandle = { state ->
+                    val interactionSource = remember { MutableInteractionSource() }
 
-        val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>(
-            directive = directive,
-            paneExpansionDragHandle = { state ->
-                val interactionSource = remember { MutableInteractionSource() }
-
-                VerticalDragHandle(
-                    modifier =
-                        Modifier.paneExpansionDraggable(
-                            state,
-                            LocalMinimumInteractiveComponentSize.current,
-                            interactionSource
-                        ),
-                    interactionSource = interactionSource
-                )
-            },
-            paneExpansionState = rememberPaneExpansionState(
+                    VerticalDragHandle(
+                        modifier =
+                            Modifier.paneExpansionDraggable(
+                                state,
+                                LocalMinimumInteractiveComponentSize.current,
+                                interactionSource
+                            ),
+                        interactionSource = interactionSource
+                    )
+                },
+                paneExpansionState = rememberPaneExpansionState(
 //                anchors = listOf(
 //                    PaneExpansionAnchor.Proportion(0.25f),
 //                    PaneExpansionAnchor.Proportion(0.5f),
 //                    PaneExpansionAnchor.Proportion(0.75f),
 //                )
+                )
             )
-        )
 
-        val navigator = remember { ExitThroughHomeNavigator(backStackState) }
-
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize(),
-            bottomBar = {
-                NavigationBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    containerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    TopLevelRoute.entries.forEach { topLevelRoute ->
-
-                        NavigationBarItem(
-                            selected = topLevelRoute.homeKey == backStackState.topLevelStack.lastOrNull(),
-                            onClick = {
-                                navigator.navigate(topLevelRoute.homeKey)
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = vectorResource(topLevelRoute.icon),
-                                    contentDescription = null
-                                )
-                            },
-                            label = {
-                                Text(stringResource(topLevelRoute.description))
-                            },
-                            colors = MaterialTheme.colorScheme.navigationBatItemColors
-                        )
-                    }
-                }
-            },
-            topBar = {
-
-                AnimatedVisibility(
-                    visible = backStackState.shouldShowTopBar.value,
-                    enter = fadeIn() + expandVertically(),
-                    exit = shrinkVertically() + fadeOut()
-                ) {
-                    TopAppBar(
-                        title = {
-                            Text(stringResource(Res.string.gallery))
-                        },
-                        actions = {
-                            IconButton(
-                                onClick = {}
-                            ) {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.refresh),
-                                    contentDescription = null
-                                )
-                            }
-                        },
-                        colors = MaterialTheme.colorScheme.topAppBarCustomColors,
-                        navigationIcon = {
-
-                            IconButton(
-                                onClick = { navigator.goBack() }
-                            ) {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.arrow_back),
-                                    contentDescription = null
-                                )
-                            }
+            val decoratorStrategy = rememberDecoratorStrategy(
+                sharedTransitionScope = this,
+                enableBackNavigation = backStackState.shouldShowTopBar.value,
+                navBar = {
+                    BottomNavBar(
+                        currentKey = backStackState.topLevelStack.lastOrNull(),
+                        navigate = { navKey ->
+                            navigator.navigate(navKey)
                         }
                     )
-                }
-            },
-            contentWindowInsets = WindowInsets.safeDrawing
-        ) { innerPadding ->
+                },
+                navRail = {
+
+                },
+                topBar = {
+                    AppBar(goBack = navigator::goBack)
+                },
+                navIcon = {
+                    IconButton(onClick = navigator::goBack) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.arrow_back),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                },
+            )
 
             val entries = remember {
                 entryProvider {
@@ -326,12 +288,73 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                     }
                 }
             }
+        }
+    }
+}
 
-            NavDisplay(
-                modifier = Modifier.padding(innerPadding).consumeWindowInsets(WindowInsets.safeDrawing),
-                entries = backStackState.decorateAndReturnNavEntries(entries),
-                onBack = navigator::goBack,
-                sceneStrategies = listOf(listDetailStrategy)
+@Composable
+private fun AppBar(goBack: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(stringResource(Res.string.gallery))
+        },
+        actions = {
+            IconButton(
+                onClick = {}
+            ) {
+                Icon(
+                    imageVector = vectorResource(Res.drawable.refresh),
+                    contentDescription = null
+                )
+            }
+        },
+        colors = MaterialTheme.colorScheme.topAppBarCustomColors,
+        navigationIcon = {
+
+            IconButton(onClick = goBack) {
+                Icon(
+                    imageVector = vectorResource(Res.drawable.arrow_back),
+                    contentDescription = null
+                )
+            }
+        }
+    )
+
+//    AnimatedVisibility(
+//        visible = backStackState.shouldShowTopBar.value,
+//        enter = fadeIn() + expandVertically(),
+//        exit = shrinkVertically() + fadeOut()
+//    ) {
+//
+//    }
+}
+
+@Composable
+private fun BottomNavBar(
+    currentKey: NavKey?,
+    navigate: (NavKey) -> Unit
+) {
+    NavigationBar(
+        modifier = Modifier.fillMaxWidth(),
+        containerColor = MaterialTheme.colorScheme.primary
+    ) {
+        TopLevelRoute.entries.forEach { topLevelRoute ->
+
+            NavigationBarItem(
+                selected = topLevelRoute.homeKey == currentKey,
+                onClick = {
+                    navigate(topLevelRoute.homeKey)
+                },
+                icon = {
+                    Icon(
+                        imageVector = vectorResource(topLevelRoute.icon),
+                        contentDescription = null
+                    )
+                },
+                label = {
+                    Text(stringResource(topLevelRoute.description))
+                },
+                colors = MaterialTheme.colorScheme.navigationBatItemColors
             )
         }
     }
