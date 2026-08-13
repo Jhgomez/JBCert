@@ -16,7 +16,6 @@ import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import androidx.window.core.layout.WindowSizeClass
-import androidx.window.core.layout.WindowSizeClass.Companion.HEIGHT_DP_MEDIUM_LOWER_BOUND
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
 
 fun listPane() = metadata {
@@ -49,9 +48,9 @@ private class ListDetailScene(
 
 @Composable
 fun rememberListDetailStrategy(): ListDetailStrategy {
-    val windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
+    val windowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
 
-    return remember {
+    return remember(windowSizeClass) {
         ListDetailStrategy(windowSizeClass)
     }
 }
