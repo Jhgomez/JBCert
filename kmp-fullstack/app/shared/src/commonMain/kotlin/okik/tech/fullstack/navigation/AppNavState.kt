@@ -185,13 +185,13 @@ class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
 
         val currentNestedStack = state
             .nestedStack
-            .firstOrNull { stack -> currentTopLevelKey::class.isInstance(stack) }!!
+            .firstOrNull { stack -> stack.key == currentTopLevelKey }!!
             .nestedStack
 
-        if (currentTopLevelKey != currentNestedStack.last()) {
-            currentNestedStack.removeLast()
+        if (currentNestedStack.last() in state.topLevelKeys) {
+            state.topLevelStack.removeLastOrNull()
         } else {
-            state.topLevelStack.removeLast()
+            currentNestedStack.removeLastOrNull()
         }
     }
 }
