@@ -1,7 +1,6 @@
 package okik.tech.fullstack
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -28,7 +27,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,6 +56,9 @@ import okik.tech.fullstack.navigation.exitthroughhome.TodayDetail
 import okik.tech.fullstack.navigation.exitthroughhome.TodayHome
 import okik.tech.fullstack.navigation.exitthroughhome.rememberExitThroughHomeAppNavState
 import okik.tech.fullstack.ui.ApodViewModel
+import okik.tech.fullstack.ui.adaptive.sceneresolution.detailPane
+import okik.tech.fullstack.ui.adaptive.sceneresolution.listPane
+import okik.tech.fullstack.ui.adaptive.sceneresolution.rememberListDetailStrategy
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -105,6 +106,17 @@ fun App(
             HomeList,
             TopLevelRoute.entries.map { route -> route.homeKey }.toTypedArray()
         )
+
+        val listDetailStrategy = rememberListDetailStrategy()
+
+        // cmp built-in layout strategies, demonstrated here
+        // https://github.com/terrakok/nav3-recipes/blob/master/sharedUI/src/commonMain/kotlin/com/example/nav3recipes/material/listdetail/MaterialListDetailActivity.kt
+//        val windowAdaptiveInfo = currentWindowAdaptiveInfoV2()
+//        val directive = remember(windowAdaptiveInfo) {
+//            calculatePaneScaffoldDirective(windowAdaptiveInfo)
+//                .copy(horizontalPartitionSpacerSize = 0.dp)
+//        }
+//        val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>(directive = directive)
 
         val navigator = remember { ExitThroughHomeNavigator(backStackState) }
 
@@ -176,99 +188,116 @@ fun App(
             contentWindowInsets = WindowInsets.safeDrawing
         ) { innerPadding ->
 
-            val entries = entryProvider {
-                entry<HomeList> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+            val entries = remember {
+                entryProvider {
+                    entry<HomeList>(
+                        metadata = listPane(
+                            placeHolder = {
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text("My PlaceHolder")
+                                }
+                            }
+                        )
                     ) {
-                        Button(onClick = {
-                            navigator.navigate(HomeApodDetail(null))
-                        }) {
-                            Text("To Apod")
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Button(onClick = {
+                                HomeApodDetail.apod = null
+                                navigator.navigate(HomeApodDetail)
+                            }) {
+                                Text("To Apod")
+                            }
                         }
                     }
-                }
 
-                entry<HomeApodDetail> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                    entry<HomeApodDetail>(
+                        metadata = detailPane()
                     ) {
-                        Button(onClick = {
-                            navigator.goBack()
-                        }) {
-                            Text("Apod detail - bac")
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Button(onClick = {
+                                navigator.goBack()
+                            }) {
+                                Text("Apod detail - bac")
+                            }
                         }
                     }
-                }
 
-                entry<TodayHome> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Button(onClick = {
-                            navigator.navigate(TodayDetail(null))
-                        }) {
-                            Text("To TOday detail")
+                    entry<TodayHome> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Button(onClick = {
+                                navigator.navigate(TodayDetail(null))
+                            }) {
+                                Text("To TOday detail")
+                            }
                         }
                     }
-                }
 
-                entry<TodayDetail> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Button(onClick = {
-                            navigator.goBack()
-                        }) {
-                            Text("Back to today home")
+                    entry<TodayDetail> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Button(onClick = {
+                                navigator.goBack()
+                            }) {
+                                Text("Back to today home")
+                            }
                         }
                     }
-                }
 
-                entry<SearchHome> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Button(onClick = {
-                            navigator.navigate(SearchDetail(null))
-                        }) {
-                            Text("To Search Detail")
+                    entry<SearchHome> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Button(onClick = {
+                                navigator.navigate(SearchDetail(null))
+                            }) {
+                                Text("To Search Detail")
+                            }
                         }
                     }
-                }
 
-                entry<SearchDetail> {
+                    entry<SearchDetail> {
 
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Button(onClick = {
-                            navigator.goBack()
-                        }) {
-                            Text("to search home")
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Button(onClick = {
+                                navigator.goBack()
+                            }) {
+                                Text("to search home")
+                            }
                         }
                     }
-                }
 
-                entry<AboutHome> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text("About")
+                    entry<AboutHome> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text("About")
+                        }
                     }
                 }
             }
@@ -277,6 +306,7 @@ fun App(
                 modifier = Modifier.padding(innerPadding).consumeWindowInsets(WindowInsets.safeDrawing),
                 entries = backStackState.decorateAndReturnNavEntries(entries),
                 onBack = navigator::goBack,
+                sceneStrategies = listOf(listDetailStrategy)
             )
         }
     }
