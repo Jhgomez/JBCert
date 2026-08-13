@@ -23,10 +23,10 @@ import okik.tech.fullstack.navigation.exitthroughhome.configs
 
 
 @Composable
-fun rememberExitThroughHomeAppNavStateV4(
+fun rememberOrderedExitNavState(
     startKey: NavKey,
     topLevelKeys: Array<NavKey>
-): ExitThroughHomeAppNavStateV4 {
+): OrederedExitNavState {
 
     val nestedStacks = topLevelKeys.associateWith { key ->
         rememberNavBackStack(
@@ -53,7 +53,7 @@ fun rememberExitThroughHomeAppNavStateV4(
     )
 
     return remember {
-        ExitThroughHomeAppNavStateV4(
+        OrederedExitNavState(
             nestedStacks = nestedStacks,
             topLevelEntries = topLevelEntries,
             topLevelKeys = topLevelKeys
@@ -68,7 +68,7 @@ fun rememberExitThroughHomeAppNavStateV4(
  * entry, so if I want to exit the app until all entries have been popped out, then I would go in
  * this order A-D-C-B, so I exit on B, similarly A-B-C-D-A-C-B  then I exit like B-C-A-D
  */
-class ExitThroughHomeAppNavStateV4(
+class OrederedExitNavState(
     val nestedStacks: Map<NavKey, NavBackStack<NavKey>>,
     val topLevelEntries: NavBackStack<NavKey>,
     val topLevelKeys: Array<NavKey>
@@ -89,7 +89,7 @@ class ExitThroughHomeAppNavStateV4(
     }
 }
 
-class ExitThroughHomeNavigatorV4(private val state: ExitThroughHomeAppNavStateV4) {
+class OrderedExitNavigatorV4(private val state: OrederedExitNavState) {
 
     private val _reselectEvents = MutableSharedFlow<NavKey>(extraBufferCapacity = 1)
     val reselectEvents = _reselectEvents.asSharedFlow()
