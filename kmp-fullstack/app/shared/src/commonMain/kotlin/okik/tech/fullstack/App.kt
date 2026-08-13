@@ -288,6 +288,15 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                     }
                 }
             }
+
+            NavDisplay(
+                entries = backStackState.decorateAndReturnNavEntries(entries),
+                modifier = Modifier.fillMaxSize(),
+                sceneStrategies = listOf(listDetailStrategy),
+                sceneDecoratorStrategies = listOf(decoratorStrategy),
+                sharedTransitionScope = this,
+                onBack = navigator::goBack
+            )
         }
     }
 }
