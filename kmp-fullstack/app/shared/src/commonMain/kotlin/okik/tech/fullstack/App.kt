@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -17,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -25,16 +27,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.VerticalDragHandle
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
+import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
+import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import androidx.window.core.layout.WindowSizeClass
 
 import fullstack.app.shared.generated.resources.Res
 import fullstack.app.shared.generated.resources.about
@@ -56,9 +64,6 @@ import okik.tech.fullstack.navigation.exitthroughhome.TodayDetail
 import okik.tech.fullstack.navigation.exitthroughhome.TodayHome
 import okik.tech.fullstack.navigation.exitthroughhome.rememberExitThroughHomeAppNavState
 import okik.tech.fullstack.ui.ApodViewModel
-import okik.tech.fullstack.ui.adaptive.sceneresolution.detailPane
-import okik.tech.fullstack.ui.adaptive.sceneresolution.listPane
-import okik.tech.fullstack.ui.adaptive.sceneresolution.rememberListDetailStrategy
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -92,13 +97,10 @@ private enum class TopLevelRoute(
     )
 }
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 @Preview
-fun App(
-    viewModel: ApodViewModel = koinViewModel<ApodViewModel>(),
-    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
-) {
-//    windowSizeClass.isAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,)
+fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 
 
     MaterialTheme {
@@ -107,16 +109,40 @@ fun App(
             TopLevelRoute.entries.map { route -> route.homeKey }.toTypedArray()
         )
 
-        val listDetailStrategy = rememberListDetailStrategy()
+        // my own list-detail strategy
+        // val listDetailStrategy = rememberListDetailStrategy()
 
         // cmp built-in layout strategies, demonstrated here
         // https://github.com/terrakok/nav3-recipes/blob/master/sharedUI/src/commonMain/kotlin/com/example/nav3recipes/material/listdetail/MaterialListDetailActivity.kt
-//        val windowAdaptiveInfo = currentWindowAdaptiveInfoV2()
-//        val directive = remember(windowAdaptiveInfo) {
-//            calculatePaneScaffoldDirective(windowAdaptiveInfo)
-//                .copy(horizontalPartitionSpacerSize = 0.dp)
-//        }
-//        val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>(directive = directive)
+        val windowAdaptiveInfo = currentWindowAdaptiveInfoV2()
+        val directive = remember(windowAdaptiveInfo) {
+            calculatePaneScaffoldDirective(windowAdaptiveInfo)
+                .copy(horizontalPartitionSpacerSize = 0.dp)
+        }
+
+        val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>(
+            directive = directive,
+            paneExpansionDragHandle = { state ->
+                val interactionSource = remember { MutableInteractionSource() }
+
+                VerticalDragHandle(
+                    modifier =
+                        Modifier.paneExpansionDraggable(
+                            state,
+                            LocalMinimumInteractiveComponentSize.current,
+                            interactionSource
+                        ),
+                    interactionSource = interactionSource
+                )
+            },
+            paneExpansionState = rememberPaneExpansionState(
+//                anchors = listOf(
+//                    PaneExpansionAnchor.Proportion(0.25f),
+//                    PaneExpansionAnchor.Proportion(0.5f),
+//                    PaneExpansionAnchor.Proportion(0.75f),
+//                )
+            )
+        )
 
         val navigator = remember { ExitThroughHomeNavigator(backStackState) }
 
@@ -191,8 +217,8 @@ fun App(
             val entries = remember {
                 entryProvider {
                     entry<HomeList>(
-                        metadata = listPane(
-                            placeHolder = {
+                        metadata = ListDetailSceneStrategy.listPane(
+                            detailPlaceholder = {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
                                     verticalArrangement = Arrangement.Center,
@@ -217,7 +243,7 @@ fun App(
                     }
 
                     entry<HomeApodDetail>(
-                        metadata = detailPane()
+                        metadata = ListDetailSceneStrategy.detailPane()
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
