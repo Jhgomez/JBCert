@@ -1,4 +1,4 @@
-package okik.tech.fullstack.navigation
+package okik.tech.fullstack.navigation.ExitThroughHome
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
