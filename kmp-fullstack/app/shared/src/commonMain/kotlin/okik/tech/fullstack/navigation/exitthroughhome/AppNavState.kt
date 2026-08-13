@@ -1,7 +1,10 @@
 package okik.tech.fullstack.navigation.exitthroughhome
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -103,6 +106,10 @@ fun rememberExitThroughHomeAppNavState(
         )
     }
 
+    val shouldShowTopBar = rememberSerializable {
+        mutableStateOf(false)
+    }
+
     // I could switch to `rememberNavBackStack`
     val topLevelStack = rememberNavBackStack(
         configuration = SavedStateConfiguration {
@@ -123,7 +130,8 @@ fun rememberExitThroughHomeAppNavState(
             homeKey = homeKey,
             topLevelStack = topLevelStack,
             nestedStack = nestedStack,
-            topLevelKeys = topLevelKeys
+            topLevelKeys = topLevelKeys,
+            shouldShowTopBar = shouldShowTopBar
         )
     }
 }
@@ -141,7 +149,8 @@ class ExitThroughHomeAppNavState(
     val homeKey: NavKey,
     val topLevelStack: NavBackStack<NavKey>,
     val nestedStack: Array<Stack>,
-    val topLevelKeys: Array<NavKey>
+    val topLevelKeys: Array<NavKey>,
+    val shouldShowTopBar: MutableState<Boolean>
 ) {
 
     @Composable
@@ -166,6 +175,8 @@ class ExitThroughHomeAppNavState(
 class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
 
     fun navigate(key: NavKey) {
+        var currentNestedStack: NavBackStack<NavKey>? = null
+
         if (key in state.topLevelKeys) {
             state.topLevelStack.clear()
 
@@ -176,9 +187,9 @@ class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
                 state.topLevelStack.add(key)
             }
         } else {
-            val currentNestedStack = state
+            currentNestedStack = state
                 .nestedStack
-                .firstOrNull { stack ->  stack.key == state.topLevelStack.lastOrNull()  }!!
+                .firstOrNull { stack ->  stack.key == state.topLevelStack.lastOrNull() }!!
                 .nestedStack
 
 //            nestedStack.remove(key)
@@ -186,6 +197,12 @@ class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
         }
 
 
+        currentNestedStack = currentNestedStack ?: state
+            .nestedStack
+            .firstOrNull { stack ->  stack.key == state.topLevelStack.lastOrNull() }!!
+            .nestedStack
+
+        state.shouldShowTopBar.value = currentNestedStack.last() !in state.topLevelKeys
     }
 
     fun goBack() {
@@ -201,6 +218,12 @@ class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
         } else {
             currentNestedStack.removeLastOrNull()
         }
+
+        state.shouldShowTopBar.value = state
+            .nestedStack
+            .firstOrNull { stack -> stack.key == state.topLevelStack.last() }!!
+            .nestedStack
+            .last() !in state.topLevelKeys
     }
 }
 
