@@ -58,14 +58,30 @@ import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
 
 private enum class TopLevelRoute(
-    val navKey: NavKey,
+    val homeKey: NavKey,
     val icon: DrawableResource,
     val description: StringResource
 ) {
-    HOME(navKey = HomeList, icon = Res.drawable.home, description = Res.string.home),
-    TODAY(navKey = TodayHome, icon = Res.drawable.today, description = Res.string.today),
-    FIND(navKey = SearchHome, icon = Res.drawable.search, description = Res.string.find),
-    ABOUT(navKey = AboutHome, icon = Res.drawable.info, description = Res.string.about)
+    HOME(
+        homeKey = HomeList,
+        icon = Res.drawable.home,
+        description = Res.string.home
+    ),
+    TODAY(
+        homeKey = TodayHome,
+        icon = Res.drawable.today,
+        description = Res.string.today
+    ),
+    FIND(
+        homeKey = SearchHome,
+        icon = Res.drawable.search,
+        description = Res.string.find
+    ),
+    ABOUT(
+        homeKey = AboutHome,
+        icon = Res.drawable.info,
+        description = Res.string.about
+    )
 }
 
 class TopLevelBackStack<T: Any>(startKey: T) {
@@ -131,7 +147,7 @@ fun App(
     MaterialTheme {
         val backStackState = rememberExitThroughHomeAppNavState(
             HomeList,
-            TopLevelRoute.entries.map { route -> route.navKey }.toTypedArray()
+            TopLevelRoute.entries.map { route -> route.homeKey }.toTypedArray()
         )
 
         val navigator = remember { ExitThroughHomeNavigator(backStackState) }
@@ -147,9 +163,9 @@ fun App(
                     TopLevelRoute.entries.forEach { topLevelRoute ->
 
                         NavigationBarItem(
-                            selected = topLevelRoute.navKey == backStackState.topLevelStack.last(),
+                            selected = topLevelRoute.homeKey == backStackState.topLevelStack.last(),
                             onClick = {
-                                navigator.navigate(topLevelRoute.navKey)
+                                navigator.navigate(topLevelRoute.homeKey)
                             },
                             icon = {
                                 Icon(
