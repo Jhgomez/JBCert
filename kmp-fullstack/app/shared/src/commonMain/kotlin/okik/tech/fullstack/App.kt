@@ -1,5 +1,11 @@
 package okik.tech.fullstack
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -22,6 +28,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +40,7 @@ import androidx.window.core.layout.WindowSizeClass
 
 import fullstack.app.shared.generated.resources.Res
 import fullstack.app.shared.generated.resources.about
+import fullstack.app.shared.generated.resources.arrow_back
 import fullstack.app.shared.generated.resources.find
 import fullstack.app.shared.generated.resources.gallery
 import fullstack.app.shared.generated.resources.home
@@ -111,7 +119,7 @@ fun App(
                     TopLevelRoute.entries.forEach { topLevelRoute ->
 
                         NavigationBarItem(
-                            selected = topLevelRoute.homeKey == backStackState.topLevelStack.last(),
+                            selected = topLevelRoute.homeKey == backStackState.topLevelStack.lastOrNull(),
                             onClick = {
                                 navigator.navigate(topLevelRoute.homeKey)
                             },
@@ -130,22 +138,40 @@ fun App(
                 }
             },
             topBar = {
-                TopAppBar(
-                    title = {
-                        Text(stringResource(Res.string.gallery))
-                    },
-                    actions = {
-                        IconButton(
-                            onClick = {}
-                        ) {
-                            Icon(
-                                imageVector = vectorResource(Res.drawable.refresh),
-                                contentDescription = null
-                            )
+
+                AnimatedVisibility(
+                    visible = backStackState.shouldShowTopBar.value,
+                    enter = fadeIn() + expandVertically(),
+                    exit = shrinkVertically() + fadeOut()
+                ) {
+                    TopAppBar(
+                        title = {
+                            Text(stringResource(Res.string.gallery))
+                        },
+                        actions = {
+                            IconButton(
+                                onClick = {}
+                            ) {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.refresh),
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        colors = MaterialTheme.colorScheme.topAppBarCustomColors,
+                        navigationIcon = {
+
+                            IconButton(
+                                onClick = { navigator.goBack() }
+                            ) {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.arrow_back),
+                                    contentDescription = null
+                                )
+                            }
                         }
-                    },
-                    colors = MaterialTheme.colorScheme.topAppBarCustomColors
-                )
+                    )
+                }
             },
             contentWindowInsets = WindowInsets.safeDrawing
         ) { innerPadding ->
