@@ -33,7 +33,9 @@ sealed interface Home: NavKey
 object HomeList: Home
 
 @Serializable
-class HomeApodDetail(val apod: Apod?): Home
+object HomeApodDetail: Home {
+    var apod: Apod? = null
+}
 
 @Serializable
 sealed interface Today: NavKey
