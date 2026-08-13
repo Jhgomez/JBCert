@@ -11,15 +11,17 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.NavMetadataKey
 import androidx.navigation3.runtime.contains
+import androidx.navigation3.runtime.get
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
+import okik.tech.fullstack.ui.adaptive.sceneresolution.ListDetailStrategy.ListKey
 
-fun listPane() = metadata {
-    put(ListDetailStrategy.ListKey, true)
+fun listPane(placeHolder: @Composable () -> Unit) = metadata {
+    put(ListDetailStrategy.ListKey, placeHolder)
 }
 
 fun detailPane() = metadata {
@@ -30,9 +32,9 @@ private class ListDetailScene(
     override val key: Any,
     override val previousEntries: List<NavEntry<NavKey>>,
     val listEntry: NavEntry<NavKey>,
-    val detailEntry: NavEntry<NavKey>,
+    val detailEntry: NavEntry<NavKey>?,
 ) : Scene<NavKey> {
-    override val entries: List<NavEntry<NavKey>> = listOf(listEntry, detailEntry)
+    override val entries: List<NavEntry<NavKey>> = listOf(listEntry, detailEntry).filterNotNull()
 
     override val content  = @Composable {
         Row(modifier = Modifier.fillMaxSize()) {
@@ -40,7 +42,7 @@ private class ListDetailScene(
                 listEntry.Content()
             }
             Box(modifier = Modifier.weight(.6f)) {
-                detailEntry.Content()
+                detailEntry?.Content() ?: listEntry.metadata[ListKey]!!.invoke()
             }
         }
     }
@@ -66,9 +68,16 @@ class ListDetailStrategy(private val windowSizeClass: WindowSizeClass) : SceneSt
 
         val detailEntry =
             entries.lastOrNull()?.takeIf { entry -> entry.metadata.contains(DetailKey) }
-                ?: return null
 
-        val listEntry = entries.findLast { entry -> entry.metadata.contains(ListKey) }
+        val indexToLookListKeyAt = if (detailEntry != null) {
+            entries.size - 2
+        } else {
+            (entries.size - 1).coerceAtLeast(0)
+        }
+
+        val listEntry = entries
+            .getOrNull(indexToLookListKeyAt)
+            ?.takeIf { entry -> entry.metadata.contains(ListKey) }
             ?: return null
 
         return ListDetailScene(
@@ -79,7 +88,6 @@ class ListDetailStrategy(private val windowSizeClass: WindowSizeClass) : SceneSt
         )
     }
 
-
-    object ListKey : NavMetadataKey<Boolean>
+    object ListKey : NavMetadataKey<@Composable () -> Unit>
     object DetailKey : NavMetadataKey<Boolean>
 }
