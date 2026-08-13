@@ -1,5 +1,7 @@
 package okik.tech.fullstack
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +23,7 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,7 +51,6 @@ import okik.tech.fullstack.navigation.TodayDetail
 import okik.tech.fullstack.navigation.TodayHome
 import okik.tech.fullstack.navigation.rememberExitThroughHomeAppNavState
 import okik.tech.fullstack.ui.ApodViewModel
-import okik.tech.fullstack.ui.TopLevelRoutes
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -186,31 +188,98 @@ fun App(
 
             val entries = entryProvider {
                 entry<HomeList> {
-
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Button(onClick = {
+                            navigator.navigate(HomeApodDetail(null))
+                        }) {
+                            Text("To Apod")
+                        }
+                    }
                 }
 
                 entry<HomeApodDetail> {
-
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Button(onClick = {
+                            navigator.navBack()
+                        }) {
+                            Text("Apod detail - bac")
+                        }
+                    }
                 }
 
                 entry<TodayHome> {
-
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Button(onClick = {
+                            navigator.navigate(TodayDetail(null))
+                        }) {
+                            Text("To TOday detail")
+                        }
+                    }
                 }
 
                 entry<TodayDetail> {
-
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Button(onClick = {
+                            navigator.navBack()
+                        }) {
+                            Text("Back to today home")
+                        }
+                    }
                 }
 
                 entry<SearchHome> {
-
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Button(onClick = {
+                            navigator.navigate(SearchDetail(null))
+                        }) {
+                            Text("To Search Detail")
+                        }
+                    }
                 }
 
                 entry<SearchDetail> {
 
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Button(onClick = {
+                            navigator.navBack()
+                        }) {
+                            Text("to search home")
+                        }
+                    }
                 }
 
                 entry<AboutHome> {
-
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text("About")
+                    }
                 }
             }
 
