@@ -209,8 +209,7 @@ fun App(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Button(onClick = {
-                                HomeApodDetail.apod = null
-                                navigator.navigate(HomeApodDetail)
+                                navigator.navigate(HomeApodDetail(null))
                             }) {
                                 Text("To Apod")
                             }

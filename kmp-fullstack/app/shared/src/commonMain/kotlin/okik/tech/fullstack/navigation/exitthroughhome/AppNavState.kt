@@ -15,6 +15,7 @@ import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.savedstate.serialization.SavedStateConfiguration
+import io.ktor.util.reflect.instanceOf
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -33,8 +34,7 @@ sealed interface Home: NavKey
 object HomeList: Home
 
 @Serializable
-object HomeApodDetail: Home {
-    var apod: Apod? = null
+class HomeApodDetail(val apod: Apod?): Home {
 }
 
 @Serializable
@@ -194,7 +194,9 @@ class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
                 .firstOrNull { stack ->  stack.key == state.topLevelStack.lastOrNull() }!!
                 .nestedStack
 
-//            nestedStack.remove(key)
+            if (currentNestedStack.last().instanceOf(key::class))
+                currentNestedStack.removeLastOrNull()
+
             currentNestedStack.add(key)
         }
 
