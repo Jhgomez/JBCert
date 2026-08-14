@@ -70,6 +70,9 @@ import okik.tech.fullstack.navigation.exitthroughhome.TodayHome
 import okik.tech.fullstack.navigation.exitthroughhome.rememberExitThroughHomeAppNavState
 import okik.tech.fullstack.ui.ApodViewModel
 import okik.tech.fullstack.ui.adaptive.scenedecorators.rememberDecoratorStrategy
+import okik.tech.fullstack.ui.adaptive.sceneresolution.detailPane
+import okik.tech.fullstack.ui.adaptive.sceneresolution.listPane
+import okik.tech.fullstack.ui.adaptive.sceneresolution.rememberListDetailStrategy
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -118,38 +121,38 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
             val navigator = remember { ExitThroughHomeNavigator(backStackState) }
 
             // my own list-detail strategy
-            // val listDetailStrategy = rememberListDetailStrategy()
+             val listDetailStrategy = rememberListDetailStrategy()
 
             // cmp built-in layout strategies, demonstrated here
             // https://github.com/terrakok/nav3-recipes/blob/master/sharedUI/src/commonMain/kotlin/com/example/nav3recipes/material/listdetail/MaterialListDetailActivity.kt
-            val windowAdaptiveInfo = currentWindowAdaptiveInfoV2()
-            val directive = remember(windowAdaptiveInfo) {
-                calculatePaneScaffoldDirective(windowAdaptiveInfo)
-                    .copy(horizontalPartitionSpacerSize = 0.dp)
-            }
-            val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>(
-                directive = directive,
-                paneExpansionDragHandle = { state ->
-                    val interactionSource = remember { MutableInteractionSource() }
-
-                    VerticalDragHandle(
-                        modifier =
-                            Modifier.paneExpansionDraggable(
-                                state,
-                                LocalMinimumInteractiveComponentSize.current,
-                                interactionSource
-                            ),
-                        interactionSource = interactionSource
-                    )
-                },
-                paneExpansionState = rememberPaneExpansionState(
-//                anchors = listOf(
-//                    PaneExpansionAnchor.Proportion(0.25f),
-//                    PaneExpansionAnchor.Proportion(0.5f),
-//                    PaneExpansionAnchor.Proportion(0.75f),
+//            val windowAdaptiveInfo = currentWindowAdaptiveInfoV2()
+//            val directive = remember(windowAdaptiveInfo) {
+//                calculatePaneScaffoldDirective(windowAdaptiveInfo)
+//                    .copy(horizontalPartitionSpacerSize = 0.dp)
+//            }
+//            val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>(
+//                directive = directive,
+//                paneExpansionDragHandle = { state ->
+//                    val interactionSource = remember { MutableInteractionSource() }
+//
+//                    VerticalDragHandle(
+//                        modifier =
+//                            Modifier.paneExpansionDraggable(
+//                                state,
+//                                LocalMinimumInteractiveComponentSize.current,
+//                                interactionSource
+//                            ),
+//                        interactionSource = interactionSource
+//                    )
+//                },
+//                paneExpansionState = rememberPaneExpansionState(
+////                anchors = listOf(
+////                    PaneExpansionAnchor.Proportion(0.25f),
+////                    PaneExpansionAnchor.Proportion(0.5f),
+////                    PaneExpansionAnchor.Proportion(0.75f),
+////                )
 //                )
-                )
-            )
+//            )
 
             val decoratorStrategy = rememberDecoratorStrategy(
                 sharedTransitionScope = this,
@@ -182,8 +185,8 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
             val entries = remember {
                 entryProvider {
                     entry<HomeList>(
-                        metadata = ListDetailSceneStrategy.listPane(
-                            detailPlaceholder = {
+                        metadata = listPane(
+                            placeHolder = {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
                                     verticalArrangement = Arrangement.Center,
@@ -208,7 +211,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                     }
 
                     entry<HomeApodDetail>(
-                        metadata = ListDetailSceneStrategy.detailPane()
+                        metadata = detailPane()
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
@@ -294,7 +297,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 
             NavDisplay(
                 entries = backStackState.decorateAndReturnNavEntries(entries),
-//                sceneStrategies = listOf(listDetailStrategy),
+                sceneStrategies = listOf(listDetailStrategy),
                 sceneDecoratorStrategies = listOf(decoratorStrategy),
                 sharedTransitionScope = this,
                 onBack = navigator::goBack
