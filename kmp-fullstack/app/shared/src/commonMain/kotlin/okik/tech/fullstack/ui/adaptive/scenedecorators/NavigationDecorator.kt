@@ -34,9 +34,10 @@ class NavigationDecoratorScene(
     private val navRail: @Composable (() -> Unit),
     private val topBar: @Composable (() -> Unit),
     private val navIcon: @Composable (() -> Unit),
-    private var windowSizeClass: State<WindowSizeClass>
+    private val windowSizeClass: State<WindowSizeClass>
 ) : Scene<NavKey> by scene {
     override val key = scene::class to scene.key
+
 
     override val content = @Composable {
         val animatedContentScope = LocalNavAnimatedContentScope.current
@@ -45,48 +46,76 @@ class NavigationDecoratorScene(
 
         with(sharedTransitionScope) {
 
-            if (windowSizeClass.value.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
-                Row(Modifier.fillMaxSize()) {
-//                    Box(
-//                        modifier = Modifier
-////                            .cacheSize(!isMovableContentCaller)
-//                            .sharedElement(
-//                                rememberSharedContentState("nav-rail"),
-//                                animatedContentScope
-//                            )
-//                    ) {
-//                        if (isMovableContentCaller) {
-//                            navRail()
-//                        }
-//                    }
-                    Box(modifier = Modifier.weight(1f)) {
-                        scene.content()
+            when {
+                windowSizeClass.value
+                    .isWidthAtLeastBreakpoint(
+                        WindowSizeClass.WIDTH_DP_LARGE_LOWER_BOUND
+                    ) -> {
+                        Row(Modifier.fillMaxSize()) {
+                            Box(
+                                modifier = Modifier
+                                    //                            .cacheSize(!isMovableContentCaller)
+                                    .sharedElement(
+                                        rememberSharedContentState("nav-rail-expanded"),
+                                        animatedContentScope
+                                    )
+                            ) {
+                                if (isMovableContentCaller) {
+                                    navRail()
+                                }
+                            }
+                            Box(modifier = Modifier.weight(1f)) {
+                                scene.content()
+                            }
+                        }
                     }
-                }
-            } else {
-                Column(Modifier.fillMaxSize()) {
-                    AnimatedVisibility(
-                        visible = enableBackNavigation.value,
-                        enter = fadeIn() + expandVertically(),
-                        exit = shrinkVertically() + fadeOut()
-                    ) {
-                        topBar()
+                windowSizeClass.value
+                    .isWidthAtLeastBreakpoint(
+                        WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
+                    ) -> {
+                        Row(Modifier.fillMaxSize()) {
+                            Box(
+                                modifier = Modifier
+        //                            .cacheSize(!isMovableContentCaller)
+                                    .sharedElement(
+                                        rememberSharedContentState("nav-rail"),
+                                        animatedContentScope
+                                    )
+                            ) {
+                                if (isMovableContentCaller) {
+                                    navRail()
+                                }
+                            }
+                            Box(modifier = Modifier.weight(1f)) {
+                                scene.content()
+                            }
+                        }
                     }
+                else -> {
+                    Column(Modifier.fillMaxSize()) {
+                        AnimatedVisibility(
+                            visible = enableBackNavigation.value,
+                            enter = fadeIn() + expandVertically(),
+                            exit = shrinkVertically() + fadeOut()
+                        ) {
+                            topBar()
+                        }
 
-                    Box(modifier = Modifier.weight(1f)) {
-                        scene.content()
-                    }
+                        Box(modifier = Modifier.weight(1f)) {
+                            scene.content()
+                        }
 
-                    Box(
-                        modifier = Modifier
-                            .cacheSize(!isMovableContentCaller)
-                            .sharedElement(
-                                rememberSharedContentState("nav-bar"),
-                                animatedContentScope
-                            )
-                    ) {
-                        if (isMovableContentCaller) {
-                            navBar()
+                        Box(
+                            modifier = Modifier
+                                .cacheSize(!isMovableContentCaller)
+                                .sharedElement(
+                                    rememberSharedContentState("nav-bar"),
+                                    animatedContentScope
+                                )
+                        ) {
+                            if (isMovableContentCaller) {
+                                navBar()
+                            }
                         }
                     }
                 }

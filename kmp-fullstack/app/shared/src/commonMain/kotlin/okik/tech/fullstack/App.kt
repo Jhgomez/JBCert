@@ -98,7 +98,7 @@ private enum class TopLevelRoute(
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 @Preview
-fun Top(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
+fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 
 
     MaterialTheme {
