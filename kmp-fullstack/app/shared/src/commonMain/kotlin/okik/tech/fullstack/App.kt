@@ -21,6 +21,7 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.WideNavigationRail
 import androidx.compose.material3.WideNavigationRailItem
+import androidx.compose.material3.WideNavigationRailState
 import androidx.compose.material3.WideNavigationRailValue
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
@@ -143,6 +144,18 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                 )
             )
 
+            val navRailState = rememberWideNavigationRailState()
+
+            LaunchedEffect(windowAdaptiveInfo) {
+                navRailState.snapTo(
+                    if (windowAdaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_LARGE_LOWER_BOUND)) {
+                        WideNavigationRailValue.Expanded
+                    } else {
+                        WideNavigationRailValue.Collapsed
+                    }
+                )
+            }
+
             val decoratorStrategy = rememberDecoratorStrategy(
                 sharedTransitionScope = this,
                 enableBackNavigation = backStackState.shouldShowTopBar,
@@ -160,7 +173,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                         navigate = { navKey ->
                             navigator.navigate(navKey)
                         },
-                        windowSizeClass = windowAdaptiveInfo.windowSizeClass
+                        navRailState = navRailState
                     )
                 },
                 topBar = {
@@ -365,21 +378,8 @@ private fun BottomNavBar(
 fun NavRail(
     currentKey: NavKey?,
     navigate: (NavKey) -> Unit,
-    windowSizeClass: WindowSizeClass
+    navRailState: WideNavigationRailState
 ) {
-    val sizeClass = rememberUpdatedState(windowSizeClass)
-
-    val navRailState = rememberWideNavigationRailState()
-
-    LaunchedEffect(windowSizeClass) {
-        navRailState.snapTo(
-            if (sizeClass.value.isWidthAtLeastBreakpoint(WIDTH_DP_LARGE_LOWER_BOUND)) {
-                WideNavigationRailValue.Expanded
-            } else {
-                WideNavigationRailValue.Collapsed
-            }
-        )
-    }
 
     WideNavigationRail(
         state = navRailState
@@ -401,7 +401,7 @@ fun NavRail(
                     Text(stringResource(topLevelRoute.description))
                 },
 //                colors = MaterialTheme.colorScheme.navigationRailItemColors,
-                railExpanded = sizeClass.value.isWidthAtLeastBreakpoint(WIDTH_DP_LARGE_LOWER_BOUND)
+                railExpanded = navRailState.currentValue == WideNavigationRailValue.Expanded
             )
         }
     }
