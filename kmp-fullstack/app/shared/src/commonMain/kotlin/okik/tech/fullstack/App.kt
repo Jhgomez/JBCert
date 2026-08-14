@@ -400,7 +400,7 @@ fun NavRail(
                 label = {
                     Text(stringResource(topLevelRoute.description))
                 },
-//                colors = MaterialTheme.colorScheme.navigationRailItemColors,
+                colors = MaterialTheme.colorScheme.navigationRailItemColors,
                 railExpanded = navRailState.currentValue == WideNavigationRailValue.Expanded
             )
         }
