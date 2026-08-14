@@ -158,7 +158,13 @@ fun Top(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                     )
                 },
                 navRail = {
-
+                    NavRail(
+                        currentKey = backStackState.topLevelStack.lastOrNull(),
+                        navigate = { navKey ->
+                            navigator.navigate(navKey)
+                        },
+                        windowSizeClass = windowAdaptiveInfo.windowSizeClass
+                    )
                 },
                 topBar = {
                     TopBar(goBack = navigator::goBack)
