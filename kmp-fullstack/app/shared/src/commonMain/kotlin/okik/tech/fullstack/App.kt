@@ -357,6 +357,53 @@ private fun BottomNavBar(
         }
     }
 }
+
+@Composable
+fun NavRail(
+    currentKey: NavKey?,
+    navigate: (NavKey) -> Unit,
+    windowSizeClass: WindowSizeClass
+) {
+    val sizeClass = rememberUpdatedState(windowSizeClass)
+
+    val navRailState = rememberWideNavigationRailState()
+
+    LaunchedEffect(windowSizeClass) {
+        navRailState.snapTo(
+            if (sizeClass.value.isWidthAtLeastBreakpoint(WIDTH_DP_LARGE_LOWER_BOUND)) {
+                WideNavigationRailValue.Expanded
+            } else {
+                WideNavigationRailValue.Collapsed
+            }
+        )
+    }
+
+    WideNavigationRail(
+        state = navRailState
+    ) {
+        TopLevelRoute.entries.forEach { topLevelRoute ->
+
+            WideNavigationRailItem(
+                selected = topLevelRoute.homeKey == currentKey,
+                onClick = {
+                    navigate(topLevelRoute.homeKey)
+                },
+                icon = {
+                    Icon(
+                        imageVector = vectorResource(topLevelRoute.icon),
+                        contentDescription = null
+                    )
+                },
+                label = {
+                    Text(stringResource(topLevelRoute.description))
+                },
+//                colors = MaterialTheme.colorScheme.navigationRailItemColors,
+                railExpanded = sizeClass.value.isWidthAtLeastBreakpoint(WIDTH_DP_LARGE_LOWER_BOUND)
+            )
+        }
+    }
+}
+
 private var cachedNavRailItemColors: NavigationItemColors? = null
 
 val ColorScheme.navigationRailItemColors: NavigationItemColors
