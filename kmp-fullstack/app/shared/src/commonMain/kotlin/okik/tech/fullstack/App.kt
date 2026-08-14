@@ -20,6 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.WideNavigationRail
+import androidx.compose.material3.WideNavigationRailColors
 import androidx.compose.material3.WideNavigationRailItem
 import androidx.compose.material3.WideNavigationRailState
 import androidx.compose.material3.WideNavigationRailValue
@@ -382,7 +383,8 @@ fun NavRail(
 ) {
 
     WideNavigationRail(
-        state = navRailState
+        state = navRailState,
+        colors = MaterialTheme.colorScheme.navigationRailColors
     ) {
         TopLevelRoute.entries.forEach { topLevelRoute ->
 
@@ -406,6 +408,19 @@ fun NavRail(
         }
     }
 }
+
+private var cachedNavRailColor: WideNavigationRailColors? = null
+
+val ColorScheme.navigationRailColors: WideNavigationRailColors
+    @Composable
+    get() = cachedNavRailColor ?:
+    WideNavigationRailColors(
+        containerColor = primary,
+        contentColor = Color.White,
+        modalContainerColor = primary,
+        modalScrimColor = Color.LightGray,
+        modalContentColor = Color.White
+    )
 
 private var cachedNavRailItemColors: NavigationItemColors? = null
 
