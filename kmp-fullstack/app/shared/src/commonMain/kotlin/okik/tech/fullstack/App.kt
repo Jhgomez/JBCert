@@ -2,6 +2,7 @@ package okik.tech.fullstack
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -24,6 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -150,7 +153,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 
             val decoratorStrategy = rememberDecoratorStrategy(
                 sharedTransitionScope = this,
-                enableBackNavigation = backStackState.shouldShowTopBar.value,
+                enableBackNavigation = backStackState.shouldShowTopBar,
                 navBar = {
                     BottomNavBar(
                         currentKey = backStackState.topLevelStack.lastOrNull(),
@@ -173,7 +176,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
-                },
+                }
             )
 
             val entries = remember {
@@ -291,8 +294,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 
             NavDisplay(
                 entries = backStackState.decorateAndReturnNavEntries(entries),
-                modifier = Modifier.fillMaxSize(),
-                sceneStrategies = listOf(listDetailStrategy),
+//                sceneStrategies = listOf(listDetailStrategy),
                 sceneDecoratorStrategies = listOf(decoratorStrategy),
                 sharedTransitionScope = this,
                 onBack = navigator::goBack
@@ -328,14 +330,6 @@ private fun AppBar(goBack: () -> Unit) {
             }
         }
     )
-
-//    AnimatedVisibility(
-//        visible = backStackState.shouldShowTopBar.value,
-//        enter = fadeIn() + expandVertically(),
-//        exit = shrinkVertically() + fadeOut()
-//    ) {
-//
-//    }
 }
 
 @Composable
