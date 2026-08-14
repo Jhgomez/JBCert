@@ -11,10 +11,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
@@ -30,13 +30,13 @@ import okik.tech.fullstack.ui.adaptive.cacheSize
 
 class NavigationDecoratorScene(
     private val scene: Scene<NavKey>,
-    private val windowSizeClass: WindowSizeClass,
     private val sharedTransitionScope: SharedTransitionScope,
-    private val enableBackNavigation: MutableState<Boolean>,
-    private val navBar: @Composable () -> Unit,
-    private val navRail: @Composable () -> Unit,
-    private val topBar:  @Composable () -> Unit,
-    private val navIcon:  @Composable () -> Unit
+    private val enableBackNavigation: State<Boolean>,
+    private val navBar: @Composable (() -> Unit),
+    private val navRail: @Composable (() -> Unit),
+    private val topBar: @Composable (() -> Unit),
+    private val navIcon: @Composable (() -> Unit),
+    private var windowSizeClass: State<WindowSizeClass>
 ) : Scene<NavKey> by scene {
     override val key = scene::class to scene.key
 
@@ -46,7 +46,8 @@ class NavigationDecoratorScene(
             animatedContentScope.transition.targetState == EnterExitState.Visible
 
         with(sharedTransitionScope) {
-            if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
+
+            if (windowSizeClass.value.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
                 Row(Modifier.fillMaxSize()) {
 //                    Box(
 //                        modifier = Modifier
@@ -99,23 +100,23 @@ class NavigationDecoratorScene(
 @Composable
 fun rememberDecoratorStrategy(
     sharedTransitionScope: SharedTransitionScope,
-    enableBackNavigation: MutableState<Boolean>,
+    enableBackNavigation: State<Boolean>,
     navBar: @Composable () -> Unit,
     navRail: @Composable () -> Unit,
     topBar:  @Composable () -> Unit,
     navIcon:  @Composable () -> Unit,
-    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass,
+    windowSizeClass: WindowSizeClass,
 ): DecoratorStrategy {
-
+    val currentProvider = rememberUpdatedState(windowSizeClass)
     val currentNavBar by rememberUpdatedState(navBar)
     val currentNavRail by rememberUpdatedState(navRail)
 
     val movableNavBar = remember { movableContentOf { currentNavBar() } }
     val movableNavRail = remember { movableContentOf { currentNavRail() } }
 
-    return remember(windowSizeClass, sharedTransitionScope) {
+    return remember(sharedTransitionScope) {
         DecoratorStrategy(
-            windowSizeClass = windowSizeClass,
+            windowSizeClassProvider = currentProvider,
             sharedTransitionScope = sharedTransitionScope,
             navBar = movableNavBar,
             navRail = movableNavRail,
@@ -127,20 +128,20 @@ fun rememberDecoratorStrategy(
 }
 
 class DecoratorStrategy(
-    private val windowSizeClass: WindowSizeClass,
     private val sharedTransitionScope: SharedTransitionScope,
-    private val enableBackNavigation: MutableState<Boolean>,
+    private val enableBackNavigation: State<Boolean>,
     private val navBar: @Composable (() -> Unit),
     private val navRail: @Composable (() -> Unit),
-    private val topBar:  @Composable () -> Unit,
-    private val navIcon:  @Composable () -> Unit
+    private val topBar: @Composable (() -> Unit),
+    private val navIcon: @Composable (() -> Unit),
+    private val windowSizeClassProvider: State<WindowSizeClass>
 ): SceneDecoratorStrategy<NavKey> {
     override fun SceneDecoratorStrategyScope<NavKey>.decorateScene(
         scene: Scene<NavKey>
     ): Scene<NavKey> {
-        return NavigationDecoratorScene(
+        val scene = NavigationDecoratorScene(
             scene = scene,
-            windowSizeClass = windowSizeClass,
+            windowSizeClass = windowSizeClassProvider,
             sharedTransitionScope = sharedTransitionScope,
             navBar = navBar,
             navRail = navRail,
@@ -148,6 +149,8 @@ class DecoratorStrategy(
             topBar = topBar,
             navIcon = navIcon,
         )
+
+        return scene
     }
 
 }
