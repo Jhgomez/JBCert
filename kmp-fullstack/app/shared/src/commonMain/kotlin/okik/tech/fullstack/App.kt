@@ -1,21 +1,11 @@
 package okik.tech.fullstack
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Button
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
@@ -25,19 +15,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.NavigationItemColors
 import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.VerticalDragHandle
+import androidx.compose.material3.WideNavigationRail
+import androidx.compose.material3.WideNavigationRailColors
+import androidx.compose.material3.WideNavigationRailItem
+import androidx.compose.material3.WideNavigationRailValue
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
+import androidx.compose.material3.rememberWideNavigationRailState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_LARGE_LOWER_BOUND
 
 import fullstack.app.shared.generated.resources.Res
 import fullstack.app.shared.generated.resources.about
@@ -59,7 +55,6 @@ import fullstack.app.shared.generated.resources.refresh
 import fullstack.app.shared.generated.resources.search
 import fullstack.app.shared.generated.resources.today
 import okik.tech.fullstack.navigation.exitthroughhome.AboutHome
-import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeAppNavState
 import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
 import okik.tech.fullstack.navigation.exitthroughhome.HomeApodDetail
 import okik.tech.fullstack.navigation.exitthroughhome.HomeList
@@ -106,7 +101,7 @@ private enum class TopLevelRoute(
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 @Preview
-fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
+fun Top(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 
 
     MaterialTheme {
@@ -166,7 +161,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 
                 },
                 topBar = {
-                    AppBar(goBack = navigator::goBack)
+                    TopBar(goBack = navigator::goBack)
                 },
                 navIcon = {
                     IconButton(onClick = navigator::goBack) {
@@ -305,7 +300,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 }
 
 @Composable
-private fun AppBar(goBack: () -> Unit) {
+private fun TopBar(goBack: () -> Unit) {
     TopAppBar(
         title = {
             Text(stringResource(Res.string.gallery))
@@ -339,7 +334,6 @@ private fun BottomNavBar(
     navigate: (NavKey) -> Unit
 ) {
     NavigationBar(
-        modifier = Modifier.fillMaxWidth(),
         containerColor = MaterialTheme.colorScheme.primary
     ) {
         TopLevelRoute.entries.forEach { topLevelRoute ->
