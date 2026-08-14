@@ -60,9 +60,9 @@ class NavigationDecoratorScene(
                                         animatedContentScope
                                     )
                             ) {
-                                if (isMovableContentCaller) {
+//                                if (isMovableContentCaller) {
                                     navRail()
-                                }
+//                                }
                             }
                             Box(modifier = Modifier.weight(1f)) {
                                 scene.content()
@@ -82,9 +82,9 @@ class NavigationDecoratorScene(
                                         animatedContentScope
                                     )
                             ) {
-                                if (isMovableContentCaller) {
+//                                if (isMovableContentCaller) {
                                     navRail()
-                                }
+//                                }
                             }
                             Box(modifier = Modifier.weight(1f)) {
                                 scene.content()
@@ -113,9 +113,9 @@ class NavigationDecoratorScene(
                                     animatedContentScope
                                 )
                         ) {
-                            if (isMovableContentCaller) {
+//                            if (isMovableContentCaller) {
                                 navBar()
-                            }
+//                            }
                         }
                     }
                 }
