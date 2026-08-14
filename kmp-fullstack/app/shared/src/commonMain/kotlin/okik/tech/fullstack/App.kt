@@ -357,6 +357,22 @@ private fun BottomNavBar(
         }
     }
 }
+private var cachedNavRailItemColors: NavigationItemColors? = null
+
+val ColorScheme.navigationRailItemColors: NavigationItemColors
+    @Composable
+    get() =  cachedNavRailItemColors ?:
+    NavigationItemColors(
+        selectedIconColor = Color.White,
+        selectedTextColor = Color.White,
+        selectedIndicatorColor = onPrimaryContainer,
+        unselectedIconColor = Color.LightGray,
+        unselectedTextColor = Color.LightGray,
+        disabledIconColor = Color.DarkGray,
+        disabledTextColor = Color.DarkGray
+    ).also {
+        cachedNavRailItemColors = it
+    }
 
 private var cachedNavItemColors: NavigationBarItemColors? = null
 
