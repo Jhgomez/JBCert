@@ -36,15 +36,6 @@ object TodayHome: Today
 @Serializable
 class TodayDetail(val apod: Apod?): Today
 
-@Serializable
-sealed interface Search: NavKey
-
-@Serializable
-object SearchHome: Search
-
-@Serializable
-class SearchDetail(val apod: Apod?): Search
-
 
 private val homeSerializerConfig = SerializersModule {
     polymorphic(NavKey::class) {
