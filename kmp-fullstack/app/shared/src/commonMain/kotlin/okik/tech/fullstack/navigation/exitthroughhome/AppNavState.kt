@@ -55,12 +55,6 @@ object SearchHome: Search
 @Serializable
 class SearchDetail(val apod: Apod?): Search
 
-@Serializable
-sealed interface About: NavKey
-
-@Serializable
-object AboutHome: About
-
 
 private val homeSerializerConfig = SerializersModule {
     polymorphic(NavKey::class) {
