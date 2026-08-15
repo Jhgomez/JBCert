@@ -86,6 +86,7 @@ kotlin {
 
             implementation(libs.coil.compose)
             implementation(libs.coil.ktor)
+            implementation(libs.coil.cache.control)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
