@@ -54,6 +54,7 @@ import fullstack.app.shared.generated.resources.refresh
 import fullstack.app.shared.generated.resources.search
 import fullstack.app.shared.generated.resources.today
 import okik.tech.fullstack.feature.about.impl.aboutEntry
+import okik.tech.fullstack.feature.home.api.HomeList
 import okik.tech.fullstack.navigation.exitthroughhome.AboutHome
 import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
 import okik.tech.fullstack.navigation.exitthroughhome.HomeApodDetail
@@ -193,51 +194,6 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 
             val entries = remember {
                 entryProvider {
-                    entry<HomeList>(
-                        metadata = ListDetailSceneStrategy.listPane(
-                            sceneKey = HomeList,
-                            detailPlaceholder = {
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text("My PlaceHolder")
-                                }
-                            }
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Button(onClick = {
-                                navigator.navigate(HomeApodDetail(null))
-                            }) {
-                                Text("To Apod")
-                            }
-                        }
-                    }
-
-                    entry<HomeApodDetail>(
-                        metadata = ListDetailSceneStrategy.detailPane(
-                            sceneKey = HomeList
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Button(onClick = {
-                                navigator.goBack()
-                            }) {
-                                Text("Apod detail - bac")
-                            }
-                        }
-                    }
-
                     entry<TodayHome>(
                         metadata = ListDetailSceneStrategy.listPane(
                             sceneKey = TodayHome,
