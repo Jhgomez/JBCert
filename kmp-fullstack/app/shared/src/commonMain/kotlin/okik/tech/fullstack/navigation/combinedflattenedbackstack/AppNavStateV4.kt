@@ -15,10 +15,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import okik.tech.fullstack.navigation.exitthroughhome.AboutHome
-import okik.tech.fullstack.navigation.exitthroughhome.HomeList
-import okik.tech.fullstack.navigation.exitthroughhome.SearchHome
-import okik.tech.fullstack.navigation.exitthroughhome.TodayHome
+import okik.tech.fullstack.feature.about.api.AboutHome
+import okik.tech.fullstack.feature.home.api.HomeList
+import okik.tech.fullstack.feature.search.api.SearchHome
+import okik.tech.fullstack.feature.today.api.TodayHome
 import okik.tech.fullstack.navigation.exitthroughhome.configs
 
 
