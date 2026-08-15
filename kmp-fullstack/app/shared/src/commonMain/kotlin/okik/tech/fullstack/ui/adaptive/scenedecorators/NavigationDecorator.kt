@@ -71,8 +71,8 @@ class NavigationDecoratorScene(
 
                                 this@Row.AnimatedVisibility(
                                     visible = enableBackNavigation.value,
-                                    enter = fadeIn() + expandVertically(),
-                                    exit = shrinkVertically() + fadeOut()
+                                    enter = fadeIn(),
+                                    exit = fadeOut()
                                 ) {
                                     navIcon()
                                 }
