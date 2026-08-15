@@ -101,8 +101,6 @@ private enum class TopLevelRoute(
 @Composable
 @Preview
 fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
-
-
     MaterialTheme {
         SharedTransitionLayout {
             val backStackState = rememberExitThroughHomeAppNavState(
@@ -236,7 +234,19 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                         }
                     }
 
-                    entry<TodayHome> {
+                    entry<TodayHome>(
+                        metadata = ListDetailSceneStrategy.listPane(
+                            detailPlaceholder = {
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text("My PlaceHolder")
+                                }
+                            }
+                        )
+                    ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -250,7 +260,9 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                         }
                     }
 
-                    entry<TodayDetail> {
+                    entry<TodayDetail>(
+                        metadata = ListDetailSceneStrategy.detailPane()
+                    ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -264,7 +276,19 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                         }
                     }
 
-                    entry<SearchHome> {
+                    entry<SearchHome>(
+                        metadata = ListDetailSceneStrategy.listPane(
+                            detailPlaceholder = {
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text("My PlaceHolder")
+                                }
+                            }
+                        )
+                    ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -278,7 +302,9 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                         }
                     }
 
-                    entry<SearchDetail> {
+                    entry<SearchDetail>(
+                        metadata = ListDetailSceneStrategy.detailPane()
+                    ) {
 
                         Column(
                             modifier = Modifier.fillMaxSize(),
