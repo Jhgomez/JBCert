@@ -28,16 +28,6 @@ class Stack(
 )
 
 @Serializable
-sealed interface Home: NavKey
-
-@Serializable
-object HomeList: Home
-
-@Serializable
-class HomeApodDetail(val apod: Apod?): Home {
-}
-
-@Serializable
 sealed interface Today: NavKey
 
 @Serializable
