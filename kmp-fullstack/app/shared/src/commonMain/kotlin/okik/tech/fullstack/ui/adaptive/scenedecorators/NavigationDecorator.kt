@@ -8,8 +8,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -49,28 +51,6 @@ class NavigationDecoratorScene(
             when {
                 windowSizeClass.value
                     .isWidthAtLeastBreakpoint(
-                        WindowSizeClass.WIDTH_DP_LARGE_LOWER_BOUND
-                    ) -> {
-                        Row(Modifier.fillMaxSize()) {
-                            Box(
-                                modifier = Modifier
-                                    //                            .cacheSize(!isMovableContentCaller)
-                                    .sharedElement(
-                                        rememberSharedContentState("nav-rail-expanded"),
-                                        animatedContentScope
-                                    )
-                            ) {
-//                                if (isMovableContentCaller) {
-                                    navRail()
-//                                }
-                            }
-                            Box(modifier = Modifier.weight(1f)) {
-                                scene.content()
-                            }
-                        }
-                    }
-                windowSizeClass.value
-                    .isWidthAtLeastBreakpoint(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
                     ) -> {
                         Row(Modifier.fillMaxSize()) {
@@ -88,6 +68,14 @@ class NavigationDecoratorScene(
                             }
                             Box(modifier = Modifier.weight(1f)) {
                                 scene.content()
+
+                                this@Row.AnimatedVisibility(
+                                    visible = enableBackNavigation.value,
+                                    enter = fadeIn() + expandVertically(),
+                                    exit = shrinkVertically() + fadeOut()
+                                ) {
+                                    navIcon()
+                                }
                             }
                         }
                     }
