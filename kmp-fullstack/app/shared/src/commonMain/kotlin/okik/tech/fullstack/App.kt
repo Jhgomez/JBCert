@@ -185,7 +185,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.arrow_back),
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 },
@@ -477,3 +477,52 @@ fun FullStackApp() {
 //    movableContentOf {  }
 //    NavMetadataKey
 }
+
+val Background = Color(red = 254, green = 247, blue = 255)
+val Error = Color(red = 179, green = 38, blue = 30)
+val ErrorContainer = Color(red = 249, green = 222, blue = 220)
+val InverseOnSurface = Color(red = 245, green = 239, blue = 247)
+val InversePrimary = Color(red = 208, green = 188, blue = 255)
+val InverseSurface = Color(red = 50, green = 47, blue = 53)
+val OnBackground = Color(red = 29, green = 27, blue = 32)
+val OnError = Color(red = 255, green = 255, blue = 255)
+val OnErrorContainer = Color(red = 65, green = 14, blue = 11)
+val OnPrimary = Color(red = 255, green = 255, blue = 255)
+val OnPrimaryContainer = Color(red = 33, green = 0, blue = 93)
+val OnPrimaryFixed = Color(red = 33, green = 0, blue = 93)
+val OnPrimaryFixedVariant = Color(red = 79, green = 55, blue = 139)
+val OnSecondary = Color(red = 255, green = 255, blue = 255)
+val OnSecondaryContainer = Color(red = 29, green = 25, blue = 43)
+val OnSecondaryFixed = Color(red = 29, green = 25, blue = 43)
+val OnSecondaryFixedVariant = Color(red = 74, green = 68, blue = 88)
+val OnSurface = Color(red = 29, green = 27, blue = 32)
+val OnSurfaceVariant = Color(red = 73, green = 69, blue = 79)
+val OnTertiary = Color(red = 255, green = 255, blue = 255)
+val OnTertiaryContainer = Color(red = 49, green = 17, blue = 29)
+val OnTertiaryFixed = Color(red = 49, green = 17, blue = 29)
+val OnTertiaryFixedVariant = Color(red = 99, green = 59, blue = 72)
+val Outline = Color(red = 121, green = 116, blue = 126)
+val OutlineVariant = Color(red = 202, green = 196, blue = 208)
+val Primary = Color(red = 103, green = 80, blue = 164)
+val PrimaryContainer = Color(red = 234, green = 221, blue = 255)
+val PrimaryFixed = Color(red = 234, green = 221, blue = 255)
+val PrimaryFixedDim = Color(red = 208, green = 188, blue = 255)
+val Scrim = Color(red = 0, green = 0, blue = 0)
+val Secondary = Color(red = 98, green = 91, blue = 113)
+val SecondaryContainer = Color(red = 232, green = 222, blue = 248)
+val SecondaryFixed = Color(red = 232, green = 222, blue = 248)
+val SecondaryFixedDim = Color(red = 204, green = 194, blue = 220)
+val Surface = Color(red = 254, green = 247, blue = 255)
+val SurfaceBright = Color(red = 254, green = 247, blue = 255)
+val SurfaceContainer = Color(red = 243, green = 237, blue = 247)
+val SurfaceContainerHigh = Color(red = 236, green = 230, blue = 240)
+val SurfaceContainerHighest = Color(red = 230, green = 224, blue = 233)
+val SurfaceContainerLow = Color(red = 247, green = 242, blue = 250)
+val SurfaceContainerLowest = Color(red = 255, green = 255, blue = 255)
+val SurfaceDim = Color(red = 222, green = 216, blue = 225)
+val SurfaceTint = Primary
+val SurfaceVariant = Color(red = 231, green = 224, blue = 236)
+val Tertiary = Color(red = 125, green = 82, blue = 96)
+val TertiaryContainer = Color(red = 255, green = 216, blue = 228)
+val TertiaryFixed = Color(red = 255, green = 216, blue = 228)
+val TertiaryFixedDim = Color(red = 239, green = 184, blue = 200)
