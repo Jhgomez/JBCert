@@ -2,10 +2,6 @@ package okik.tech.fullstack
 
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,11 +24,9 @@ import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
-import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.material3.rememberWideNavigationRailState
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,67 +34,25 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_LARGE_LOWER_BOUND
 
 import fullstack.app.shared.generated.resources.Res
-import fullstack.app.shared.generated.resources.about
 import fullstack.app.shared.generated.resources.arrow_back
-import fullstack.app.shared.generated.resources.find
 import fullstack.app.shared.generated.resources.gallery
-import fullstack.app.shared.generated.resources.home
-import fullstack.app.shared.generated.resources.info
 import fullstack.app.shared.generated.resources.refresh
-import fullstack.app.shared.generated.resources.search
-import fullstack.app.shared.generated.resources.today
 import okik.tech.fullstack.feature.about.impl.aboutEntry
 import okik.tech.fullstack.feature.home.api.HomeList
 import okik.tech.fullstack.feature.home.impl.homeEntries
 import okik.tech.fullstack.feature.search.impl.searchEntries
 import okik.tech.fullstack.feature.today.impl.todayEntries
-import okik.tech.fullstack.navigation.exitthroughhome.AboutHome
+import okik.tech.fullstack.navigation.TopLevelRoute
 import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
-import okik.tech.fullstack.navigation.exitthroughhome.HomeApodDetail
-import okik.tech.fullstack.navigation.exitthroughhome.HomeList
-import okik.tech.fullstack.navigation.exitthroughhome.SearchDetail
-import okik.tech.fullstack.navigation.exitthroughhome.SearchHome
-import okik.tech.fullstack.navigation.exitthroughhome.TodayDetail
-import okik.tech.fullstack.navigation.exitthroughhome.TodayHome
 import okik.tech.fullstack.navigation.exitthroughhome.rememberExitThroughHomeAppNavState
 import okik.tech.fullstack.ui.ApodViewModel
 import okik.tech.fullstack.ui.adaptive.scenedecorators.rememberDecoratorStrategy
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
-
-private enum class TopLevelRoute(
-    val homeKey: NavKey,
-    val icon: DrawableResource,
-    val description: StringResource
-) {
-    HOME(
-        homeKey = HomeList,
-        icon = Res.drawable.home,
-        description = Res.string.home
-    ),
-    TODAY(
-        homeKey = TodayHome,
-        icon = Res.drawable.today,
-        description = Res.string.today
-    ),
-    FIND(
-        homeKey = SearchHome,
-        icon = Res.drawable.search,
-        description = Res.string.find
-    ),
-    ABOUT(
-        homeKey = AboutHome,
-        icon = Res.drawable.info,
-        description = Res.string.about
-    )
-}
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
