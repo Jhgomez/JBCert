@@ -53,6 +53,7 @@ import fullstack.app.shared.generated.resources.info
 import fullstack.app.shared.generated.resources.refresh
 import fullstack.app.shared.generated.resources.search
 import fullstack.app.shared.generated.resources.today
+import okik.tech.fullstack.feature.about.impl.aboutEntry
 import okik.tech.fullstack.navigation.exitthroughhome.AboutHome
 import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
 import okik.tech.fullstack.navigation.exitthroughhome.HomeApodDetail
@@ -324,15 +325,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                         }
                     }
 
-                    entry<AboutHome> {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text("About")
-                        }
-                    }
+                    aboutEntry()
                 }
             }
 
