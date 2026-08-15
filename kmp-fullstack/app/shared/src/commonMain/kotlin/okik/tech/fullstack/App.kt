@@ -57,6 +57,7 @@ import okik.tech.fullstack.feature.about.impl.aboutEntry
 import okik.tech.fullstack.feature.home.api.HomeList
 import okik.tech.fullstack.feature.home.impl.homeEntries
 import okik.tech.fullstack.feature.search.impl.searchEntries
+import okik.tech.fullstack.feature.today.impl.todayEntries
 import okik.tech.fullstack.navigation.exitthroughhome.AboutHome
 import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
 import okik.tech.fullstack.navigation.exitthroughhome.HomeApodDetail
@@ -198,48 +199,8 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                 entryProvider {
                     homeEntries(navigator)
 
-                    entry<TodayHome>(
-                        metadata = ListDetailSceneStrategy.listPane(
-                            sceneKey = TodayHome,
-                            detailPlaceholder = {
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text("My PlaceHolder")
-                                }
-                            }
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Button(onClick = {
-                                navigator.navigate(TodayDetail(null))
-                            }) {
-                                Text("To TOday detail")
-                            }
-                        }
-                    }
+                    todayEntries(navigator)
 
-                    entry<TodayDetail>(
-                        metadata = ListDetailSceneStrategy.detailPane(sceneKey = TodayHome)
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Button(onClick = {
-                                navigator.goBack()
-                            }) {
-                                Text("Back to today home")
-                            }
-                        }
-                    }
                     searchEntries(navigator)
 
                     aboutEntry()
