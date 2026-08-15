@@ -27,15 +27,6 @@ class Stack(
     val nestedStack: NavBackStack<NavKey>
 )
 
-@Serializable
-sealed interface Today: NavKey
-
-@Serializable
-object TodayHome: Today
-
-@Serializable
-class TodayDetail(val apod: Apod?): Today
-
 
 private val homeSerializerConfig = SerializersModule {
     polymorphic(NavKey::class) {
