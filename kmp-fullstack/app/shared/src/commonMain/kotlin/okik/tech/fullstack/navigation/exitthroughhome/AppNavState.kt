@@ -15,18 +15,21 @@ import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.savedstate.serialization.SavedStateConfiguration
-import io.ktor.util.reflect.instanceOf
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import okik.tech.fullstack.domain.Apod
-
+import okik.tech.fullstack.feature.about.api.About
+import okik.tech.fullstack.feature.about.api.AboutHome
+import okik.tech.fullstack.feature.home.api.Home
+import okik.tech.fullstack.feature.home.api.HomeList
+import okik.tech.fullstack.feature.search.api.Search
+import okik.tech.fullstack.feature.search.api.SearchHome
+import okik.tech.fullstack.feature.today.api.Today
+import okik.tech.fullstack.feature.today.api.TodayHome
 
 class Stack(
     val key: NavKey,
     val nestedStack: NavBackStack<NavKey>
 )
-
 
 private val homeSerializerConfig = SerializersModule {
     polymorphic(NavKey::class) {
