@@ -55,6 +55,7 @@ import fullstack.app.shared.generated.resources.search
 import fullstack.app.shared.generated.resources.today
 import okik.tech.fullstack.feature.about.impl.aboutEntry
 import okik.tech.fullstack.feature.home.api.HomeList
+import okik.tech.fullstack.feature.home.impl.homeEntries
 import okik.tech.fullstack.navigation.exitthroughhome.AboutHome
 import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
 import okik.tech.fullstack.navigation.exitthroughhome.HomeApodDetail
@@ -194,6 +195,8 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 
             val entries = remember {
                 entryProvider {
+                    homeEntries(navigator)
+
                     entry<TodayHome>(
                         metadata = ListDetailSceneStrategy.listPane(
                             sceneKey = TodayHome,
