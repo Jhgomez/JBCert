@@ -18,7 +18,7 @@ import okik.tech.fullstack.feature.search.api.SearchHome
 import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
-fun EntryProviderScope<NavKey>.homeEntries(navigator: ExitThroughHomeNavigator) {
+fun EntryProviderScope<NavKey>.searchEntries(navigator: ExitThroughHomeNavigator) {
     entry<SearchHome>(
         metadata = ListDetailSceneStrategy.listPane(
             sceneKey = SearchHome,
