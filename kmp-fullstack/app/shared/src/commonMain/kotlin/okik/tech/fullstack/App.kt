@@ -194,6 +194,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                 entryProvider {
                     entry<HomeList>(
                         metadata = ListDetailSceneStrategy.listPane(
+                            sceneKey = HomeList,
                             detailPlaceholder = {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
@@ -219,7 +220,9 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                     }
 
                     entry<HomeApodDetail>(
-                        metadata = ListDetailSceneStrategy.detailPane()
+                        metadata = ListDetailSceneStrategy.detailPane(
+                            sceneKey = HomeList
+                        )
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
@@ -236,6 +239,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 
                     entry<TodayHome>(
                         metadata = ListDetailSceneStrategy.listPane(
+                            sceneKey = TodayHome,
                             detailPlaceholder = {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
@@ -261,7 +265,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                     }
 
                     entry<TodayDetail>(
-                        metadata = ListDetailSceneStrategy.detailPane()
+                        metadata = ListDetailSceneStrategy.detailPane(sceneKey = TodayHome)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
@@ -278,6 +282,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
 
                     entry<SearchHome>(
                         metadata = ListDetailSceneStrategy.listPane(
+                            sceneKey = SearchHome,
                             detailPlaceholder = {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
@@ -303,7 +308,7 @@ fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
                     }
 
                     entry<SearchDetail>(
-                        metadata = ListDetailSceneStrategy.detailPane()
+                        metadata = ListDetailSceneStrategy.detailPane(sceneKey = SearchHome)
                     ) {
 
                         Column(
