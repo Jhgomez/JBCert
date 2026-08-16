@@ -173,13 +173,13 @@ class MainViewModel(
     // ============================================================================
 
     private val reposFlow = database.repoQueries.selectAll().asFlow()
-        .distinctUntilChanged()
         .mapToList(Dispatchers.Default)
+        .distinctUntilChanged()
         .map { DatabaseFlow.ReposFlow(it) }
 
     private val newsFlow = database.newsQueries.selectAll().asFlow()
-        .distinctUntilChanged()
         .mapToList(Dispatchers.Default)
+        .distinctUntilChanged()
         .map { DatabaseFlow.NewsFlow(it) }
 
     private val dbFlow = merge(
@@ -283,6 +283,7 @@ class MainViewModel(
     }
 
     suspend fun insertNewsToDB() {
+        var currentShowUpdate = userState.value.showContent
         if (uiState.value.stories == null && uiState.value.topRepos == null ||
             uiState.value.stories != null) {
             userState.update {
@@ -290,7 +291,7 @@ class MainViewModel(
             }
         }
 
-        if (!userState.value.showContent || uiState.value.stories == null) {
+        if (!currentShowUpdate || uiState.value.stories == null) {
             val news = newsApi.getTopStories()
             val newsQueries = database.newsQueries
 
@@ -339,6 +340,8 @@ class MainViewModel(
     }
 
     suspend fun insertTopRepos() {
+        var currentShowUpdate = userState.value.showContent
+
         if (uiState.value.stories == null && uiState.value.topRepos == null ||
             uiState.value.topRepos != null) {
             userState.update {
@@ -346,7 +349,7 @@ class MainViewModel(
             }
         }
 
-        if (!userState.value.showContent || uiState.value.topRepos == null) {
+        if (!currentShowUpdate || uiState.value.topRepos == null) {
             val searchResponse =
                 gitHubApi
                     .query(SearchTopReposQuery())
@@ -398,16 +401,16 @@ class MainViewModel(
 }
 
 sealed interface DatabaseFlow<T> {
-    fun getValues(): List<T>
+    fun getValues(): List<T>?
 
     @JvmInline
-    value class NewsFlow(private val news: List<News>): DatabaseFlow<News> {
-        override fun getValues(): List<News> = news
+    value class NewsFlow(private val news: List<News>?): DatabaseFlow<News> {
+        override fun getValues(): List<News>? = news
     }
 
     @JvmInline
-    value class ReposFlow(private val repos: List<TopRepo>): DatabaseFlow<TopRepo> {
-        override fun getValues(): List<TopRepo> = repos
+    value class ReposFlow(private val repos: List<TopRepo>?): DatabaseFlow<TopRepo> {
+        override fun getValues(): List<TopRepo>? = repos
     }
 }
 
