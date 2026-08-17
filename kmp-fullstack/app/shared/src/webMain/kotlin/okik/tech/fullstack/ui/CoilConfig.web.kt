@@ -15,7 +15,7 @@ import org.jetbrains.compose.resources.DrawableResource
 // to try to recompose as it returns a state to us, but I don't want to go that route no
 // https://kotlinlang.org/docs/multiplatform/compose-multiplatform-resources-usage.html#images
 @Composable
-private actual fun getPlatformCoilDefaultImages(
+actual fun getPlatformCoilDefaultImages(
     defaultError: DrawableResource,
     defaultPlaceholder: DrawableResource,
     defaultFallback: DrawableResource

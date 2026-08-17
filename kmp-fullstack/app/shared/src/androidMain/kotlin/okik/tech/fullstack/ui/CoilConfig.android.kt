@@ -9,7 +9,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.imageResource
 
 @Composable
-private actual fun getPlatformCoilDefaultImages(
+actual fun getPlatformCoilDefaultImages(
     defaultError: DrawableResource,
     defaultPlaceholder: DrawableResource,
     defaultFallback: DrawableResource
