@@ -23,6 +23,42 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.header
 import org.jetbrains.compose.resources.DrawableResource
 
+data class CoilDefaultImages(
+    val defaultError: Image,
+    val defaultPlaceholder: Image,
+    val defaultFallback: Image
+)
+
+val ColorScheme.defaultError: Image
+    get() = ColorImage(onErrorContainer.toArgb())
+
+val ColorScheme.defaultPlaceholder: Image
+    get() = ColorImage(secondary.toArgb())
+
+val ColorScheme.defaultFallback: Image
+    get() = ColorImage(onPrimaryContainer.toArgb())
+
+@Composable
+fun getCoilDefaults(): CoilDefaultImages {
+    val colorScheme = MaterialTheme.colorScheme
+
+    return remember {
+        getPlatformCoilDefaultImages(
+            defaultError = Res.drawable.error,
+            defaultPlaceholder = Res.drawable.placeholder,
+            defaultFallback = Res.drawable.fallback,
+            colorScheme = colorScheme
+        )
+    }
+}
+
+expect private fun getPlatformCoilDefaultImages(
+    defaultError: DrawableResource,
+    defaultPlaceholder: DrawableResource,
+    defaultFallback: DrawableResource,
+    colorScheme: ColorScheme
+): CoilDefaultImages
+
 /**
  * Helps configure a default ImageLoader that all coil images, that don't specify an ImageLoader,
  * will use
