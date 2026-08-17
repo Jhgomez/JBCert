@@ -87,6 +87,9 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.ktor)
             implementation(libs.coil.cache.control)
+
+//            implementation(libs.paging.common)
+            implementation(libs.paging.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
