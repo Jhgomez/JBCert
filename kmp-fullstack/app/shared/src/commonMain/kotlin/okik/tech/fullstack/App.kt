@@ -35,22 +35,13 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_LARGE_LOWER_BOUND
-import coil3.ImageLoader
 import coil3.annotation.ExperimentalCoilApi
-import coil3.compose.setSingletonImageLoaderFactory
-import coil3.memory.MemoryCache
-import coil3.network.cachecontrol.CacheControlCacheStrategy
-import coil3.network.ktor3.KtorNetworkFetcherFactory
-import coil3.request.crossfade
-import coil3.util.DebugLogger
+import coil3.network.NetworkHeaders
 
 import fullstack.app.shared.generated.resources.Res
 import fullstack.app.shared.generated.resources.arrow_back
 import fullstack.app.shared.generated.resources.gallery
 import fullstack.app.shared.generated.resources.refresh
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.request.header
 import okik.tech.fullstack.feature.about.impl.aboutEntry
 import okik.tech.fullstack.feature.home.api.HomeList
 import okik.tech.fullstack.feature.home.impl.homeEntries
@@ -60,6 +51,7 @@ import okik.tech.fullstack.navigation.TopLevelRoute
 import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
 import okik.tech.fullstack.navigation.exitthroughhome.rememberExitThroughHomeAppNavState
 import okik.tech.fullstack.ui.ApodViewModel
+import okik.tech.fullstack.ui.IntiCoilImageLoader
 import okik.tech.fullstack.ui.adaptive.scenedecorators.rememberDecoratorStrategy
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -69,38 +61,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 @Preview
 fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
-
-    // you could also use SingletonImageLoader.setSafe with PlatformContext.INSTANCE or
-    // LocalPlatformContext.current
-    setSingletonImageLoaderFactory { context ->
-        ImageLoader.Builder(context)
-            .memoryCache {
-                MemoryCache.Builder()
-                    .maxSizePercent(context, 0.02)
-                    .build()
-            }
-//            .diskCache {
-//                DiskCache.Builder()
-//                    .directory()
-//                    .maxSizePercent(0.002)
-//                    .build()
-//            }
-            .components {
-                add(KtorNetworkFetcherFactory(
-                    httpClient = {
-                        return@KtorNetworkFetcherFactory HttpClient {
-                            defaultRequest {
-                                header("Cache-Control", "no-cache")
-                            }
-                        }
-                    },
-                    cacheStrategy = { CacheControlCacheStrategy() }
-                ))
-            }
-            .logger(DebugLogger())
-            .crossfade(true)
-            .build()
-    }
+    IntiCoilImageLoader()
 
     MaterialTheme {
         SharedTransitionLayout {

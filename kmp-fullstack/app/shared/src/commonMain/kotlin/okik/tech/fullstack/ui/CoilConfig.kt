@@ -31,13 +31,13 @@ val ColorScheme.defaultError: Image
     get() = ColorImage(onErrorContainer.toArgb())
 
 val ColorScheme.defaultPlaceholder: Image
-    get() = ColorImage(secondary.toArgb())
+    get() = ColorImage(primaryContainer.toArgb())
 
 val ColorScheme.defaultFallback: Image
-    get() = ColorImage(onPrimaryContainer.toArgb())
+    get() = ColorImage(secondaryFixedDim.toArgb())
 
 @Composable
-expect private fun getPlatformCoilDefaultImages(
+expect fun getPlatformCoilDefaultImages(
     defaultError: DrawableResource,
     defaultPlaceholder: DrawableResource,
     defaultFallback: DrawableResource
@@ -84,9 +84,9 @@ fun IntiCoilImageLoader() {
                 ))
             }
             .logger(DebugLogger())
-//            .error(defaultError)
-//            .fallback(defaultFallback)
-//            .placeholder(defaultPlaceholder)
+            .error(defaults.defaultError)
+            .fallback(defaults.defaultFallback)
+            .placeholder(defaults.defaultPlaceholder)
             .crossfade(true)
             .build()
     }
