@@ -15,7 +15,7 @@ sqldelight {
     databases {
         register("FullstackDb") {
             packageName.set("okik.tech.fullstack.db")
-            dialect("app.cash.sqldelight:sqlite-3-44-dialect:2.3.2")
+            dialect("app.cash.sqldelight:sqlite-3-38-dialect:2.3.2")
             generateAsync.set(true)
             treatNullAsUnknownForEquality = true
         }
