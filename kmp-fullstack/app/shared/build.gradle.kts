@@ -11,6 +11,17 @@ plugins {
     alias(libs.plugins.sqldelight)
 }
 
+sqldelight {
+    databases {
+        register("FullstackDb") {
+            packageName.set("okik.tech.fullstack.db")
+            dialect("app.cash.sqldelight:sqlite-3-44-dialect:2.3.2")
+            generateAsync.set(true)
+            treatNullAsUnknownForEquality = true
+        }
+    }
+}
+
 kotlin {
     listOf(
         iosArm64(),
@@ -58,6 +69,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
+            implementation(libs.sqldelight.android.driver)
         }
         commonMain.dependencies {
             api(project(":core"))
@@ -100,6 +112,31 @@ kotlin {
         }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
+//            implementation("app.cash.sqldelight:web-worker-driver:{{ versions.sqldelight }}")
+//            implementation(devNpm("copy-webpack-plugin", "14.0.0"))
+//            implementation(npm("@cashapp/sqldelight-sqljs-worker", "{{ versions.sqldelight }}"))
+//            implementation(npm("sql.js", "1.14.2"))
+            implementation(libs.sqldelight.web.worker)
+            implementation(
+                devNpm(libs.plugins.webpack.plugin.get().pluginId,
+                    libs.versions.webpack.plugin.get())
+            )
+            implementation(
+                npm(
+                    libs.plugins.sql.js.get().pluginId,
+                    libs.versions.sql.js.get())
+            )
+            implementation(
+                npm(
+                    libs.plugins.sqljs.worker.get().pluginId,
+                    libs.versions.sqldelight.get())
+            )
+        }
+        iosMain.dependencies {
+            implementation(libs.sqldelight.native.driver)
+        }
+        jvmMain.dependencies {
+            implementation(libs.sqldelight.jvm.driver)
         }
     }
 }
