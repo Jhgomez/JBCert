@@ -32,6 +32,8 @@ compose-multiplatform-navigation3-browser = "1.1.0"
 coil = "3.5.0"
 paging = "3.5.1"
 sqldelight = "2.3.2"
+webpack-plugin = "14.0.0"
+sql-js = "1.14.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -107,6 +109,11 @@ coil-cache-control = { module = "io.coil-kt.coil3:coil-network-cache-control", v
 paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 
+sqldelight-web-worker = { module = "app.cash.sqldelight:web-worker-driver", version.ref = "sqldelight" }
+sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+sqldelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
+sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
@@ -118,3 +125,6 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinx-serialization" }
 koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koin-compiler"}
 sqldelight = { id = "app.cash.sqldelight", version.ref="sqldelight" }
+webpack-plugin = { id = "copy-webpack-plugin" }
+sql-js = { id = "sql.js" }
+sqljs-worker = { id = "@cashapp/sqldelight-sqljs-worker" } # sql
