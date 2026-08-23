@@ -1,10 +1,11 @@
 package okik.tech.fullstack.data.db.di
 
+import app.cash.sqldelight.db.SqlDriver
 import okik.tech.fullstack.data.db.DbDriverFactory
 import okik.tech.fullstack.data.db.IosDbDriverFactoryImpl
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 actual val driverModule: Module = module {
-    single<DbDriverFactory> { IosDbDriverFactoryImpl() }
+    single<SqlDriver> { IosDbDriverFactoryImpl().synchronousGet() }
 }

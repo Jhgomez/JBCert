@@ -9,5 +9,5 @@ expect val driverModule: Module
 val databaseModule = module {
     includes(driverModule)
 
-    single { createDatabase(driverFactory = get()) }
+    single { createDatabase(sqlDriver = get()) }
 }
