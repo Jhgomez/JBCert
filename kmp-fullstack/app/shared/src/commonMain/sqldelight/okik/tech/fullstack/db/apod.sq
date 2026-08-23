@@ -1,11 +1,29 @@
-CREATE TABLE Apod (
+CREATE TABLE ApodEntity (
     dateId INTEGER PRIMARY KEY,
     copyright TEXT,
-    fetchedAt INTEGER,
-    explanation TEXT,
-    url TEXT,
+    fetchedAt INTEGER NOT NULL,
+    explanation TEXT NOT NULL,
+    url TEXT NOT NULL,
     hdUrl TEXT,
-    media_type TEXT,
-    title TEXT,
+    media_type TEXT NOT NULL,
+    title TEXT NOT NULL,
     thumbnailUrl TEXT
 );
+
+upsert:
+INSERT INTO ApodEntity (dateId, copyright, fetchedAt, explanation, url, hdUrl, media_type, title, thumbnailUrl)
+VALUES ? -- this generates an object insertion, while if we use (?, ?, ?, ?, ?, ?, ?, ?) is field by field
+ON CONFLICT (dateId)
+DO UPDATE SET
+    dateId = excluded.dateId,
+    copyright = excluded.copyright,
+    fetchedAt = excluded.fetchedAt,
+    explanation = excluded.explanation,
+    url = excluded.url,
+    hdUrl = excluded.hdUrl,
+    media_type = excluded.media_type,
+    title = excluded.title,
+    thumbnailUrl = excluded.thumbnailUrl;
+
+ selectAll:
+ SELECT * FROM ApodEntity;
