@@ -6,7 +6,7 @@ import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import okik.tech.fullstack.db.FullstackDb
 
 
-class IosDbDriverProducerImpl(): DbDriverFactory {
+class IosDbDriverFactoryImpl(): DbDriverFactory {
     override fun synchronousGet(): SqlDriver =
         NativeSqliteDriver(
             schema = FullstackDb.Schema.synchronous(),
