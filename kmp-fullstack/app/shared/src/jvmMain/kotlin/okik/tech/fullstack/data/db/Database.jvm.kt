@@ -7,7 +7,7 @@ import okik.tech.fullstack.db.FullstackDb
 import java.util.Properties
 
 
-class IosDbDriverProducerImpl(): DbDriverFactory {
+class JvmDbDriverProducerImpl(): DbDriverFactory {
     override fun synchronousGet(): SqlDriver =
         JdbcSqliteDriver(
             url = "jdbc:sqlite:/path/to/myDatabase.db ", //JdbcSqliteDriver.IN_MEMORY,
