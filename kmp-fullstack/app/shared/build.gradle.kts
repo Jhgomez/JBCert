@@ -110,12 +110,7 @@ kotlin {
         webMain.dependencies {
             implementation(libs.navigation3.browser)
         }
-        jsMain.dependencies {
-            implementation(libs.wrappers.browser)
-//            implementation("app.cash.sqldelight:web-worker-driver:{{ versions.sqldelight }}")
-//            implementation(devNpm("copy-webpack-plugin", "14.0.0"))
-//            implementation(npm("@cashapp/sqldelight-sqljs-worker", "{{ versions.sqldelight }}"))
-//            implementation(npm("sql.js", "1.14.2"))
+        webMain.dependencies {
             implementation(libs.sqldelight.web.worker)
             implementation(
                 devNpm(libs.plugins.webpack.plugin.get().pluginId,
@@ -131,6 +126,9 @@ kotlin {
                     libs.plugins.sqljs.worker.get().pluginId,
                     libs.versions.sqldelight.get())
             )
+        }
+        jsMain.dependencies {
+            implementation(libs.wrappers.browser)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
