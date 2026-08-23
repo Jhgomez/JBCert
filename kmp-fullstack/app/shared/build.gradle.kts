@@ -104,6 +104,7 @@ kotlin {
 //            implementation(libs.paging.common)
             implementation(libs.paging.compose)
             implementation(libs.sqldelight.paging3)
+            implementation(libs.sqldelight.coroutines)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
