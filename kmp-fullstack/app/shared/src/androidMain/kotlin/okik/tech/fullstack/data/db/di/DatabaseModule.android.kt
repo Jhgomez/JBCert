@@ -1,12 +1,19 @@
 package okik.tech.fullstack.data.db.di
 
+import app.cash.sqldelight.async.coroutines.synchronous
 import app.cash.sqldelight.db.SqlDriver
-import okik.tech.fullstack.data.db.AndroidDbDriverFactoryImpl
-import okik.tech.fullstack.data.db.DbDriverFactory
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import okik.tech.fullstack.db.FullstackDb
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 actual val driverModule: Module = module {
-    single<SqlDriver> { AndroidDbDriverFactoryImpl(context = androidContext()).synchronousGet() }
+    single<SqlDriver> {
+        AndroidSqliteDriver(
+            schema = FullstackDb.Schema.synchronous(),
+            context = androidContext(),
+            name = "fullstackDb"
+        )
+    }
 }
