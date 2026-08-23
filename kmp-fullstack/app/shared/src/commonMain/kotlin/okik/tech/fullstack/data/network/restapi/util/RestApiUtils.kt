@@ -11,14 +11,14 @@ inline fun <T>safeRequest(block: () -> T): ApiResult<T> {
     return try {
         ApiResult.Success(block())
     } catch (exception: NotFound) {
-        ApiResult.NotFound(exception.reason)
+        ApiResult.Error.NotFound(exception.reason)
     } catch (exception: Unauthorized) {
-        ApiResult.Unauthorized(exception.reason)
+        ApiResult.Error.Unauthorized(exception.reason)
     } catch (exception: NetworkError) {
-        ApiResult.NetworkError(exception.reason)
+        ApiResult.Error.NetworkError(exception.reason)
     } catch (exception: UnknownException) {
-        ApiResult.UnknownResult(exception.reason)
+        ApiResult.Error.UnknownResult(exception.reason)
     } catch (exception: UnhandledHttpCode) {
-        ApiResult.UnhandledHttpCode(exception.reason)
+        ApiResult.Error.UnhandledHttpCode(exception.reason)
     }
 }
