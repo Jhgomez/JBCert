@@ -11,7 +11,7 @@ val worker: Worker = js(
     """new Worker(new URL("@cashapp/sqldelight-sqljs-worker/sqljs.worker.js", import.meta.url))"""
 )
 
-class IosDbDriverProducerImpl(): DbDriverFactory {
+class WasmDbDriverProducerImpl(): DbDriverFactory {
     override suspend fun asynchronousGet(): SqlDriver {
         val driver = WebWorkerDriver(worker)
 
