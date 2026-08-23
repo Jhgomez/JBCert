@@ -2,19 +2,16 @@ package okik.tech.fullstack.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.datetime.LocalDate
 import okik.tech.fullstack.data.db.ApodDao
 import okik.tech.fullstack.data.network.ApiResult
 import okik.tech.fullstack.models.ApodResponse
 import okik.tech.fullstack.data.network.restapi.services.ApodApiService
-import okik.tech.fullstack.data.repository.toDomainResultSuccess
 import okik.tech.fullstack.db.ApodEntity
 import okik.tech.fullstack.domain.Apod
 import okik.tech.fullstack.domain.ApodRepository
 import okik.tech.fullstack.domain.DomainResult
 import okik.tech.fullstack.domain.Paging
 import okik.tech.fullstack.models.PaginatedResponse
-import kotlin.time.Instant
 
 class ApodRepositoryImpl(
     private val apiService: ApodApiService,
@@ -22,9 +19,16 @@ class ApodRepositoryImpl(
 ) : ApodRepository {
 
     override suspend fun getTodayApod(): DomainResult<Apod> =
-        apiService
-            .getTodaysApod()
-            .toDomainErrorModel(ApodResponse::toDomainErrorModel)
+        when (val response = apiService.getTodaysApod()) {
+            is ApiResult.Error<ApodResponse> -> response.toDomainResultError()
+            is ApiResult.Success<ApodResponse> -> {
+                val insertedApod = apodDao.upsertApod(response.result.toApodEntity()).toDomainModel()
+
+                DomainResult.Success(
+                    result = insertedApod
+                )
+            }
+        }
 
     override suspend fun getApodHistory(page: Int, pageSize: Int): DomainResult<Paging<Apod>> =
         when(val response = apiService.getApodHistory(page, pageSize)) {
@@ -35,7 +39,7 @@ class ApodRepositoryImpl(
                     response.result.items[index].toApodEntity()
                 }
 
-                val insertedEntities = apodDao.upsert(apodEntities)
+                val insertedEntities = apodDao.upsertApods(apodEntities)
 
                 DomainResult.Success(
                     result = Paging(
@@ -49,11 +53,17 @@ class ApodRepositoryImpl(
             }
         }
 
-
     override suspend fun getApodByDate(date: String): DomainResult<Apod> =
-        apiService
-            .getApodByDate(date)
-            .toDomainErrorModel(ApodResponse::toDomainErrorModel)
+        when (val response = apiService.getApodByDate(date)) {
+            is ApiResult.Error<ApodResponse> -> response.toDomainResultError()
+            is ApiResult.Success<ApodResponse> -> {
+                val insertedApod = apodDao.upsertApod(response.result.toApodEntity()).toDomainModel()
+
+                DomainResult.Success(
+                    result = insertedApod
+                )
+            }
+        }
 
     override fun getTodayApodFlow(): Flow<DomainResult<Apod>> = flow {
         emit(getTodayApod())
