@@ -6,7 +6,7 @@ import app.cash.sqldelight.driver.worker.WebWorkerDriver
 import okik.tech.fullstack.db.FullstackDb
 import org.w3c.dom.Worker
 
-class IosDbDriverProducerImpl(): DbDriverFactory {
+class JsDbDriverProducerImpl(): DbDriverFactory {
     override suspend fun asynchronousGet(): SqlDriver {
         val sqlDriver = WebWorkerDriver(
             Worker(
