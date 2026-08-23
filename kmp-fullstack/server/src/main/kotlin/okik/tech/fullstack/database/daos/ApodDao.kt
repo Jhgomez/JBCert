@@ -39,14 +39,13 @@ class ApodDao {
         Apod.upsert(Apod.id, onUpdateExclude = listOf(Apod.id, Apod.fetchedAt)) {
             it[id] = date
             it[copyright] = apod.copyright
-            it[fetchedAt] = Instant.parse(apod.fetchedAt).toEpochMilli()
+            it[fetchedAt] = fetchedAt
             it[explanation] = apod.explanation
             it[url] = apod.url
             it[hdUrl] = apod.hdUrl
             it[media_type] = apod.mediaType
             it[title] = apod.title
             it[thumbnailUrl] = apod.thumbnailUrl
-
         }
 
         val formattedString = if (exists) "Cached apod entry with id/date ${apod.date} was updated" else
@@ -161,6 +160,6 @@ class ApodEntity(id: EntityID<LocalDate>) : Entity<LocalDate>(id) {
             mediaType = media_type,
             copyright = copyright,
             thumbnailUrl = thumbnailUrl,
-            fetchedAt = Instant.ofEpochMilli(fetchedAt).toString()
+            fetchedAt = fetchedAt
         )
 }
