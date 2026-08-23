@@ -9,11 +9,12 @@ class ApodDao(val database: FullstackDb) {
 
     suspend fun selectAll(): List<ApodEntity> = queries.selectAll().awaitAsList()
 
-    suspend fun upsert(apods: Array<ApodEntity>) {
-        database.transaction {
+    suspend fun upsert(apods: Array<ApodEntity>): Array<ApodEntity> =
+        database.transactionWithResult {
             for (apod in apods) {
                 queries.upsert(apod)
             }
+
+            apods
         }
-    }
 }
