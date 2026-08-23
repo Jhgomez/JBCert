@@ -1,10 +1,12 @@
 package okik.tech.fullstack.feature.home.impl.di
 
-import okik.tech.fullstack.feature.home.impl.ApodList.HomeLIstViewModel
-import okik.tech.fullstack.ui.ApodViewModel
+import okik.tech.fullstack.feature.home.impl.ApodList.HomeListViewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val homeFeatureModule = module {
     // ViewModel
-    single { HomeLIstViewModel(get()) }
+    viewModel {
+        HomeListViewModel(apodRepository = get())
+    }
 }
