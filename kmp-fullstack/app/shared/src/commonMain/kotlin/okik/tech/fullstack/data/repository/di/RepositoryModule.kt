@@ -11,7 +11,8 @@ val repositoryModule = module {
         ApodRepositoryImpl(
             apiService = get(),
             apodDao = get(),
-            pagingInfoDao = get()
+            pagingInfoDao = get(),
+            dbTransaction = get()
         )
     }
 }
