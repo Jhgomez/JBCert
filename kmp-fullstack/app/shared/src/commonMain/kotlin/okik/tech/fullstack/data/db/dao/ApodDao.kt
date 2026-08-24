@@ -18,14 +18,13 @@ class ApodDaoImpl(val database: FullstackDb, val dispatcher: CoroutineDispatcher
 
     override suspend fun selectAll(): List<ApodEntity> = queries.selectAll().awaitAsList()
 
-    override suspend fun upsertApods(apods: Array<ApodEntity>): Array<ApodEntity> =
-        database.transactionWithResult {
-            for (apod in apods) {
-                queries.upsert(apod)
-            }
-
-            apods
+    override suspend fun upsertApods(apods: Array<ApodEntity>): Array<ApodEntity> {
+        for (apod in apods) {
+            queries.upsert(apod)
         }
+
+        return apods
+    }
 
     override suspend fun upsertApod(apod: ApodEntity): ApodEntity {
         queries.upsert(apod)
