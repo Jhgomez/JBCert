@@ -77,7 +77,7 @@ private fun CoroutineScope.startHistoricalDataFetching(
 ) = launch {
     try {
         val today = LocalDate.now()
-//        val firstApodDate = LocalDate.of(1995, 6, 16) // careful here if you use this date you will be fetching all days up until this date
+//        val firstApodDate = LocalDate.of(1995, 6, 16) // careful here if you use this date you will be fetching all days up until today's date
 
         val firstApodDate = today.minusDays(90)
 

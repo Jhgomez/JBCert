@@ -56,7 +56,7 @@ data class ApodConfig(
 
             return ApodConfig(
                 nasaApiKey = getConfigValue(props, "nasa.api.key", "NASA_API_KEY", "DEMO_KEY"),
-                initialBatchSize = getConfigValue(props, "batch.initial.size", "INITIAL_BATCH_SIZE", "2").toInt(),
+                initialBatchSize = getConfigValue(props, "batch.initial.size", "INITIAL_BATCH_SIZE", "30").toInt(),
                 followupBatchSize = getConfigValue(props, "batch.followup.size", "FOLLOWUP_BATCH_SIZE", "2").toInt(),
                 demoInitialBatchSize = getConfigValue(props, "batch.demo.initial.size", "DEMO_INITIAL_BATCH_SIZE", "2").toInt(),
                 demoFollowupBatchSize = getConfigValue(props, "batch.demo.followup.size", "DEMO_FOLLOWUP_BATCH_SIZE", "2").toInt(),

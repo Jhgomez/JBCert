@@ -159,7 +159,7 @@ class ApodService(
                         val apod = nasaApiClient.getApodByDate(currentDate.toString())
                         apodDao.save(apod)
                         count++
-                        delay(1500)
+                        delay(600)
                     } catch (e: NasaApiException) {
                         if (e.message?.contains("Rate limit") == true) {
                             logger.warn("Rate limit hit while filling cache. Pausing for 5 minutes.")
