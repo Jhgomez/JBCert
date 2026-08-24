@@ -13,5 +13,4 @@ class PagingSourceFactory(database: FullstackDb, private val dispatcher: Corouti
         context = dispatcher,
         queryProvider = queries::apodsPage
     )
-
 }

@@ -8,13 +8,14 @@ import okik.tech.fullstack.data.db.createDatabase
 import okik.tech.fullstack.data.db.dao.ApodDaoImpl
 import okik.tech.fullstack.data.db.dao.PagingInfoDao
 import okik.tech.fullstack.data.db.dao.PagingInfoDaoImpl
-import okik.tech.fullstack.db.ApodEntity
-import okik.tech.fullstack.db.PageInfoEntity
+import okik.tech.fullstack.data.db.paging.PagingSourceFactory
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import kotlin.jvm.JvmInline
 
 expect val driverModule: Module
-value class DaoDispatcher(val dispatcher: CoroutineDispatcher)
+@JvmInline
+value class IoDispatcher(val dispatcher: CoroutineDispatcher)
 
 val databaseModule = module {
     includes(driverModule)
@@ -24,11 +25,15 @@ val databaseModule = module {
     single<DbTransaction> { DbTransactionImpl(database = get()) }
 
     single<ApodDao> {
-        val daoDispatcher: DaoDispatcher = get()
-        ApodDaoImpl(database = get(), dispatcher = daoDispatcher.dispatcher)
+        ApodDaoImpl(database = get())
     }
 
     single<PagingInfoDao> {
         PagingInfoDaoImpl(database = get())
+    }
+
+    single {
+        val daoDispatcher: IoDispatcher = get()
+        PagingSourceFactory(database = get(), dispatcher = daoDispatcher.dispatcher)
     }
 }
