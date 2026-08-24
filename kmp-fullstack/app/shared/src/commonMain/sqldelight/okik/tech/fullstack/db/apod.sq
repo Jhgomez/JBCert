@@ -1,5 +1,6 @@
 CREATE TABLE ApodEntity (
     dateId INTEGER PRIMARY KEY,
+    date TEXT NOT NULL,
     copyright TEXT,
     fetchedAt INTEGER NOT NULL,
     explanation TEXT NOT NULL,
@@ -14,6 +15,7 @@ upsert:
 INSERT INTO
     ApodEntity (
         dateId,
+        date,
         copyright,
         fetchedAt,
         explanation,
@@ -27,6 +29,7 @@ INSERT INTO
     ON CONFLICT (dateId)
     DO UPDATE SET
         dateId = excluded.dateId,
+        date = excluded.date,
         copyright = excluded.copyright,
         fetchedAt = excluded.fetchedAt,
         explanation = excluded.explanation,
