@@ -2,20 +2,27 @@ package okik.tech.fullstack.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import okik.tech.fullstack.data.db.ApodDao
+import okik.tech.fullstack.data.db.dao.ApodDao
+import okik.tech.fullstack.data.db.dao.PagingInfoDao
 import okik.tech.fullstack.data.network.ApiResult
 import okik.tech.fullstack.models.ApodResponse
 import okik.tech.fullstack.data.network.restapi.services.ApodApiService
+import okik.tech.fullstack.data.repository.mapper.toApodEntity
+import okik.tech.fullstack.data.repository.mapper.toDomainModel
+import okik.tech.fullstack.data.repository.mapper.toDomainResultError
+import okik.tech.fullstack.data.repository.mapper.toEntity
 import okik.tech.fullstack.db.ApodEntity
 import okik.tech.fullstack.domain.Apod
 import okik.tech.fullstack.domain.ApodRepository
 import okik.tech.fullstack.domain.DomainResult
+import okik.tech.fullstack.domain.PageInfo
 import okik.tech.fullstack.domain.Paging
 import okik.tech.fullstack.models.PaginatedResponse
 
 class ApodRepositoryImpl(
     private val apiService: ApodApiService,
-    private val apodDao: ApodDao
+    private val apodDao: ApodDao,
+    private val pagingInfoDao: PagingInfoDao
 ) : ApodRepository {
 
     override suspend fun getTodayApod(): DomainResult<Apod> =
@@ -68,4 +75,18 @@ class ApodRepositoryImpl(
     override fun getTodayApodFlow(): Flow<DomainResult<Apod>> = flow {
         emit(getTodayApod())
     }
+
+    override suspend fun upsertPageInfo(pageInfo: PageInfo): PageInfo {
+        pagingInfoDao.upsertPage(pageInfo.toEntity())
+
+        return pageInfo
+    }
+
+    override suspend fun deletePagesInfo() {
+        pagingInfoDao.delete()
+    }
+
+    override suspend fun getPageInfo(id: String): PageInfo =
+        pagingInfoDao.select(id).toDomainModel()
+
 }
