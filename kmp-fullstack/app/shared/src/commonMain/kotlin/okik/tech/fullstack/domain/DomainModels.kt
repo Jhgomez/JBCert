@@ -1,6 +1,7 @@
 package okik.tech.fullstack.domain
 
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 data class Apod(
     val date: String,
@@ -11,7 +12,7 @@ data class Apod(
     val mediaType: String,
     val copyright: String? = null,
     val thumbnailUrl: String? = null,
-    val fetchedAt: String = Clock.System.now().toString()
+    val fetchedAt: Instant = Clock.System.now()
 )
 
 data class PageInfo(
