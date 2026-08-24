@@ -39,7 +39,7 @@ class ApodDao {
         Apod.upsert(Apod.id, onUpdateExclude = listOf(Apod.id, Apod.fetchedAt)) {
             it[id] = date
             it[copyright] = apod.copyright
-            it[fetchedAt] = fetchedAt
+            it[fetchedAt] = apod.fetchedAt
             it[explanation] = apod.explanation
             it[url] = apod.url
             it[hdUrl] = apod.hdUrl
