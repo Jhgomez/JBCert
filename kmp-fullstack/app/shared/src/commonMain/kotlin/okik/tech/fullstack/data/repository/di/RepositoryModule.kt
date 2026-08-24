@@ -7,5 +7,11 @@ import org.koin.dsl.module
 val repositoryModule = module {
 
     // Repository
-    single<ApodRepository> { ApodRepositoryImpl(apiService = get(), apodDao = get()) }
+    single<ApodRepository> {
+        ApodRepositoryImpl(
+            apiService = get(),
+            apodDao = get(),
+            pagingInfoDao = get()
+        )
+    }
 }
