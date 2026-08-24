@@ -8,7 +8,6 @@ import okik.tech.fullstack.data.db.createDatabase
 import okik.tech.fullstack.data.db.dao.ApodDaoImpl
 import okik.tech.fullstack.data.db.dao.PagingInfoDao
 import okik.tech.fullstack.data.db.dao.PagingInfoDaoImpl
-import okik.tech.fullstack.data.db.paging.PagingSourceFactory
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import kotlin.jvm.JvmInline
@@ -25,15 +24,14 @@ val databaseModule = module {
     single<DbTransaction> { DbTransactionImpl(database = get()) }
 
     single<ApodDao> {
-        ApodDaoImpl(database = get())
+        val daoDispatcher: IoDispatcher = get()
+        ApodDaoImpl(
+            database = get(),
+            dispatcher = daoDispatcher.dispatcher
+        )
     }
 
     single<PagingInfoDao> {
         PagingInfoDaoImpl(database = get())
-    }
-
-    single {
-        val daoDispatcher: IoDispatcher = get()
-        PagingSourceFactory(database = get(), dispatcher = daoDispatcher.dispatcher)
     }
 }
