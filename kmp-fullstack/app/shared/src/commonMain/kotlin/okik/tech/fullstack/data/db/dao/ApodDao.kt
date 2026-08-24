@@ -7,19 +7,19 @@ import kotlinx.coroutines.CoroutineDispatcher
 import okik.tech.fullstack.db.ApodEntity
 import okik.tech.fullstack.db.FullstackDb
 
-class ApodDao(val database: FullstackDb, val dispatcher: CoroutineDispatcher) {
-    val queries = database.apodQueries
+class ApodDaoImpl(val database: FullstackDb, val dispatcher: CoroutineDispatcher) : ApodDao<ApodEntity> {
+    private val queries = database.apodQueries
 
-    val source = QueryPagingSource(
+    override val source = QueryPagingSource(
         countQuery = queries.countApods(),
         transacter = queries,
         context = dispatcher,
         queryProvider = queries::apodsPage
     )
 
-    suspend fun selectAll(): List<ApodEntity> = queries.selectAll().awaitAsList()
+    override suspend fun selectAll(): List<ApodEntity> = queries.selectAll().awaitAsList()
 
-    suspend fun upsertApods(apods: Array<ApodEntity>): Array<ApodEntity> =
+    override suspend fun upsertApods(apods: Array<ApodEntity>): Array<ApodEntity> =
         database.transactionWithResult {
             for (apod in apods) {
                 queries.upsert(apod)
@@ -28,7 +28,7 @@ class ApodDao(val database: FullstackDb, val dispatcher: CoroutineDispatcher) {
             apods
         }
 
-    suspend fun upsertApod(apod: ApodEntity): ApodEntity {
+    override suspend fun upsertApod(apod: ApodEntity): ApodEntity {
         queries.upsert(apod)
 
         return apod
