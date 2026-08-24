@@ -45,16 +45,9 @@ class ApodRepositoryImpl(
             is ApiResult.Error<PaginatedResponse<ApodResponse>> -> response.toDomainResultError()
             is ApiResult.Success<PaginatedResponse<ApodResponse>> -> {
 
-                val apodEntities = Array(response.result.items.size) { index ->
-                    response.result.items[index].toApodEntity()
-                }
-
-                val insertedEntities =
-                    dbTransaction.transactionWithResult { apodDao.upsertApods(apodEntities) }
-
                 DomainResult.Success(
                     result = Paging(
-                        items = insertedEntities.map(ApodEntity::toDomainModel),
+                        items = response.result.items.map(ApodResponse::toDomainModel),
                         page = response.result.page,
                         pageSize = response.result.pageSize,
                         totalItems = response.result.totalItems,
@@ -95,7 +88,6 @@ class ApodRepositoryImpl(
 
     override suspend fun refreshApodAndPagingInfo(
         page: Paging<Apod>,
-        lastPageIndexName: String,
         highestPageIndex: String
     ) {
         dbTransaction.transaction {
@@ -109,11 +101,17 @@ class ApodRepositoryImpl(
             )
 
             pagingInfoDao.upsertPage(
-                PageInfoEntity(lastPageIndexName, page.page.toLong())
-            )
-
-            pagingInfoDao.upsertPage(
                 PageInfoEntity(highestPageIndex, page.totalPages.toLong())
+            )
+        }
+    }
+
+    override suspend fun upsertApods(apods: List<Apod>) {
+        dbTransaction.transaction {
+            apodDao.upsertApods(
+                Array(apods.size) { index ->
+                    apods[index].toEntity()
+                }
             )
         }
     }

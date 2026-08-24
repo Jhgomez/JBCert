@@ -12,7 +12,7 @@ interface ApodRepository {
     suspend fun getPageInfo(id: String): PageInfo
     suspend fun refreshApodAndPagingInfo(
         page: Paging<Apod>,
-        lastPageIndexName: String,
         highestPageIndex: String
     )
+    suspend fun upsertApods(apods: List<Apod>)
 }
