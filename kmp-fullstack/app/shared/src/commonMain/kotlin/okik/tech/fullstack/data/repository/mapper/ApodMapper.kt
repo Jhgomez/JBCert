@@ -7,6 +7,22 @@ import okik.tech.fullstack.domain.Apod
 import okik.tech.fullstack.models.ApodResponse
 import kotlin.time.Instant
 
+val dateFormat = LocalDate.Format {
+    byUnicodePattern("yyyy-MM-dd")
+}
+
+fun Apod.toEntity() = ApodEntity(
+    dateId = dateFormat.parse(date).toEpochDays(),
+    copyright = copyright,
+    fetchedAt = Instant.parse(fetchedAt).toEpochMilliseconds(),
+    explanation = explanation,
+    url = url,
+    hdUrl = hdUrl,
+    media_type = mediaType,
+    title = title,
+    thumbnailUrl = thumbnailUrl
+)
+
 fun ApodEntity.toDomainModel() = Apod(
     date = LocalDate.fromEpochDays(dateId).toString(),
     title = title,
@@ -18,10 +34,6 @@ fun ApodEntity.toDomainModel() = Apod(
     thumbnailUrl = thumbnailUrl,
     fetchedAt = Instant.fromEpochMilliseconds(fetchedAt).toString()
 )
-
-val dateFormat = LocalDate.Format {
-    byUnicodePattern("yyyy-MM-dd")
-}
 
 fun ApodResponse.toApodEntity() = ApodEntity(
     dateId = dateFormat.parse(date).toEpochDays(),
