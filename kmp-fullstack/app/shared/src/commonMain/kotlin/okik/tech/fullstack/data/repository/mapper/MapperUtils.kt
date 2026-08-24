@@ -1,4 +1,4 @@
-package okik.tech.fullstack.data.repository.mappers
+package okik.tech.fullstack.data.repository.mapper
 
 import okik.tech.fullstack.data.network.ApiResult
 import okik.tech.fullstack.domain.DomainError

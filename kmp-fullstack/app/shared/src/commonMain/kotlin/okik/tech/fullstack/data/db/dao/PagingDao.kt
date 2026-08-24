@@ -6,7 +6,7 @@ import okik.tech.fullstack.db.PageInfoEntity
 
 class PagingInfoDaoImpl(
     val database: FullstackDb
-): PagingInfoDao<PageInfoEntity> {
+): PagingInfoDao {
     private val queries = database.pagingQueries
 
     override suspend fun select(id: String): PageInfoEntity = queries.selectPageInfo(id).awaitAsOne()
