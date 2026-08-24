@@ -1,6 +1,5 @@
 package okik.tech.fullstack.data.db.dao
 
-import androidx.paging.PagingSource
 import app.cash.sqldelight.async.coroutines.awaitAsList
 import app.cash.sqldelight.paging3.QueryPagingSource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -32,5 +31,9 @@ class ApodDaoImpl(val database: FullstackDb, val dispatcher: CoroutineDispatcher
         queries.upsert(apod)
 
         return apod
+    }
+
+    override suspend fun deleteAll() {
+        queries.deleteAll()
     }
 }

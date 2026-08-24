@@ -10,6 +10,7 @@ interface ApodDao {
     suspend fun selectAll(): List<ApodEntity>
     suspend fun upsertApods(apods: Array<ApodEntity>): Array<ApodEntity>
     suspend fun upsertApod(apod: ApodEntity): ApodEntity
+    suspend fun deleteAll()
 }
 
 interface PagingInfoDao {
