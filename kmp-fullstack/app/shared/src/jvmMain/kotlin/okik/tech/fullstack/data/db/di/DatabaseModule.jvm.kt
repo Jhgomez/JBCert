@@ -12,7 +12,7 @@ import java.nio.file.Path
 import java.util.Properties
 
 actual val driverModule: Module = module {
-    single { DaoDispatcher(Dispatchers.IO) }
+    single { IoDispatcher(Dispatchers.IO) }
 
     single<SqlDriver> {
         // sqldelight can create a missing file but not missing folder so be careful here and create

@@ -7,7 +7,7 @@ import org.koin.dsl.module
 // empty module since web targets can not create a sql driver synchronously, it has to be
 // asynchronously and we should not force other targets to create it synchronously
 actual val driverModule: Module = module {
-    single { DaoDispatcher(Dispatchers.Default) }
+    single { IoDispatcher(Dispatchers.Default) }
 }
 
 expect suspend fun getDriverModule(): Module

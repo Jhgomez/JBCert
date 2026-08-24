@@ -10,7 +10,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 actual val driverModule: Module = module {
-    single<DaoDispatcher> { DaoDispatcher(Dispatchers.IO) }
+    single<IoDispatcher> { IoDispatcher(Dispatchers.IO) }
 
     single<SqlDriver> {
         AndroidSqliteDriver(
