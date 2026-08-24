@@ -7,4 +7,7 @@ interface ApodRepository {
     suspend fun getApodHistory(page: Int, pageSize: Int): DomainResult<Paging<Apod>>
     suspend fun getApodByDate(date: String): DomainResult<Apod>
     fun getTodayApodFlow(): Flow<DomainResult<Apod>>
+    suspend fun upsertPageInfo(pageInfo: PageInfo): PageInfo
+    suspend fun deletePagesInfo()
+    suspend fun getPageInfo(id: String): PageInfo
 }
