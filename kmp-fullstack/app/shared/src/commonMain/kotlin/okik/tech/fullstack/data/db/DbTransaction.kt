@@ -9,7 +9,7 @@ interface DbTransaction {
     suspend fun transaction(body: suspend SuspendingTransactionWithoutReturn.() -> Unit)
 }
 
-class Transaction(private val database: FullstackDb): DbTransaction {
+class DbTransactionImpl(private val database: FullstackDb): DbTransaction {
     override suspend fun <R> transactionWithResult(
         bodyWithReturn: suspend SuspendingTransactionWithReturn<R>.() -> R
     ): R = database.transactionWithResult(bodyWithReturn = bodyWithReturn)

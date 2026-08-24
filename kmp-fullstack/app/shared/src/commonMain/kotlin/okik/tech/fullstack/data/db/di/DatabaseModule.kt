@@ -1,6 +1,8 @@
 package okik.tech.fullstack.data.db.di
 
 import kotlinx.coroutines.CoroutineDispatcher
+import okik.tech.fullstack.data.db.DbTransaction
+import okik.tech.fullstack.data.db.DbTransactionImpl
 import okik.tech.fullstack.data.db.dao.ApodDao
 import okik.tech.fullstack.data.db.createDatabase
 import okik.tech.fullstack.data.db.dao.ApodDaoImpl
@@ -18,6 +20,8 @@ val databaseModule = module {
     includes(driverModule)
 
     single { createDatabase(sqlDriver = get()) }
+
+    single<DbTransaction> { DbTransactionImpl(database = get()) }
 
     single<ApodDao> {
         val daoDispatcher: DaoDispatcher = get()
