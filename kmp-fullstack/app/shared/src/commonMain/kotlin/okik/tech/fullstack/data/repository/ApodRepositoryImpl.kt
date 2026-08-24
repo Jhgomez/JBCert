@@ -1,7 +1,12 @@
 package okik.tech.fullstack.data.repository
 
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.map
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import okik.tech.fullstack.data.db.DbTransaction
 import okik.tech.fullstack.data.db.dao.ApodDao
 import okik.tech.fullstack.data.db.dao.PagingInfoDao
@@ -12,13 +17,13 @@ import okik.tech.fullstack.data.repository.mapper.toApodEntity
 import okik.tech.fullstack.data.repository.mapper.toDomainModel
 import okik.tech.fullstack.data.repository.mapper.toDomainResultError
 import okik.tech.fullstack.data.repository.mapper.toEntity
-import okik.tech.fullstack.db.ApodEntity
 import okik.tech.fullstack.db.PageInfoEntity
 import okik.tech.fullstack.domain.Apod
 import okik.tech.fullstack.domain.ApodRepository
 import okik.tech.fullstack.domain.DomainResult
 import okik.tech.fullstack.domain.PageInfo
 import okik.tech.fullstack.domain.Paging
+import okik.tech.fullstack.data.db.paging.ApodHistoryRemoteMediator
 import okik.tech.fullstack.models.PaginatedResponse
 
 class ApodRepositoryImpl(
@@ -116,4 +121,23 @@ class ApodRepositoryImpl(
         }
     }
 
+    override fun getApodPagingFlow(): Flow<Any> {
+        @OptIn(ExperimentalPagingApi::class)
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+                prefetchDistance = 1,
+                enablePlaceholders = true,
+                initialLoadSize = 10,
+            ),
+            pagingSourceFactory = {
+                apodDao.getApodPagingSource()
+            },
+            remoteMediator = ApodHistoryRemoteMediator(apodRepository = this)
+        )
+        .flow
+        .map { pagingData ->
+            pagingData.map { apodEntity -> apodEntity.toDomainModel() }
+        }
+    }
 }
