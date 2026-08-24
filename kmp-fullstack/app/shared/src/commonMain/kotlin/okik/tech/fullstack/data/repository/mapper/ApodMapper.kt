@@ -1,4 +1,4 @@
-package okik.tech.fullstack.data.repository.mappers
+package okik.tech.fullstack.data.repository.mapper
 
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.byUnicodePattern
