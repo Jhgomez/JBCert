@@ -10,4 +10,9 @@ interface ApodRepository {
     suspend fun upsertPageInfo(pageInfo: PageInfo): PageInfo
     suspend fun deletePagesInfo()
     suspend fun getPageInfo(id: String): PageInfo
+    suspend fun refreshApodAndPagingInfo(
+        page: Paging<Apod>,
+        lastPageIndexName: String,
+        highestPageIndex: String
+    )
 }

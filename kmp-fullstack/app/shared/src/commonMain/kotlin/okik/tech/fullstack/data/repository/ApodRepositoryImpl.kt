@@ -2,6 +2,7 @@ package okik.tech.fullstack.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okik.tech.fullstack.data.db.DbTransaction
 import okik.tech.fullstack.data.db.dao.ApodDao
 import okik.tech.fullstack.data.db.dao.PagingInfoDao
 import okik.tech.fullstack.data.network.ApiResult
@@ -12,6 +13,7 @@ import okik.tech.fullstack.data.repository.mapper.toDomainModel
 import okik.tech.fullstack.data.repository.mapper.toDomainResultError
 import okik.tech.fullstack.data.repository.mapper.toEntity
 import okik.tech.fullstack.db.ApodEntity
+import okik.tech.fullstack.db.PageInfoEntity
 import okik.tech.fullstack.domain.Apod
 import okik.tech.fullstack.domain.ApodRepository
 import okik.tech.fullstack.domain.DomainResult
@@ -22,7 +24,8 @@ import okik.tech.fullstack.models.PaginatedResponse
 class ApodRepositoryImpl(
     private val apiService: ApodApiService,
     private val apodDao: ApodDao,
-    private val pagingInfoDao: PagingInfoDao
+    private val pagingInfoDao: PagingInfoDao,
+    private val dbTransaction: DbTransaction
 ) : ApodRepository {
 
     override suspend fun getTodayApod(): DomainResult<Apod> =
@@ -46,7 +49,8 @@ class ApodRepositoryImpl(
                     response.result.items[index].toApodEntity()
                 }
 
-                val insertedEntities = apodDao.upsertApods(apodEntities)
+                val insertedEntities =
+                    dbTransaction.transactionWithResult { apodDao.upsertApods(apodEntities) }
 
                 DomainResult.Success(
                     result = Paging(
@@ -88,5 +92,30 @@ class ApodRepositoryImpl(
 
     override suspend fun getPageInfo(id: String): PageInfo =
         pagingInfoDao.select(id).toDomainModel()
+
+    override suspend fun refreshApodAndPagingInfo(
+        page: Paging<Apod>,
+        lastPageIndexName: String,
+        highestPageIndex: String
+    ) {
+        dbTransaction.transaction {
+            apodDao.deleteAll()
+            pagingInfoDao.delete()
+
+            apodDao.upsertApods(
+                Array(page.items.size) { index ->
+                    page.items[index].toEntity()
+                }
+            )
+
+            pagingInfoDao.upsertPage(
+                PageInfoEntity(lastPageIndexName, page.page.toLong())
+            )
+
+            pagingInfoDao.upsertPage(
+                PageInfoEntity(highestPageIndex, page.totalPages.toLong())
+            )
+        }
+    }
 
 }
