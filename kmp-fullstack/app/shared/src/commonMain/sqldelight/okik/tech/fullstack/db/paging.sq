@@ -1,0 +1,20 @@
+CREATE TABLE PageInfoEntity (
+    name TEXT PRIMARY KEY,
+    page INTEGER NOT NULL
+);
+
+selectPageInfo:
+    SELECT *
+    FROM PageInfoEntity
+    WHERE name = :name;
+
+delete:
+    DELETE FROM
+    PageInfoEntity;
+
+upsert:
+    INSERT INTO PageInfoEntity(name, page)
+    VALUES ?
+    ON CONFLICT (name)
+    DO UPDATE SET
+        page = excluded.page;
