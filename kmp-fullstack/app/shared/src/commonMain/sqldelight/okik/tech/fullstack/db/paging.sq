@@ -12,9 +12,8 @@ delete:
     DELETE FROM
     PageInfoEntity;
 
-upsert:
-    INSERT INTO PageInfoEntity(name, page)
-    VALUES ?
-    ON CONFLICT (name)
-    DO UPDATE SET
-        page = excluded.page;
+updatePage:
+UPDATE PageInfoEntity SET page = ? WHERE name = ?;
+
+insertPage:
+INSERT OR IGNORE INTO PageInfoEntity(name, page) VALUES ?;

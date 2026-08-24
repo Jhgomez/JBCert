@@ -12,32 +12,47 @@ CREATE TABLE ApodEntity (
 );
 
 upsert:
-INSERT INTO
-    ApodEntity (
-        dateId,
-        date,
-        copyright,
-        fetchedAt,
-        explanation,
-        url,
-        hdUrl,
-        media_type,
-        title,
-        thumbnailUrl
-    )
-    VALUES ? -- this generates an object insertion, while if we use (?, ?, ?, ?, ?, ?, ?, ?) is field by field
-    ON CONFLICT (dateId)
-    DO UPDATE SET
-        dateId = excluded.dateId,
-        date = excluded.date,
-        copyright = excluded.copyright,
-        fetchedAt = excluded.fetchedAt,
-        explanation = excluded.explanation,
-        url = excluded.url,
-        hdUrl = excluded.hdUrl,
-        media_type = excluded.media_type,
-        title = excluded.title,
-        thumbnailUrl = excluded.thumbnailUrl;
+INSERT OR REPLACE INTO ApodEntity (
+    dateId,
+    date,
+    copyright,
+    fetchedAt,
+    explanation,
+    url,
+    hdUrl,
+    media_type,
+    title,
+    thumbnailUrl
+)
+VALUES ?;
+
+-- below upsert sintaxt is only supported in SDK >= 30
+-- INSERT INTO
+--     ApodEntity (
+--         dateId,
+--         date,
+--         copyright,
+--         fetchedAt,
+--         explanation,
+--         url,
+--         hdUrl,
+--         media_type,
+--         title,
+--         thumbnailUrl
+--     )
+--     VALUES ? -- this generates an object insertion, while if we use (?, ?, ?, ?, ?, ?, ?, ?) is field by field
+--     ON CONFLICT (dateId)
+--     DO UPDATE SET
+--         dateId = excluded.dateId,
+--         date = excluded.date,
+--         copyright = excluded.copyright,
+--         fetchedAt = excluded.fetchedAt,
+--         explanation = excluded.explanation,
+--         url = excluded.url,
+--         hdUrl = excluded.hdUrl,
+--         media_type = excluded.media_type,
+--         title = excluded.title,
+--         thumbnailUrl = excluded.thumbnailUrl;
 
  deleteAll:
     DELETE FROM

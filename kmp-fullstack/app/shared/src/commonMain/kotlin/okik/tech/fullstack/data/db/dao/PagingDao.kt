@@ -12,7 +12,12 @@ class PagingInfoDaoImpl(
     override suspend fun select(id: String): PageInfoEntity = queries.selectPageInfo(id).awaitAsOne()
 
     override suspend fun upsertPage(entry: PageInfoEntity): PageInfoEntity {
-        queries.upsert(entry)
+        queries.updatePage(
+            page = entry.page,
+            name = entry.name
+        )
+
+        queries.insertPage(entry)
 
         return entry
     }
