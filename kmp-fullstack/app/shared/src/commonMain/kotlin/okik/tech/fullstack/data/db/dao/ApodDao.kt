@@ -7,7 +7,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import okik.tech.fullstack.db.ApodEntity
 import okik.tech.fullstack.db.FullstackDb
 
-class ApodDaoImpl(val database: FullstackDb, val dispatcher: CoroutineDispatcher) : ApodDao<ApodEntity> {
+class ApodDaoImpl(val database: FullstackDb, val dispatcher: CoroutineDispatcher) : ApodDao {
     private val queries = database.apodQueries
 
     override val source = QueryPagingSource(

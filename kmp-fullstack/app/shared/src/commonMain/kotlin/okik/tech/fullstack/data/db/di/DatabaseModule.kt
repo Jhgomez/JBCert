@@ -19,12 +19,12 @@ val databaseModule = module {
 
     single { createDatabase(sqlDriver = get()) }
 
-    single<ApodDao<ApodEntity>> {
+    single<ApodDao> {
         val daoDispatcher: DaoDispatcher = get()
         ApodDaoImpl(database = get(), dispatcher = daoDispatcher.dispatcher)
     }
 
-    single<PagingInfoDao<PageInfoEntity>> {
+    single<PagingInfoDao> {
         PagingInfoDaoImpl(database = get())
     }
 }
