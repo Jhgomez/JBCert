@@ -15,7 +15,7 @@ data class Apod(
 )
 
 data class PageInfo(
-    val id: String,
+    val name: String,
     val page: Int
 )
 
