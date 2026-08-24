@@ -5,8 +5,6 @@ import okik.tech.fullstack.db.ApodEntity
 import okik.tech.fullstack.db.PageInfoEntity
 
 interface ApodDao {
-    val source: PagingSource<Int, ApodEntity>
-
     suspend fun selectAll(): List<ApodEntity>
     suspend fun upsertApods(apods: Array<ApodEntity>): Array<ApodEntity>
     suspend fun upsertApod(apod: ApodEntity): ApodEntity
