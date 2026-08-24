@@ -30,23 +30,19 @@ data class Paging<T>(
     val totalPages: UByte
 )
 
-data class DomainError(
-    val status: Int,
-    val message: String
-)
-
 sealed interface DomainResult<out T> {
     data class Success<R>(val result: R): DomainResult<R>
 
-    sealed interface DomainErrorResult<R>: DomainResult<R> {
-        val domainError: DomainError
+    sealed class DomainErrorResult: DomainResult<Nothing>, Exception() {
+        abstract val status: Int
+        abstract override val message: String
 
         // any type of time out, or newtork error which means user could retry
-        data class NetworkError<M>(override val domainError: DomainError): DomainErrorResult<M>
-        data class NotFound<M>(override val domainError: DomainError): DomainErrorResult<M>
-        data class Unauthorized<M>(override val domainError: DomainError): DomainErrorResult<M>
+        data class NetworkError(override val status: Int, override val message: String): DomainErrorResult()
+        data class NotFound(override val status: Int, override val message: String): DomainErrorResult()
+        data class Unauthorized(override val status: Int, override val message: String): DomainErrorResult()
         // any parsing error, or client misconfiguration we need to take care
-        data class UnknownResult<M>(override val domainError: DomainError): DomainErrorResult<M>
-        data class UnhandledHttpCode<M>(override val domainError: DomainError): DomainErrorResult<M>
+        data class UnknownResult(override val status: Int, override val message: String): DomainErrorResult()
+        data class UnhandledHttpCode(override val status: Int, override val message: String): DomainErrorResult()
     }
 }
