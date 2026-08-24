@@ -1,9 +1,7 @@
 package okik.tech.fullstack.domain
 
-import kotlinx.serialization.Serializable
 import kotlin.time.Clock
 
-@Serializable
 data class Apod(
     val date: String,
     val title: String,
@@ -14,6 +12,11 @@ data class Apod(
     val copyright: String? = null,
     val thumbnailUrl: String? = null,
     val fetchedAt: String = Clock.System.now().toString()
+)
+
+data class PageInfo(
+    val id: String,
+    val page: Int
 )
 
 data class Paging<T>(
@@ -28,6 +31,7 @@ data class DomainError(
     val status: Int,
     val message: String
 )
+
 sealed interface DomainResult<out T> {
     data class Success<R>(val result: R): DomainResult<R>
 
