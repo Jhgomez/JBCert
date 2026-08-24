@@ -1,5 +1,5 @@
 CREATE TABLE ApodEntity (
-    dateId INTEGER,
+    dateId INTEGER PRIMARY KEY,
     copyright TEXT,
     fetchedAt INTEGER NOT NULL,
     explanation TEXT NOT NULL,
@@ -7,9 +7,7 @@ CREATE TABLE ApodEntity (
     hdUrl TEXT,
     media_type TEXT NOT NULL,
     title TEXT NOT NULL,
-    thumbnailUrl TEXT,
-    page INTEGER,
-    PRIMARY KEY (dateId, page)
+    thumbnailUrl TEXT
 );
 
 upsert:
@@ -23,8 +21,7 @@ INSERT INTO
         hdUrl,
         media_type,
         title,
-        thumbnailUrl,
-        page
+        thumbnailUrl
     )
     VALUES ? -- this generates an object insertion, while if we use (?, ?, ?, ?, ?, ?, ?, ?) is field by field
     ON CONFLICT (dateId)
@@ -37,8 +34,7 @@ INSERT INTO
         hdUrl = excluded.hdUrl,
         media_type = excluded.media_type,
         title = excluded.title,
-        thumbnailUrl = excluded.thumbnailUrl,
-        page = excluded.page;
+        thumbnailUrl = excluded.thumbnailUrl;
 
  selectAll:
     SELECT * FROM ApodEntity;
