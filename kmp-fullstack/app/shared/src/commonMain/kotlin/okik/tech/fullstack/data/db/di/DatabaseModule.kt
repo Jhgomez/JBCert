@@ -1,8 +1,13 @@
 package okik.tech.fullstack.data.db.di
 
 import kotlinx.coroutines.CoroutineDispatcher
-import okik.tech.fullstack.data.db.ApodDao
+import okik.tech.fullstack.data.db.dao.ApodDao
 import okik.tech.fullstack.data.db.createDatabase
+import okik.tech.fullstack.data.db.dao.ApodDaoImpl
+import okik.tech.fullstack.data.db.dao.PagingInfoDao
+import okik.tech.fullstack.data.db.dao.PagingInfoDaoImpl
+import okik.tech.fullstack.db.ApodEntity
+import okik.tech.fullstack.db.PageInfoEntity
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -14,8 +19,12 @@ val databaseModule = module {
 
     single { createDatabase(sqlDriver = get()) }
 
-    single {
+    single<ApodDao<ApodEntity>> {
         val daoDispatcher: DaoDispatcher = get()
-        ApodDao(database = get(), dispatcher = daoDispatcher.dispatcher)
+        ApodDaoImpl(database = get(), dispatcher = daoDispatcher.dispatcher)
+    }
+
+    single<PagingInfoDao<PageInfoEntity>> {
+        PagingInfoDaoImpl(database = get())
     }
 }
