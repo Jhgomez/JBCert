@@ -12,7 +12,8 @@ val dateFormat = LocalDate.Format {
 }
 
 fun Apod.toEntity() = ApodEntity(
-    dateId = dateFormat.parse(date).toEpochDays(),
+    dateId = id,
+    date = date,
     copyright = copyright,
     fetchedAt = fetchedAt.toEpochMilliseconds(),
     explanation = explanation,
@@ -24,7 +25,8 @@ fun Apod.toEntity() = ApodEntity(
 )
 
 fun ApodEntity.toDomainModel() = Apod(
-    date = LocalDate.fromEpochDays(dateId).toString(),
+    id = dateId,
+    date = date,
     title = title,
     explanation = explanation,
     url = url,
@@ -37,6 +39,7 @@ fun ApodEntity.toDomainModel() = Apod(
 
 fun ApodResponse.toApodEntity() = ApodEntity(
     dateId = dateFormat.parse(date).toEpochDays(),
+    date = date,
     copyright = copyright,
     fetchedAt = fetchedAt,
     explanation = explanation,
@@ -48,6 +51,7 @@ fun ApodResponse.toApodEntity() = ApodEntity(
 )
 
 fun ApodResponse.toDomainModel() = Apod(
+    id = dateFormat.parse(date).toEpochDays(),
     date = date,
     title = title,
     explanation = explanation,

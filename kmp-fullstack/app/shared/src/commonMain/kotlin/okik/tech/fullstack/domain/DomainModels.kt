@@ -6,6 +6,7 @@ import kotlin.time.Instant
 
 @Serializable
 data class Apod(
+    val id: Long,
     val date: String,
     val title: String,
     val explanation: String,
