@@ -14,7 +14,7 @@ val dateFormat = LocalDate.Format {
 fun Apod.toEntity() = ApodEntity(
     dateId = dateFormat.parse(date).toEpochDays(),
     copyright = copyright,
-    fetchedAt = Instant.parse(fetchedAt).toEpochMilliseconds(),
+    fetchedAt = fetchedAt.toEpochMilliseconds(),
     explanation = explanation,
     url = url,
     hdUrl = hdUrl,
@@ -32,7 +32,7 @@ fun ApodEntity.toDomainModel() = Apod(
     mediaType = media_type,
     copyright = copyright,
     thumbnailUrl = thumbnailUrl,
-    fetchedAt = Instant.fromEpochMilliseconds(fetchedAt).toString()
+    fetchedAt = Instant.fromEpochMilliseconds(fetchedAt)
 )
 
 fun ApodResponse.toApodEntity() = ApodEntity(
@@ -45,4 +45,16 @@ fun ApodResponse.toApodEntity() = ApodEntity(
     media_type = mediaType,
     title = title,
     thumbnailUrl = thumbnailUrl
+)
+
+fun ApodResponse.toDomainModel() = Apod(
+    date = date,
+    title = title,
+    explanation = explanation,
+    url = url,
+    hdUrl = hdUrl,
+    mediaType = mediaType,
+    copyright = copyright,
+    thumbnailUrl = thumbnailUrl,
+    fetchedAt = Instant.fromEpochMilliseconds(fetchedAt)
 )
