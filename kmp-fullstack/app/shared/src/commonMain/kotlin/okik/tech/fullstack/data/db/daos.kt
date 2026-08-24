@@ -1,11 +1,26 @@
 package okik.tech.fullstack.data.db
 
+import androidx.paging.PagingSource
+import app.cash.sqldelight.Query
+import app.cash.sqldelight.TransacterBase
 import app.cash.sqldelight.async.coroutines.awaitAsList
+import app.cash.sqldelight.paging3.QueryPagingSource
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okik.tech.fullstack.db.ApodEntity
 import okik.tech.fullstack.db.FullstackDb
+import kotlin.Long
+import kotlin.coroutines.CoroutineContext
 
-class ApodDao(val database: FullstackDb) {
+class ApodDao(val database: FullstackDb, val dispatcher: CoroutineDispatcher) {
     val queries = database.apodQueries
+
+    val source = QueryPagingSource(
+        countQuery = queries.countApods(),
+        transacter = queries,
+        context = dispatcher,
+        queryProvider = queries::apodsPage
+    )
 
     suspend fun selectAll(): List<ApodEntity> = queries.selectAll().awaitAsList()
 
