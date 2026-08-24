@@ -4,6 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
+import okik.tech.fullstack.db.ApodEntity
 import okik.tech.fullstack.domain.Apod
 import okik.tech.fullstack.domain.ApodRepository
 import okik.tech.fullstack.domain.DomainResult
@@ -13,18 +14,18 @@ import okik.tech.fullstack.domain.Paging
 class HomeListRemoteMediator(
     val apodRepository: ApodRepository,
     val handleCatchError: (DomainResult.DomainErrorResult<Paging<Apod>>) -> Unit
-): RemoteMediator<Int, Apod>() {
+): RemoteMediator<Int, ApodEntity>() {
     val HIGHEST_PAGE_INDEX = "highest_page"
 
-    var currentIndex = 0
+    var currentIndex = 1
 
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, Apod>
+        state: PagingState<Int, ApodEntity>
     ): MediatorResult {
         return try {
             when (loadType) {
-                LoadType.REFRESH -> currentIndex = 0
+                LoadType.REFRESH -> currentIndex = 1
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
                     ++currentIndex
