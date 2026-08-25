@@ -9,9 +9,10 @@ import org.koin.dsl.module
 import org.w3c.dom.Worker
 
 @OptIn(ExperimentalWasmJsInterop::class)
-val worker: Worker = js(
-    """new Worker(new URL("@cashapp/sqldelight-sqljs-worker/sqljs.worker.js", import.meta.url))"""
-)
+private fun createWorker(): Worker =
+    js("""new Worker(new URL("@cashapp/sqldelight-sqljs-worker/sqljs.worker.js", import.meta.url))""")
+
+val worker: Worker = createWorker()
 
 actual suspend fun getDriverModule(): Module {
     val driver = WebWorkerDriver(worker)
