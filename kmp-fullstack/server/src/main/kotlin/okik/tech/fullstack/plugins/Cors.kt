@@ -9,7 +9,7 @@ import io.ktor.server.plugins.cors.routing.CORS
 fun Application.configureCors() {
     install(CORS) {
         // Allow specific origins (replace with your frontend URL in production)
-        allowHost("localhost:3000") // Example frontend origin
+        allowHost("localhost:8080") // Example frontend origin
         // Or use anyHost() for loose development access:
         // anyHost()
 
