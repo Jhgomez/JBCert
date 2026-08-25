@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.ktor.client.cio.engine)
     implementation(libs.ktor.negotiation.client)
     implementation(libs.ktor.logging.client)
+    implementation(libs.ktor.server.cors)
 
     implementation(libs.exposed.core)
     implementation(libs.exposed.jdbc)
