@@ -21,7 +21,7 @@ fun main() {
         Netty, // is an engine
         // this allows to override the PORT variable viea environment
         // vars which will make easier to deploy to different environments latter
-        port = System.getenv("PORT")?.toIntOrNull() ?: 8080,
+        port = System.getenv("PORT")?.toIntOrNull() ?: 7070,
         host = "0.0.0.0",
         module = Application::module
     )
