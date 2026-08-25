@@ -7,7 +7,7 @@ object RemoteServerConfig {
     private const val WORKING_SERVER = "localhost"
     private const val BROKEN_SERVER = "fake-server"
 
-    private const val PORT = "8080"
+    private const val PORT = "7070"
 
     private val NON_PHYSICAL_DEVICE =
         if (SERVER_MODE == "working") "$WORKING_SERVER:$PORT" else "$BROKEN_SERVER:$PORT"

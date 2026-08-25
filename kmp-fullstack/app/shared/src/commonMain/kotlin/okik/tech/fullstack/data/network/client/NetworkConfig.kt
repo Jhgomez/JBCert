@@ -12,6 +12,7 @@ import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import okik.tech.fullstack.data.network.client.configureHttpResponseValidator
 import okik.tech.fullstack.getPlatform
 
 object NetworkConfig {
@@ -22,7 +23,7 @@ object NetworkConfig {
     // functionality but also a very nice way to customize them, both are documented here:
     // https://ktor.io/docs/client-response-validation.html
     fun createHttpClient(): HttpClient {
-        return HttpClient(CIO) {
+        return HttpClient() {
             defaultRequest {
                 url.protocol = URLProtocol.HTTP
 
