@@ -2,7 +2,6 @@ package okik.tech.fullstack.data.network.client
 
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
-import io.ktor.client.engine.cio.CIOEngineConfig
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.RedirectResponseException
@@ -33,7 +32,7 @@ import kotlin.Exception
 // we catch excepntions and turn them into proper models.  We could remove this validator and catch
 // the exceptions in the http call site but Ktor is already handling concurrency here, for example
 // "exceptionResponse.body" is suspend so we dont suspend the wrong coroutine we trust Ktor
-fun HttpClientConfig<CIOEngineConfig>.configureHttpResponseValidator() {
+fun HttpClientConfig<*>.configureHttpResponseValidator() {
     // this will make the client to throw exceptions if response doesn't have a 2xx http status code
     expectSuccess = true
 
