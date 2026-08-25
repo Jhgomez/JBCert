@@ -69,6 +69,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
+            implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.android.driver)
         }
         commonMain.dependencies {
@@ -87,8 +88,9 @@ kotlin {
             implementation(libs.koin.viewmodel)
 //            implementation(libs.koin.cmp)
 
+            // core dependency seems to already include the JS engine so no need to add extra artifacts
+            // for a platform specific engine even when docs say to add dependency
             implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.cio.engine)
             implementation(libs.ktor.negotiation.client)
             implementation(libs.ktor.json)
             implementation(libs.ktor.logging.client)
@@ -133,10 +135,12 @@ kotlin {
             implementation(libs.wrappers.browser)
         }
         iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
             implementation(libs.sqldelight.native.driver)
         }
         jvmMain.dependencies {
             implementation(libs.sqldelight.jvm.driver)
+            implementation(libs.ktor.client.okhttp)
         }
     }
 }
