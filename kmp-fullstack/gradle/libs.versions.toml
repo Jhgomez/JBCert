@@ -69,14 +69,22 @@ ktor-koin-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "
 
 ktor-logging-client = { module = "io.ktor:ktor-client-logging", version.ref = "ktor"}
 ktor-server-cors-jvm = { module = "io.ktor:ktor-server-cors-jvm", version.ref = "ktor" } #  for interacting with the web client.
+ktor_server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
 #ktor-server-content-negotiation-jvm = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
 #ktor-serialization-kotlinx-json-jvm = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ktor-client-cio-engine = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" } # this engine supports all platforms at once so we don't need to add different engines for each platform
 ktor-negotiation-client = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
-
+# this engine supports all platforms at once so we don't need to add different engines for each platform
+# however it doesn't seems to work properly with Js and Wasm, besides it seems to be more performant to
+# declare the engine specifically than letting ktor client choose at runtime, in our CMP targets we will
+# use specific engines, in the client our server has we will use CIO
+ktor-client-cio-engine = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-wasm = { module = "io.ktor:ktor-client-js-wasm-js", version.ref = "ktor"}
+ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-android = { module = "io.insert-koin:koin-android" }
