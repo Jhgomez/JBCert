@@ -9,6 +9,7 @@ import okik.tech.fullstack.config.appConfigModule
 import okik.tech.fullstack.config.initializeDatabase
 import okik.tech.fullstack.config.serviceModule
 import okik.tech.fullstack.plugins.configureBackgroundJobs
+import okik.tech.fullstack.plugins.configureCors
 import okik.tech.fullstack.plugins.configureMonitoring
 import okik.tech.fullstack.plugins.configureRouting
 import okik.tech.fullstack.plugins.configureSerialization
@@ -36,6 +37,7 @@ fun Application.module() {
     }
 
     initializeDatabase()
+    configureCors()
     configureSerialization()
     configureStatusPages()
     configureMonitoring()
