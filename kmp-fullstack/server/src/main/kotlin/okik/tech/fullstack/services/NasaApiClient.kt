@@ -3,6 +3,7 @@ package okik.tech.fullstack.services
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
@@ -25,7 +26,7 @@ private const val HOURLY_LIMIT = 30
 private const val DAILY_LIMIT = 50
 private const val MIN_REQUEST_INTERVAL = 1000L
 
-private fun createHttpClient() = HttpClient {
+private fun createHttpClient() = HttpClient(CIO) {
     install(ContentNegotiation) {
         json(Json {
             ignoreUnknownKeys = true
