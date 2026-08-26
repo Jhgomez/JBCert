@@ -49,7 +49,7 @@ class ApodHistoryRemoteMediator(val apodRepository: ApodRepository): RemoteMedia
                     apodRepository.upsertApods(response.result.items)
                 }
             } else {
-                MediatorResult.Error(
+                return MediatorResult.Error(
                     response as DomainResult.DomainErrorResult
                 )
             }
