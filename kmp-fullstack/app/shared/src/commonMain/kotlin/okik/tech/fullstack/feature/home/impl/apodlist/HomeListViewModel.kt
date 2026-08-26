@@ -17,9 +17,13 @@ class HomeListViewModel(private val apodRepository: ApodRepository): ViewModel()
 
     // this is the paying price(unchecked cast) for following CA while leveraging androidx paging3 pager
     val apodPagesFlow: Flow<PagingData<Apod>> =
-        apodRepository.getApodPagingFlow() as Flow<PagingData<Apod>>
+        (apodRepository.getApodPagingFlow() as Flow<PagingData<Apod>>)
 
     fun refreshPagerData() {
 //        apodRepository.refreshPagerData()
+    }
+
+    fun append() {
+        apodRepository.appendPagerPage()
     }
 }
