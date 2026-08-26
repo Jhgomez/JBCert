@@ -11,45 +11,63 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
-import okik.tech.fullstack.feature.about.api.AboutHome
 import okik.tech.fullstack.feature.home.api.HomeApodDetail
 import okik.tech.fullstack.feature.home.api.HomeList
+import okik.tech.fullstack.feature.home.impl.apodlist.HomeListScreen
 import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
-fun EntryProviderScope<NavKey>.homeEntries(navigator: ExitThroughHomeNavigator) {
+fun EntryProviderScope<NavKey>.homeEntries(
+    navigator: ExitThroughHomeNavigator
+) {
     entry<HomeList>(
         metadata = ListDetailSceneStrategy.listPane(
             sceneKey = HomeList,
             detailPlaceholder = {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("My PlaceHolder")
-                }
+
             }
         )
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Button(onClick = {
-                navigator.navigate(HomeApodDetail(null))
-            }) {
-                Text("To Apod")
+        HomeListScreen(
+            onApodClick = { apod, key ->
+                navigator.navigate(
+                    key = HomeApodDetail(
+                        apod = apod,
+                        coilCacheKey = key?.key,
+                        keyExtras = key?.extras
+                    )
+                )
             }
-        }
+        )
+
+
+//        Column(
+//            modifier = Modifier.fillMaxSize(),
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.Center
+//        ) {
+//            var placeholder: MemoryCache.Key? = remember { null }
+////            var bitmap: MutableState<Painter> = remember { mutableStateOf(ColorPainter(Color.LightGray)) }
+//
+////            LaunchedEffect(navigator) {
+////                bitmap.value = BitmapPainter(Res.readBytes("drawable/placeholder.webp").decodeToImageBitmap())
+////            }
+//
+//
+//
+//            Button(onClick = {
+//                navigator.navigate(HomeApodDetail(null))
+//            }) {
+//                Text("To Apod")
+//            }
+//        }
     }
 
     entry<HomeApodDetail>(
         metadata = ListDetailSceneStrategy.detailPane(
             sceneKey = HomeList
         )
-    ) {
+    ) { key ->
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,7 +76,7 @@ fun EntryProviderScope<NavKey>.homeEntries(navigator: ExitThroughHomeNavigator) 
             Button(onClick = {
                 navigator.goBack()
             }) {
-                Text("Apod detail - bac")
+                Text(key.apod.toString())
             }
         }
     }
