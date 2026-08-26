@@ -1,7 +1,9 @@
 package okik.tech.fullstack.feature.home.impl.apodlist
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.Flow
 import okik.tech.fullstack.domain.Apod
 import okik.tech.fullstack.domain.ApodRepository
@@ -17,7 +19,7 @@ class HomeListViewModel(private val apodRepository: ApodRepository): ViewModel()
 
     // this is the paying price(unchecked cast) for following CA while leveraging androidx paging3 pager
     val apodPagesFlow: Flow<PagingData<Apod>> =
-        (apodRepository.getApodPagingFlow() as Flow<PagingData<Apod>>)
+        (apodRepository.getApodPagingFlow() as Flow<PagingData<Apod>>).cachedIn(viewModelScope)
 
     fun refreshPagerData() {
 //        apodRepository.refreshPagerData()
