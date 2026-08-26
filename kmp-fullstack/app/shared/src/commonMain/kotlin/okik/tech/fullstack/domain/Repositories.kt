@@ -26,4 +26,5 @@ interface ApodRepository {
      * db nor any DAO
      */
     fun getApodPagingFlow(): Flow<Any>
+    fun appendPagerPage()
 }
