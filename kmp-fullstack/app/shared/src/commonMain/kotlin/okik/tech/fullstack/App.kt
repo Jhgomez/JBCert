@@ -36,7 +36,6 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_LARGE_LOWER_BOUND
 import coil3.annotation.ExperimentalCoilApi
-import coil3.network.NetworkHeaders
 
 import fullstack.app.shared.generated.resources.Res
 import fullstack.app.shared.generated.resources.arrow_back
@@ -50,17 +49,15 @@ import okik.tech.fullstack.feature.today.impl.todayEntries
 import okik.tech.fullstack.navigation.TopLevelRoute
 import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
 import okik.tech.fullstack.navigation.exitthroughhome.rememberExitThroughHomeAppNavState
-import okik.tech.fullstack.ui.ApodViewModel
 import okik.tech.fullstack.ui.IntiCoilImageLoader
 import okik.tech.fullstack.ui.adaptive.scenedecorators.rememberDecoratorStrategy
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalCoilApi::class)
 @Composable
 @Preview
-fun App(viewModel: ApodViewModel = koinViewModel<ApodViewModel>()) {
+fun App() {
     IntiCoilImageLoader()
 
     MaterialTheme {
