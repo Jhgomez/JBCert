@@ -77,15 +77,15 @@ class ApodViewModel(
                             currentPage = _homeUiState.value.currentPage + 1
                         )
                     }
-                    is DomainResult.DomainErrorResult.UnknownResult<Paging<Apod>>,
-                    is DomainResult.DomainErrorResult.NotFound<Paging<Apod>>,
-                    is DomainResult.DomainErrorResult.NetworkError<Paging<Apod>>,
-                    is DomainResult.DomainErrorResult.Unauthorized<Paging<Apod>>,
+                    is DomainResult.DomainErrorResult.UnknownResult,
+                    is DomainResult.DomainErrorResult.NotFound,
+                    is DomainResult.DomainErrorResult.NetworkError,
+                    is DomainResult.DomainErrorResult.Unauthorized,
                     is DomainResult.DomainErrorResult.UnhandledHttpCode ->
                         _homeUiState.value = _homeUiState.value.copy(
                             isLoading = false,
                             error = "$this",
-                            shouldShowRetry = this is DomainResult.DomainErrorResult.NetworkError<Paging<Apod>>
+                            shouldShowRetry = this is DomainResult.DomainErrorResult.NetworkError
                         )
 
                 }
@@ -117,15 +117,15 @@ class ApodViewModel(
                             error = null
                         )
                     }
-                    is DomainResult.DomainErrorResult.UnknownResult<Apod>,
-                    is DomainResult.DomainErrorResult.NotFound<Apod>,
-                    is DomainResult.DomainErrorResult.NetworkError<Apod>,
-                    is DomainResult.DomainErrorResult.Unauthorized<Apod>,
+                    is DomainResult.DomainErrorResult.UnknownResult,
+                    is DomainResult.DomainErrorResult.NotFound,
+                    is DomainResult.DomainErrorResult.NetworkError,
+                    is DomainResult.DomainErrorResult.Unauthorized,
                     is DomainResult.DomainErrorResult.UnhandledHttpCode ->
                         _homeUiState.value = _homeUiState.value.copy(
                             isLoading = false,
                             error = "$this",
-                            shouldShowRetry = this is DomainResult.DomainErrorResult.NetworkError<Apod>
+                            shouldShowRetry = this is DomainResult.DomainErrorResult.NetworkError
                         )
                 }
             }
@@ -164,16 +164,16 @@ class ApodViewModel(
                             foundApod = result,
                             error = null
                         )
-                    is DomainResult.DomainErrorResult.NetworkError<Apod>,
-                    is DomainResult.DomainErrorResult.NotFound<Apod>,
-                    is DomainResult.DomainErrorResult.Unauthorized<Apod>,
-                    is DomainResult.DomainErrorResult.UnhandledHttpCode<Apod>,
-                    is DomainResult.DomainErrorResult.UnknownResult<Apod> -> {
+                    is DomainResult.DomainErrorResult.NetworkError,
+                    is DomainResult.DomainErrorResult.NotFound,
+                    is DomainResult.DomainErrorResult.Unauthorized,
+                    is DomainResult.DomainErrorResult.UnhandledHttpCode,
+                    is DomainResult.DomainErrorResult.UnknownResult -> {
 
                         _homeUiState.value = _homeUiState.value.copy(
                             isLoading = false,
                             error = "$this",
-                            shouldShowRetry = this is DomainResult.DomainErrorResult.NetworkError<Apod>
+                            shouldShowRetry = this is DomainResult.DomainErrorResult.NetworkError
                         )
                     }
                 }
