@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -100,15 +101,15 @@ fun HomeListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(96.dp)
+                    .clip(MaterialTheme.shapes.medium)
                     .clickable {
                         if (apod != null) {
                             onApodClick(apod, placeholder)
                         }
-                    }
-                    .padding(8.dp),
+                    },
                 headlineContent = {
                     if (apod == null) {
-
+                        // TODO, add shimmer/reveal/skeletons effect
                     } else {
                         Column(
                             modifier = Modifier.fillMaxHeight(),
@@ -118,6 +119,8 @@ fun HomeListScreen(
                             Text(
                                 text = apod.title,
                                 style = MaterialTheme.typography.titleLargeEmphasized,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Spacer(Modifier.height(4.dp))
                             Text(
@@ -139,7 +142,7 @@ fun HomeListScreen(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(80.dp)
-                            .clickable { placeholder },
+                            .clip(MaterialTheme.shapes.small)
                     )
                 },
                 trailingContent = {
