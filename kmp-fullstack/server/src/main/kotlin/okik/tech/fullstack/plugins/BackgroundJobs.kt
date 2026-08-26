@@ -94,7 +94,8 @@ private fun CoroutineScope.startHistoricalDataFetching(
             val initialStartDate = today.minusDays(initialBatchSize.toLong())
             logger.info("Fetching initial batch: $initialBatchSize pictures from $initialStartDate to $today")
 
-            val initialCount = apodService.fillHistoricalCache(initialStartDate, today)
+            // you could change firstApodDate by initialStartDate but it is a lot of fetching from NASA
+            val initialCount = apodService.fillHistoricalCache(firstApodDate, today)
             logger.info("Initial fetch completed: $initialCount new entries added")
 
             startFollowUpBatches(apodService, logger, initialStartDate, firstApodDate, followupBatchSize, config)

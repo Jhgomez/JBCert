@@ -256,7 +256,7 @@ class ApodService(
         try {
             val totalCount = apodDao.getTotalCount()
 
-            if (totalCount < 10) {
+            if (totalCount < 90) {
                 logger.info("Database has only $totalCount entries. Historical fetch needed.")
                 return true
             }
