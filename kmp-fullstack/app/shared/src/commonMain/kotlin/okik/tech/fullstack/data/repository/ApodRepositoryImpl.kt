@@ -24,6 +24,7 @@ import okik.tech.fullstack.domain.DomainResult
 import okik.tech.fullstack.domain.PageInfo
 import okik.tech.fullstack.domain.Paging
 import okik.tech.fullstack.data.db.paging.ApodHistoryRemoteMediator
+import okik.tech.fullstack.db.ApodEntity
 import okik.tech.fullstack.models.PaginatedResponse
 
 class ApodRepositoryImpl(
@@ -121,23 +122,33 @@ class ApodRepositoryImpl(
         }
     }
 
+    var pager: Pager<Int, ApodEntity>? = null
+
     override fun getApodPagingFlow(): Flow<Any> {
         @OptIn(ExperimentalPagingApi::class)
-        return Pager(
-            config = PagingConfig(
-                pageSize = 10,
-                prefetchDistance = 1,
-                enablePlaceholders = true,
-                initialLoadSize = 10,
-            ),
-            pagingSourceFactory = {
-                apodDao.getApodPagingSource()
-            },
-            remoteMediator = ApodHistoryRemoteMediator(apodRepository = this)
-        )
-        .flow
-        .map { pagingData ->
-            pagingData.map { apodEntity -> apodEntity.toDomainModel() }
-        }
+        val flow = pager?.flow ?:
+            Pager(
+                config = PagingConfig(
+                    pageSize = 10,
+                    prefetchDistance = 2, // pager config is really "fragile", if I put 2 here, it will fetch all pages of **this** backend as it was a loop, so it fetches all until they are all in memory
+                    enablePlaceholders = true,
+                    initialLoadSize = 10,
+                ),
+                pagingSourceFactory = {
+                    apodDao.getApodPagingSource()
+                },
+                remoteMediator = ApodHistoryRemoteMediator(apodRepository = this)
+            ).also {
+                pager = it
+            }
+            .flow
+
+        return flow.map { pagingData ->
+                pagingData.map { apodEntity -> apodEntity.toDomainModel() }
+            }
+    }
+
+    override fun appendPagerPage() {
+        pager?.append()
     }
 }
