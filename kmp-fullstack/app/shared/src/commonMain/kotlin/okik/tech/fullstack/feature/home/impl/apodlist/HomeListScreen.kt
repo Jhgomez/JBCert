@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.ItemSnapshotList
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.memory.MemoryCache
@@ -57,7 +57,8 @@ fun HomeListScreen(
     val isRefreshInProgress = state.loadState.refresh == LoadState.Loading
 
     HomeListScreen(
-        apods = state.itemSnapshotList.toList(),
+        apods = state.itemSnapshotList,
+        apodCallback = { index -> state[index] },
         isRefreshInProgress = isRefreshInProgress,
         showAppendLoading = showAppendLoading,
         errorResult = errorResult,
@@ -69,6 +70,7 @@ fun HomeListScreen(
 @Composable
 fun HomeListScreen(
     apods: List<Apod?>,
+    apodCallback: (Int) -> Apod?,
     isRefreshInProgress: Boolean,
     showAppendLoading: Boolean,
     errorResult: DomainResult.DomainErrorResult?,
@@ -82,11 +84,17 @@ fun HomeListScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(
-            count = apods.size,
-            key = { index -> apods[index]?.id ?: -index.toLong() }
+            count = (apods.size - 1).coerceAtLeast(0),
+            key = { index ->
+//                if (apods.size < index) {
+                    apods[index]?.id ?: -index.toLong()
+//                } else {
+//                    -index.toLong()
+//                }
+            }
         ) { index ->
             var placeholder: MemoryCache.Key? = remember { null }
-            val apod = apods[index]
+            val apod = apodCallback(index)
 
             ListItem(
                 modifier = Modifier
@@ -122,17 +130,17 @@ fun HomeListScreen(
                     }
                 },
                 leadingContent = {
-//                    AsyncImage(
-//                        model = ImageRequest.Builder(LocalPlatformContext.current)
-//                            .data(apod?.url)
-//                            .build(),
-//                        contentDescription = null,
-//                        onSuccess = { placeholder = it.result.memoryCacheKey },
-//                        contentScale = ContentScale.Crop,
-//                        modifier = Modifier
-//                            .size(80.dp)
-//                            .clickable { placeholder },
-//                    )
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalPlatformContext.current)
+                            .data(apod?.url)
+                            .build(),
+                        contentDescription = null,
+                        onSuccess = { placeholder = it.result.memoryCacheKey },
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clickable { placeholder },
+                    )
                 },
                 trailingContent = {
                     Icon(
