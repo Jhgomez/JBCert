@@ -64,20 +64,18 @@ fun IntiCoilImageLoader() {
                     .maxSizePercent(context, 0.02)
                     .build()
             }
-//            .diskCache(null)
-//            .diskCache {
-//                DiskCache.Builder()
-//                    .directory()
-//                    .maxSizePercent(0.002)
-//                    .build()
-//            }
             .components {
                 add(KtorNetworkFetcherFactory(
                     httpClient = {
                         return@KtorNetworkFetcherFactory HttpClient {
-                            defaultRequest {
-                                header("Cache-Control", "no-cache")
-                            }
+//                            defaultRequest {
+//                                // tells intermediaries not to serve a cached response but if targeting
+//                                // web it is important, if this is set then a preflight is performed
+//                                // and asks permission for cache-control but if the server headers
+//                                // don't have this configured then the request is blocked in the browser
+//                                // in our case it would be allowHeader(HttpHeaders.CacheControl)
+//                                header("Cache-Control", "no-cache")
+//                            }
                         }
                     },
                     cacheStrategy = { CacheControlCacheStrategy() }
