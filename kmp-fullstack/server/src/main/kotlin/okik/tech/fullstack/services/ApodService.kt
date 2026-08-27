@@ -3,6 +3,8 @@ package okik.tech.fullstack.services
 import kotlinx.coroutines.delay
 import okik.tech.fullstack.database.daos.ApodDao
 import okik.tech.fullstack.database.daos.CacheMetadataDao
+import okik.tech.fullstack.database.daos.MediaDao
+import okik.tech.fullstack.database.daos.MediaHdDao
 import okik.tech.fullstack.models.ApodResponse
 import okik.tech.fullstack.models.PaginatedResponse
 import org.slf4j.LoggerFactory
@@ -17,6 +19,8 @@ class ApodService(
     private val nasaApiClient: NasaApiClient,
     private val apodDao: ApodDao,
     private val cacheMetadataDao: CacheMetadataDao,
+    private val mediaDao: MediaDao,
+    private val mediaHdDao: MediaHdDao,
     private val cacheDays: Int
 ) {
     private val logger = LoggerFactory.getLogger(ApodService::class.java)
@@ -277,5 +281,27 @@ class ApodService(
             logger.error("Error checking database status", e)
             return true
         }
+    }
+
+    suspend fun getMedia(url: String): String {
+        val resourceBytes = mediaDao.get(url)
+
+        if (resourceBytes == null) {
+            val fileInfo = nasaApiClient.getMedia(url)
+            return mediaDao.set(fileInfo)
+        }
+
+        return resourceBytes
+    }
+
+    suspend fun getMediaHd(url: String): String {
+        val resourceBytes = mediaHdDao.get(url)
+
+        if (resourceBytes == null) {
+            val fileInfo = nasaApiClient.getMediaHd(url)
+            return mediaHdDao.set(fileInfo)
+        }
+
+        return resourceBytes
     }
 }
