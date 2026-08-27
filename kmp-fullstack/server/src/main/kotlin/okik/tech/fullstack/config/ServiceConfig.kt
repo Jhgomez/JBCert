@@ -8,7 +8,12 @@ val serviceModule = module {
     single {
         val config = get<AppConfig>()
 
-        NasaApiClient(apiKey = config.nasaApiKey)
+        NasaApiClient(
+            apiKey = config.nasaApiKey,
+            cacheDirectory = config.cacheDirectory,
+            cacheHdDirectory = config.cacheHdDirectory,
+            cacheTempDirectory = config.cacheTempDirectory
+        )
     }
 
     single {
@@ -16,6 +21,8 @@ val serviceModule = module {
             nasaApiClient = get(),
             apodDao = get(),
             cacheMetadataDao = get(),
+            mediaDao = get(),
+            mediaHdDao = get(),
             cacheDays = get<AppConfig>().cacheDays
         )
     }
