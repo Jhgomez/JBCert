@@ -147,15 +147,13 @@ fun Route.apodRoutes() {
                 )
 
                 val type = if (isHd) " HD" else ""
-                val contentType = Files.probeContentType(fileInfo.path)
-                logger.info("Content type in file system of$type resource ${fileInfo.url}, is: $contentType")
                 logger.info("Content type in DB of$type resource ${fileInfo.url}, is: ${fileInfo.contentType}")
 
-                call.response.header(HttpHeaders.ContentType, contentType)
+                call.response.header(HttpHeaders.ContentType, fileInfo.contentType)
                 call.respondFile(fileInfo.path.toFile())
 
             } catch (e: Exception) {
-                call.respondError(HttpStatusCode.InternalServerError, "Failed to fetch today's APOD: ${e.message}")
+                call.respondError(HttpStatusCode.InternalServerError, "Failed to fetch NASA Resource: $e")
             }
         }
     }
