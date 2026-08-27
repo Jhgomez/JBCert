@@ -4,7 +4,6 @@ import okik.tech.fullstack.database.tables.Media
 import okik.tech.fullstack.database.tables.MediaHd
 import okik.tech.fullstack.services.FileInfo
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
-import org.jetbrains.exposed.v1.core.statements.api.ExposedBlob
 import org.jetbrains.exposed.v1.dao.Entity
 import org.jetbrains.exposed.v1.dao.EntityClass
 import org.jetbrains.exposed.v1.jdbc.upsert
@@ -21,7 +20,7 @@ class MediaHdDao {
     }
 
     fun get(keyUrl: String): String? {
-        return MediaHdEntity.Dao.findById(keyUrl)?.pictureFile
+        return MediaHdEntity.Dao.findById(keyUrl)?.medaiFile
     }
 }
 
@@ -33,10 +32,10 @@ class MediaHdDao {
 class MediaHdEntity(id: EntityID<String>) : Entity<String>(id) {
     object Dao : EntityClass<String, MediaHdEntity>(MediaHd)
     var key by MediaHd.id
-    var pictureFile by MediaHd.pictureFile
+    var medaiFile by MediaHd.mediaFile
     var contentType by MediaHd.contentType
 
     override fun toString(): String {
-        return "MediaHdDao(key=$key, pictureFile=${pictureFile}, contentType=$contentType)"
+        return "MediaHdDao(key=$key, pictureFile=${medaiFile}, contentType=$contentType)"
     }
 }
