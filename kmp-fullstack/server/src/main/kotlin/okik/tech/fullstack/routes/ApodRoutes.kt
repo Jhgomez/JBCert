@@ -1,8 +1,12 @@
 package okik.tech.fullstack.routes
 
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.Url
 import io.ktor.server.application.ApplicationCall
+import io.ktor.server.response.header
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondFile
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
@@ -12,8 +16,8 @@ import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.koin.ktor.ext.inject
 import org.slf4j.LoggerFactory
+import java.nio.file.Files
 import java.time.LocalDate
-import java.time.format.DateTimeParseException
 
 /**
  * Routes implements some patterns, DI, clean structure(try-catch), early validation, and utility
@@ -116,13 +120,44 @@ fun Route.apodRoutes() {
                 val histories = apodService.getApodHistory(page, pageSize, startDate, endDate)
 
                 call.respond(histories)
-            } catch (e: DateTimeParseException) {
-                call.respondError(HttpStatusCode.InternalServerError, "Failed to fetch APOD history: ${e.message}")
             } catch (e: Exception) {
                 call.respondError(HttpStatusCode.InternalServerError, "Failed to fetch APOD history: ${e.message}")
             }
         }
 
+        get("/media") {
+            try {
+                val resourceUrl = call.parameters["url"] ?: return@get call.respondError(
+                    HttpStatusCode.BadRequest,
+                    "No Url specified"
+                )
+
+                val parsedUrl = runCatching { Url(resourceUrl) }.getOrNull()
+                    ?: return@get call.respond(HttpStatusCode.BadRequest, "Url format is invalid")
+
+                if (parsedUrl.host != "apod.nasa.gov") {
+                    return@get call.respond(HttpStatusCode.Forbidden,  "Can only fetch resources from apod.nasa.gov")
+                }
+
+                val isHd = call.parameters["is_hd"]?.toBoolean() == true
+
+                val fileInfo = apodService.getMedia(
+                    url = resourceUrl,
+                    isHd = isHd
+                )
+
+                val type = if (isHd) " HD" else ""
+                val contentType = Files.probeContentType(fileInfo.path)
+                logger.info("Content type in file system of$type resource ${fileInfo.url}, is: $contentType")
+                logger.info("Content type in DB of$type resource ${fileInfo.url}, is: ${fileInfo.contentType}")
+
+                call.response.header(HttpHeaders.ContentType, contentType)
+                call.respondFile(fileInfo.path.toFile())
+
+            } catch (e: Exception) {
+                call.respondError(HttpStatusCode.InternalServerError, "Failed to fetch today's APOD: ${e.message}")
+            }
+        }
     }
 
     /**
