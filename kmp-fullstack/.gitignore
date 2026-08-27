@@ -21,4 +21,5 @@ generated-db/
 cachefiles/
 cachehdfiles/
 cachetemp/
+desktopdb/
 path/*
