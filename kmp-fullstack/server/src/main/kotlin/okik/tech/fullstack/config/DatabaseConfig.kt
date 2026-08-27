@@ -5,10 +5,14 @@ import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import okik.tech.fullstack.database.daos.ApodDao
 import okik.tech.fullstack.database.daos.CacheMetadataDao
+import okik.tech.fullstack.database.daos.MediaDao
+import okik.tech.fullstack.database.daos.MediaHdDao
 import org.koin.dsl.module
 import org.koin.ktor.ext.inject
 import okik.tech.fullstack.database.tables.Apod
 import okik.tech.fullstack.database.tables.CacheMetadata
+import okik.tech.fullstack.database.tables.Media
+import okik.tech.fullstack.database.tables.MediaHd
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -29,6 +33,9 @@ object DatabaseConfig {
 
         single { CacheMetadataDao() }
 
+        single { MediaDao() }
+
+        single { MediaHdDao() }
     }
 
     private fun createHikariDataSource(dbFilePath: String): HikariDataSource {
@@ -64,7 +71,7 @@ fun Application.initializeDatabase() {
     val appConfig by inject<AppConfig>()
 
     transaction(database) {
-        SchemaUtils.create(Apod, CacheMetadata)
+        SchemaUtils.create(Apod, CacheMetadata, Media, MediaHd)
     }
 
     log.info("SQLite database initialized successfully at: ${appConfig.dbFilePath}")
