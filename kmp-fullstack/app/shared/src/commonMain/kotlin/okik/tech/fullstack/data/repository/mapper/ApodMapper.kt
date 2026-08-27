@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.byUnicodePattern
 import okik.tech.fullstack.db.ApodEntity
 import okik.tech.fullstack.domain.Apod
+import okik.tech.fullstack.getPlatform
 import okik.tech.fullstack.models.ApodResponse
 import kotlin.time.Instant
 
@@ -37,6 +38,8 @@ fun ApodEntity.toDomainModel() = Apod(
     fetchedAt = Instant.fromEpochMilliseconds(fetchedAt)
 )
 
+private val baseUrl = getPlatform().baseUrl
+
 fun ApodResponse.toApodEntity() = ApodEntity(
     dateId = dateFormat.parse(date).toEpochDays(),
     date = date,
@@ -61,8 +64,8 @@ fun ApodResponse.toApodEntity() = ApodEntity(
 
     // FYI, YouTube deliberately permits embedding — that's the entire product. NASA's image server
     // images are seem to be meant to be <img>-embedded, not fetched.
-    url = "http://localhost:7070/api/apod/media?url=$url",
-    hdUrl = hdUrl?.let { "http://localhost:7070/api/apod/media?url=$hdUrl&is_hd=true" },
+    url = "http://$baseUrl/api/apod/media?url=$url",
+    hdUrl = hdUrl?.let { "http://$baseUrl/api/apod/media?url=$hdUrl&is_hd=true" },
     media_type = mediaType,
     title = title,
     thumbnailUrl = thumbnailUrl
@@ -73,8 +76,8 @@ fun ApodResponse.toDomainModel() = Apod(
     date = date,
     title = title,
     explanation = explanation,
-    url = "http://localhost:7070/api/apod/media?url=$url",
-    hdUrl = hdUrl?.let { "http://localhost:7070/api/apod/media?url=$hdUrl&is_hd=true" },
+    url = "http://$baseUrl/api/apod/media?url=$url",
+    hdUrl = hdUrl?.let { "http://$baseUrl/api/apod/media?url=$hdUrl&is_hd=true" },
     mediaType = mediaType,
     copyright = copyright,
     thumbnailUrl = thumbnailUrl,
