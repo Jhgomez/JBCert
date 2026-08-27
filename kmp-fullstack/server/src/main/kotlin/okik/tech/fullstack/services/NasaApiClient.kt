@@ -139,13 +139,15 @@ class NasaApiClient(
                 StandardCopyOption.REPLACE_EXISTING
             )
         } catch (e: Throwable) {
+            logger.error("Fetching resource $url from NASA server returned error: ${e.message}")
+
             Files.deleteIfExists(temp)
             throw FetchingFileException("Fetching resource from NASA server returned error: ${e.message}")
         }
 
         FileInfo(
             url = url,
-            fileName = fileName,
+            path = Path(targetBase, fileName),
             contentType = contentType
         )
     }
@@ -287,6 +289,6 @@ class FetchingFileException(message: String, cause: Throwable? = null) :
 
 class FileInfo(
     val url: String, // Table's primary Key
-    val fileName: String,
+    val path: Path,
     val contentType: String
 )
