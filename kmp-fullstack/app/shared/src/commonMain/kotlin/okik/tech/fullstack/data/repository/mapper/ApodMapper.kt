@@ -61,8 +61,8 @@ fun ApodResponse.toApodEntity() = ApodEntity(
 
     // FYI, YouTube deliberately permits embedding — that's the entire product. NASA's image server
     // images are seem to be meant to be <img>-embedded, not fetched.
-    url = "http://localhost:7070/api/apod/media?url=%22$url%22",
-    hdUrl = hdUrl?.let { "http://localhost:7070/api/apod/media?url=%22$hdUrl%22&is_hd=true" },
+    url = "http://localhost:7070/api/apod/media?url=$url",
+    hdUrl = hdUrl?.let { "http://localhost:7070/api/apod/media?url=$hdUrl&is_hd=true" },
     media_type = mediaType,
     title = title,
     thumbnailUrl = thumbnailUrl
@@ -73,8 +73,8 @@ fun ApodResponse.toDomainModel() = Apod(
     date = date,
     title = title,
     explanation = explanation,
-    url = "http://localhost:7070/api/apod/media?url=%22$url%22",
-    hdUrl = hdUrl?.let { "http://localhost:7070/api/apod/media?url=%22$hdUrl%22&is_hd=true" },
+    url = "http://localhost:7070/api/apod/media?url=$url",
+    hdUrl = hdUrl?.let { "http://localhost:7070/api/apod/media?url=$hdUrl&is_hd=true" },
     mediaType = mediaType,
     copyright = copyright,
     thumbnailUrl = thumbnailUrl,
