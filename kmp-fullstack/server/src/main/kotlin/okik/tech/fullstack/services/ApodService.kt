@@ -283,25 +283,23 @@ class ApodService(
         }
     }
 
-    suspend fun getMedia(url: String): FileInfo {
-        val resourceBytes = mediaDao.get(url)
+    suspend fun getMedia(url: String, isHd: Boolean): FileInfo {
+        val resourceBytes =
+            if (isHd)
+                mediaHdDao.get(url)
+            else
+                mediaDao.get(url)
+
 
         if (resourceBytes == null) {
-            val fileInfo = nasaApiClient.getMedia(url)
+            val fileInfo =
+                if (isHd)
+                    nasaApiClient.getMediaHd(url)
+                else
+                    nasaApiClient.getMedia(url)
+
+
             mediaDao.set(fileInfo)
-
-            return fileInfo
-        }
-
-        return resourceBytes
-    }
-
-    suspend fun getMediaHd(url: String): FileInfo {
-        val resourceBytes = mediaHdDao.get(url)
-
-        if (resourceBytes == null) {
-            val fileInfo = nasaApiClient.getMediaHd(url)
-            mediaHdDao.set(fileInfo)
 
             return fileInfo
         }
