@@ -10,17 +10,28 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
+import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.utils.io.copyTo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okik.tech.fullstack.models.ApodResponse
 import org.slf4j.LoggerFactory
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.nio.file.StandardOpenOption
+import java.security.MessageDigest
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.io.path.Path
 
 private const val HOURLY_LIMIT = 30
 private const val DAILY_LIMIT = 50
@@ -42,7 +53,10 @@ private fun createHttpClient() = HttpClient(CIO) {
 
 class NasaApiClient(
     private val apiKey: String,
-    private val httpClient: HttpClient = createHttpClient()
+    private val httpClient: HttpClient = createHttpClient(),
+    private val cacheDirectory: String,
+    private val cacheTempDirectory: String,
+    private val cacheHdDirectory: String
 ) {
     private val logger = LoggerFactory.getLogger(NasaApiClient::class.java)
     private val baseUrl = "https://api.nasa.gov/planetary/apod"
@@ -55,6 +69,16 @@ class NasaApiClient(
 
     // Last request time
     private var lastRequestTime = 0L
+
+    val cacheTempDirPath = Path(cacheTempDirectory)
+    val cacheDirPath = Path(cacheDirectory)
+    val cacheHdDirPath = Path(cacheHdDirectory)
+
+    init {
+        Files.createDirectories(cacheTempDirPath)
+        Files.createDirectories(cacheDirPath)
+        Files.createDirectories(cacheHdDirPath)
+    }
 
     suspend fun getTodayApod(): ApodResponse {
         logger.info("Fetching today's APOD from NASA API")
@@ -79,6 +103,52 @@ class NasaApiClient(
         logger.info("Fetching $count random APODs from NASA API")
         return fetchRandomApod(count.toInt())
     }
+
+    suspend fun getMedia(url: String): FileInfo {
+        return withContext(Dispatchers.IO) {
+            val fileName = cacheKey(url)
+            var contentType = ""
+
+            val temp = Files.createTempFile(cacheTempDirPath, "dl-", ".part")
+
+            try {
+                Files.newByteChannel(
+                    temp,
+                    StandardOpenOption.WRITE,
+//                StandardOpenOption.TRUNCATE_EXISTING
+                ).use { channel ->
+                    httpClient.prepareGet(url).execute { response ->
+                        response.bodyAsChannel().copyTo(channel)
+                        contentType = response.contentType()?.contentType ?: ""
+                    }
+                }
+
+                val target = Path(cacheDirectory, fileName)
+
+                Files.move(
+                    temp,
+                    target,
+                    StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING
+                )
+            } catch (e: Throwable) {
+                Files.deleteIfExists(temp)
+                throw e
+            }
+
+
+            FileInfo(
+                url = url,
+                fileName = fileName,
+                contentType = contentType
+            )
+        }
+    }
+
+    private fun cacheKey(url: String): String =
+        MessageDigest.getInstance("SHA-256")
+            .digest(url.toByteArray())
+            .toHexString()
 
     private suspend fun fetchSingleApod(date: String? = null): ApodResponse {
         return requestMutex.withLock {
@@ -206,3 +276,12 @@ class NasaApiClient(
 
 class NasaApiException(message: String, cause: Throwable? = null) :
     RuntimeException(message, cause)
+
+class FetchingFileException(message: String, cause: Throwable? = null) :
+        RuntimeException(message, cause)
+
+class FileInfo(
+    val url: String, // Table's primary Key
+    val fileName: String,
+    val contentType: String
+)
