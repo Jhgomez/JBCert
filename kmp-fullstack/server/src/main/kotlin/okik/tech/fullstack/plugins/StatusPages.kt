@@ -7,6 +7,8 @@ import io.ktor.server.application.log
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
 import okik.tech.fullstack.models.ErrorResponse
+import okik.tech.fullstack.services.ApodService
+import org.slf4j.LoggerFactory
 
 /**
  * lets you catch exceptions and translate into well-formed http responses, instead of returning a
@@ -14,6 +16,8 @@ import okik.tech.fullstack.models.ErrorResponse
  * and respond with a meaningful message and status code
  */
 fun Application.configureStatusPages() {
+    val logger = LoggerFactory.getLogger(Application::class.java)
+
     install(StatusPages) {
         exception<IllegalArgumentException> { call, cause ->
             call.respond(
@@ -27,6 +31,7 @@ fun Application.configureStatusPages() {
 
         exception<Throwable> { call, cause ->
             call.application.log.error("Unhandled exception", cause)
+            logger.error("Unhandled exception: ${cause}")
             call.respond(
                 status = HttpStatusCode.InternalServerError,
                 message = ErrorResponse(
