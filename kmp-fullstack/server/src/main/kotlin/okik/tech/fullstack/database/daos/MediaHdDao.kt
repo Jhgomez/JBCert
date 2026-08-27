@@ -7,20 +7,19 @@ import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.Entity
 import org.jetbrains.exposed.v1.dao.EntityClass
 import org.jetbrains.exposed.v1.jdbc.upsert
+import kotlin.io.path.Path
 
 class MediaHdDao {
-    fun set(fileInfo: FileInfo): String {
+    fun set(fileInfo: FileInfo) {
         Media.upsert(Media.id) {
             it[Media.id] = fileInfo.url
-            it[Media.mediaFile] = fileInfo.fileName
+            it[Media.mediaPath] = fileInfo.path.toString()
             it[Media.contentType] = fileInfo.contentType
         }
-
-        return fileInfo.fileName
     }
 
-    fun get(keyUrl: String): String? {
-        return MediaHdEntity.Dao.findById(keyUrl)?.medaiFile
+    fun get(keyUrl: String): FileInfo? {
+        return MediaHdEntity.Dao.findById(keyUrl)?.toFileInfo()
     }
 }
 
@@ -32,10 +31,16 @@ class MediaHdDao {
 class MediaHdEntity(id: EntityID<String>) : Entity<String>(id) {
     object Dao : EntityClass<String, MediaHdEntity>(MediaHd)
     var key by MediaHd.id
-    var medaiFile by MediaHd.mediaFile
+    var mediaPath by MediaHd.mediaPath
     var contentType by MediaHd.contentType
 
+    inline fun toFileInfo(): FileInfo = FileInfo(
+        url = key.toString(),
+        path = Path(mediaPath),
+        contentType = contentType
+    )
+
     override fun toString(): String {
-        return "MediaHdDao(key=$key, pictureFile=${medaiFile}, contentType=$contentType)"
+        return "MediaHdDao(key=$key, pictureFile=${mediaPath}, contentType=$contentType)"
     }
 }
