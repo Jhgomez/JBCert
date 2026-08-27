@@ -3,6 +3,7 @@ package okik.tech.fullstack.database.daos
 import okik.tech.fullstack.database.tables.Media
 import okik.tech.fullstack.database.tables.MediaHd
 import okik.tech.fullstack.services.FileInfo
+import okik.tech.fullstack.utils.dbQuery
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.Entity
 import org.jetbrains.exposed.v1.dao.EntityClass
@@ -10,7 +11,7 @@ import org.jetbrains.exposed.v1.jdbc.upsert
 import kotlin.io.path.Path
 
 class MediaHdDao {
-    fun set(fileInfo: FileInfo) {
+    suspend fun set(fileInfo: FileInfo) = dbQuery {
         Media.upsert(Media.id) {
             it[Media.id] = fileInfo.url
             it[Media.mediaPath] = fileInfo.path.toString()
@@ -18,8 +19,8 @@ class MediaHdDao {
         }
     }
 
-    fun get(keyUrl: String): FileInfo? {
-        return MediaHdEntity.Dao.findById(keyUrl)?.toFileInfo()
+    suspend fun get(keyUrl: String): FileInfo? = dbQuery {
+        MediaHdEntity.Dao.findById(keyUrl)?.toFileInfo()
     }
 }
 
