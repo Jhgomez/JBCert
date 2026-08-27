@@ -27,6 +27,7 @@ import kotlinx.serialization.json.Json
 import okik.tech.fullstack.models.ApodResponse
 import org.slf4j.LoggerFactory
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import java.nio.file.StandardOpenOption
 import java.security.MessageDigest
@@ -71,13 +72,11 @@ class NasaApiClient(
     private var lastRequestTime = 0L
 
     val cacheTempDirPath = Path(cacheTempDirectory)
-    val cacheDirPath = Path(cacheDirectory)
-    val cacheHdDirPath = Path(cacheHdDirectory)
 
     init {
         Files.createDirectories(cacheTempDirPath)
-        Files.createDirectories(cacheDirPath)
-        Files.createDirectories(cacheHdDirPath)
+        Files.createDirectories(Path(cacheDirectory))
+        Files.createDirectories(Path(cacheHdDirectory))
     }
 
     suspend fun getTodayApod(): ApodResponse {
@@ -104,45 +103,51 @@ class NasaApiClient(
         return fetchRandomApod(count.toInt())
     }
 
-    suspend fun getMedia(url: String): FileInfo {
-        return withContext(Dispatchers.IO) {
-            val fileName = cacheKey(url)
-            var contentType = ""
+    suspend fun getMedia(url: String): FileInfo =
+        fetchMedia(url, cacheDirectory)
 
-            val temp = Files.createTempFile(cacheTempDirPath, "dl-", ".part")
+    suspend fun getMediaHd(url: String): FileInfo =
+        fetchMedia(url, cacheHdDirectory)
 
-            try {
-                Files.newByteChannel(
-                    temp,
-                    StandardOpenOption.WRITE,
+    private suspend fun fetchMedia(
+        url: String,
+        targetBase: String
+    ): FileInfo = withContext(Dispatchers.IO) {
+        val fileName = cacheKey(url)
+        var contentType = ""
+
+        val temp = Files.createTempFile(cacheTempDirPath, "dl-", ".part")
+
+        try {
+            Files.newByteChannel(
+                temp,
+                StandardOpenOption.WRITE,
 //                StandardOpenOption.TRUNCATE_EXISTING
-                ).use { channel ->
-                    httpClient.prepareGet(url).execute { response ->
-                        response.bodyAsChannel().copyTo(channel)
-                        contentType = response.contentType()?.contentType ?: ""
-                    }
+            ).use { channel ->
+                httpClient.prepareGet(url).execute { response ->
+                    response.bodyAsChannel().copyTo(channel)
+                    contentType = response.contentType()?.contentType ?: ""
                 }
-
-                val target = Path(cacheDirectory, fileName)
-
-                Files.move(
-                    temp,
-                    target,
-                    StandardCopyOption.ATOMIC_MOVE,
-                    StandardCopyOption.REPLACE_EXISTING
-                )
-            } catch (e: Throwable) {
-                Files.deleteIfExists(temp)
-                throw e
             }
 
+            val target = Path(targetBase, fileName)
 
-            FileInfo(
-                url = url,
-                fileName = fileName,
-                contentType = contentType
+            Files.move(
+                temp,
+                target,
+                StandardCopyOption.ATOMIC_MOVE,
+                StandardCopyOption.REPLACE_EXISTING
             )
+        } catch (e: Throwable) {
+            Files.deleteIfExists(temp)
+            throw FetchingFileException("Fetching resource from NASA server returned error: ${e.message}")
         }
+
+        FileInfo(
+            url = url,
+            fileName = fileName,
+            contentType = contentType
+        )
     }
 
     private fun cacheKey(url: String): String =
