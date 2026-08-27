@@ -6,20 +6,19 @@ import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.Entity
 import org.jetbrains.exposed.v1.dao.EntityClass
 import org.jetbrains.exposed.v1.jdbc.upsert
+import kotlin.io.path.Path
 
 class MediaDao {
-    fun set(fileInfo: FileInfo): String {
+    fun set(fileInfo: FileInfo) {
         Media.upsert(Media.id) {
             it[Media.id] = fileInfo.url
-            it[Media.mediaFile] = fileInfo.fileName
+            it[Media.mediaPath] = fileInfo.path.toString()
             it[Media.contentType] = fileInfo.contentType
         }
-        
-        return fileInfo.fileName
     }
 
-    fun get(keyUrl: String): String? {
-        return MediaEntity.Dao.findById(keyUrl)?.mediaFile
+    fun get(keyUrl: String): FileInfo? {
+        return MediaEntity.Dao.findById(keyUrl)?.toFileInfo()
     }
 }
 
@@ -31,10 +30,16 @@ class MediaDao {
 class MediaEntity(id: EntityID<String>) : Entity<String>(id) {
     object Dao : EntityClass<String, MediaEntity>(Media)
     var key by Media.id
-    var mediaFile by Media.mediaFile
+    var mediaPath by Media.mediaPath
     var contentType by Media.contentType
 
+    inline fun toFileInfo(): FileInfo = FileInfo(
+        url = key.toString(),
+        path = Path(mediaPath),
+        contentType = contentType
+    )
+
     override fun toString(): String {
-        return "MediaDao(key=$key, pictureFile=${mediaFile}, contentType=$contentType)"
+        return "MediaDao(key=$key, pictureFile=${mediaPath}, contentType=$contentType)"
     }
 }

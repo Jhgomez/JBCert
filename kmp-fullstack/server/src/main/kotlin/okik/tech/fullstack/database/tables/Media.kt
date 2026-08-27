@@ -9,7 +9,7 @@ object Media : IdTable<String>("media") {
     override val id: Column<EntityID<String>> = varchar("url", 256).entityId()
     override val primaryKey = PrimaryKey(id)
 
-    val mediaFile = varchar("file", 256)
+    val mediaPath = varchar("file", 256)
     val contentType = varchar("content_type", 64)
 }
 
