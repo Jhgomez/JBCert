@@ -4,6 +4,6 @@
     <string name="find">Find</string>
     <string name="about">About</string>
     <string name="gallery">APOD Gallery</string>
-<!--    <string name=""></string>-->
+    <string name="apod_list_placeholder_message">Choose an item from list</string>
 <!--    <string name=""></string>-->
 </resources>
