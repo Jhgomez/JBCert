@@ -17,8 +17,7 @@ import fullstack.app.shared.generated.resources.error
 import fullstack.app.shared.generated.resources.fallback
 import fullstack.app.shared.generated.resources.placeholder
 import io.ktor.client.HttpClient
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.request.header
+import okik.tech.fullstack.data.network.client.engineFactory
 import org.jetbrains.compose.resources.DrawableResource
 
 data class CoilDefaultImages(
@@ -67,7 +66,7 @@ fun IntiCoilImageLoader() {
             .components {
                 add(KtorNetworkFetcherFactory(
                     httpClient = {
-                        return@KtorNetworkFetcherFactory HttpClient {
+                        return@KtorNetworkFetcherFactory HttpClient(engineFactory) {
 //                            defaultRequest {
 //                                // tells intermediaries not to serve a cached response but if targeting
 //                                // web it is important, if this is set then a preflight is performed
