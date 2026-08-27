@@ -1,5 +1,6 @@
 package okik.tech.fullstack.feature.home.impl.apodlist
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -94,64 +95,82 @@ fun HomeListScreen(
 //                }
             }
         ) { index ->
-            var placeholder: MemoryCache.Key? = remember { null }
-            val apod = apodCallback(index)
-
-            ListItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(96.dp)
-                    .clip(MaterialTheme.shapes.medium)
-                    .clickable {
-                        if (apod != null) {
-                            onApodClick(apod, placeholder)
-                        }
-                    },
-                headlineContent = {
-                    if (apod == null) {
-                        // TODO, add shimmer/reveal/skeletons effect
-                    } else {
-                        Column(
-                            modifier = Modifier.fillMaxHeight(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            Text(
-                                text = apod.title,
-                                style = MaterialTheme.typography.titleLargeEmphasized,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Text(
-                                text = apod.explanation,
-                                style = MaterialTheme.typography.labelMedium,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-                },
-                leadingContent = {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalPlatformContext.current)
-                            .data(apod?.url)
-                            .build(),
-                        contentDescription = null,
-                        onSuccess = { placeholder = it.result.memoryCacheKey },
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(80.dp)
-                            .clip(MaterialTheme.shapes.small)
-                    )
-                },
-                trailingContent = {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.arrow_right),
-                        contentDescription = null
-                    )
-                }
-            )
+            ApodItem(onApodClick, apodCallback(index))
         }
     }
 }
+
+@Composable
+private fun ApodItem(
+    onApodClick: (Apod, MemoryCache.Key?) -> Unit,
+    apod: Apod?
+) {
+    var placeholder: MemoryCache.Key? = remember { null }
+
+    ListItem(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(96.dp)
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(enabled = apod != null) {
+                onApodClick(apod!!, placeholder)
+            },
+        headlineContent = {
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = apod?.title ?: " ",
+                    style = MaterialTheme.typography.titleLargeEmphasized,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier =
+                        if (apod != null)
+                            Modifier
+                        else
+                            Modifier
+                                .fillMaxWidth(.6f)
+                                .clip(MaterialTheme.shapes.small)
+                                .background(MaterialTheme.colorScheme.secondaryFixedDim)
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = apod?.explanation ?: " \n ",
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier =
+                        if (apod != null)
+                            Modifier
+                        else
+                            Modifier
+                                .fillMaxWidth(.9f)
+                                .clip(MaterialTheme.shapes.small)
+                                .background(MaterialTheme.colorScheme.secondaryFixedDim)
+                )
+            }
+        },
+        leadingContent = {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalPlatformContext.current)
+                    .data(apod?.url)
+                    .build(),
+                contentDescription = null,
+                onSuccess = { placeholder = it.result.memoryCacheKey },
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(MaterialTheme.shapes.small)
+            )
+        },
+        trailingContent = {
+            Icon(
+                imageVector = vectorResource(Res.drawable.arrow_right),
+                contentDescription = null
+            )
+        }
+    )
+}
+
