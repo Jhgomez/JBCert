@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import fullstack.app.shared.generated.resources.Res
 import fullstack.app.shared.generated.resources.apod_list_placeholder_message
-import fullstack.app.shared.generated.resources.gallery
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

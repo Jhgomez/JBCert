@@ -81,7 +81,12 @@ fun HomeListScreen(
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 8.dp),
+        contentPadding = PaddingValues(
+            start = 8.dp,
+            top = 24.dp,
+            end = 8.dp,
+            bottom = 16.dp
+        ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
