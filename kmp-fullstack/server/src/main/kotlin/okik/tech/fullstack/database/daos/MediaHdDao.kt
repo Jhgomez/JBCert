@@ -12,10 +12,10 @@ import kotlin.io.path.Path
 
 class MediaHdDao {
     suspend fun set(fileInfo: FileInfo) = dbQuery {
-        Media.upsert(Media.id) {
-            it[Media.id] = fileInfo.url
-            it[Media.mediaPath] = fileInfo.path.toString()
-            it[Media.contentType] = fileInfo.contentType
+        MediaHd.upsert(MediaHd.id) {
+            it[MediaHd.id] = fileInfo.url
+            it[MediaHd.mediaPath] = fileInfo.path.toString()
+            it[MediaHd.contentType] = fileInfo.contentType
         }
     }
 
