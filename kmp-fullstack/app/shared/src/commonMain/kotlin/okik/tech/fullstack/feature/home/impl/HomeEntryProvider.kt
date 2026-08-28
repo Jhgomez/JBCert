@@ -3,16 +3,19 @@ package okik.tech.fullstack.feature.home.impl
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import okik.tech.fullstack.feature.home.api.HomeApodDetail
 import okik.tech.fullstack.feature.home.api.HomeList
+import okik.tech.fullstack.feature.home.impl.apoddetail.ApodDetailPlaceholder
 import okik.tech.fullstack.feature.home.impl.apodlist.HomeListScreen
 import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
 
@@ -24,7 +27,11 @@ fun EntryProviderScope<NavKey>.homeEntries(
         metadata = ListDetailSceneStrategy.listPane(
             sceneKey = HomeList,
             detailPlaceholder = {
-
+                ApodDetailPlaceholder(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                )
             }
         )
     ) {

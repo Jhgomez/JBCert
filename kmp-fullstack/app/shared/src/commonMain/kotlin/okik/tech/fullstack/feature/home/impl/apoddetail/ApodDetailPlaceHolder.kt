@@ -13,7 +13,7 @@ import fullstack.app.shared.generated.resources.apod_list_placeholder_message
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun HomeDetailPlaceholder(modifier: Modifier = Modifier) {
+fun ApodDetailPlaceholder(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
