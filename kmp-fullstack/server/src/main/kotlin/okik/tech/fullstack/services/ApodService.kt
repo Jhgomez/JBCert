@@ -298,8 +298,10 @@ class ApodService(
                 else
                     nasaApiClient.getMedia(url)
 
-
-            mediaDao.set(fileInfo)
+            if (isHd)
+                mediaHdDao.set(fileInfo)
+            else
+                mediaDao.set(fileInfo)
 
             return fileInfo
         }
