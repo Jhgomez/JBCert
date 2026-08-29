@@ -44,8 +44,7 @@ fun ApodDetailScreen(
     apod: Apod,
     coilCacheKey: String?,
     keyExtras: Map<String, String>?,
-    modifier: Modifier,
-    goBack: () -> Unit
+    modifier: Modifier
 ) {
     ApodDetailScreen(
         title = apod.title,
@@ -56,8 +55,7 @@ fun ApodDetailScreen(
         copyright = apod.copyright,
         coilCacheKey = coilCacheKey,
         keyExtras = keyExtras,
-        modifier = modifier,
-        goBack = goBack
+        modifier = modifier
     )
 }
 
@@ -71,8 +69,7 @@ fun ApodDetailScreen(
     copyright: String?,
     coilCacheKey: String?,
     keyExtras: Map<String, String>?,
-    modifier: Modifier,
-    goBack: () -> Unit
+    modifier: Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
