@@ -3,11 +3,12 @@ package okik.tech.fullstack.navigation.exitthroughhome
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import io.ktor.util.reflect.instanceOf
+import okik.tech.fullstack.navigation.AppNavKey
 
 class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
 
     fun navigate(key: NavKey) {
-        var currentNestedStack: NavBackStack<NavKey>? = null
+        if (key !is AppNavKey) throw IllegalStateException("All keys should extend from AppNavKey")
 
         if (key in state.topLevelKeys) {
             state.topLevelStack.clear()
@@ -19,8 +20,8 @@ class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
                 state.topLevelStack.add(key)
             }
         } else {
-            currentNestedStack = state
-                .nestedStack
+            var currentNestedStack = state
+                .nestedStacks
                 .firstOrNull { stack ->  stack.key == state.topLevelStack.lastOrNull() }!!
                 .nestedStack
 
@@ -30,20 +31,15 @@ class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
             currentNestedStack.add(key)
         }
 
-
-        currentNestedStack = currentNestedStack ?: state
-            .nestedStack
-            .firstOrNull { stack ->  stack.key == state.topLevelStack.lastOrNull() }!!
-            .nestedStack
-
-        state.shouldShowTopBar.value = currentNestedStack.last() !in state.topLevelKeys
+        state.shouldShowTopBar.value = key.shouldShowTopBar
+        state.shouldShowNavIcon.value = key.shouldNavIcon
     }
 
     fun goBack() {
         val currentTopLevelKey = state.topLevelStack.last()
 
         val currentNestedStack = state
-            .nestedStack
+            .nestedStacks
             .firstOrNull { stack -> stack.key == currentTopLevelKey }!!
             .nestedStack
 
@@ -54,7 +50,7 @@ class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
         }
 
         state.shouldShowTopBar.value = state
-            .nestedStack
+            .nestedStacks
             .firstOrNull { stack -> stack.key == state.topLevelStack.last() }!!
             .nestedStack
             .last() !in state.topLevelKeys
