@@ -8,10 +8,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -31,12 +29,13 @@ import okik.tech.fullstack.ui.adaptive.cacheSize
 class NavigationDecoratorScene(
     private val scene: Scene<NavKey>,
     private val sharedTransitionScope: SharedTransitionScope,
-    private val enableBackNavigation: State<Boolean>,
+    private val shouldShowTopBar: State<Boolean>,
     private val navBar: @Composable (() -> Unit),
     private val navRail: @Composable (() -> Unit),
     private val topBar: @Composable (() -> Unit),
     private val navIcon: @Composable (() -> Unit),
-    private val windowSizeClass: State<WindowSizeClass>
+    private val windowSizeClass: State<WindowSizeClass>,
+    private val shouldShowNavIcon: State<Boolean>
 ) : Scene<NavKey> by scene {
     override val key = scene::class to scene.key
 
@@ -70,7 +69,7 @@ class NavigationDecoratorScene(
                                 scene.content()
 
                                 this@Row.AnimatedVisibility(
-                                    visible = enableBackNavigation.value,
+                                    visible = shouldShowTopBar.value || shouldShowNavIcon.value,
                                     enter = fadeIn(),
                                     exit = fadeOut()
                                 ) {
@@ -82,7 +81,7 @@ class NavigationDecoratorScene(
                 else -> {
                     Column(Modifier.fillMaxSize()) {
                         AnimatedVisibility(
-                            visible = enableBackNavigation.value,
+                            visible = shouldShowTopBar.value,
                             enter = fadeIn() + expandVertically(),
                             exit = shrinkVertically() + fadeOut()
                         ) {
@@ -91,6 +90,14 @@ class NavigationDecoratorScene(
 
                         Box(modifier = Modifier.weight(1f)) {
                             scene.content()
+
+                            this@Column.AnimatedVisibility(
+                                visible = shouldShowNavIcon.value,
+                                enter = fadeIn() + expandVertically(),
+                                exit = shrinkVertically() + fadeOut()
+                            ) {
+                                navIcon()
+                            }
                         }
 
                         Box(
@@ -115,7 +122,8 @@ class NavigationDecoratorScene(
 @Composable
 fun rememberDecoratorStrategy(
     sharedTransitionScope: SharedTransitionScope,
-    enableBackNavigation: State<Boolean>,
+    shouldShowTopBar: State<Boolean>,
+    shouldShowNavIcon: State<Boolean>,
     navBar: @Composable () -> Unit,
     navRail: @Composable () -> Unit,
     topBar:  @Composable () -> Unit,
@@ -135,7 +143,8 @@ fun rememberDecoratorStrategy(
             sharedTransitionScope = sharedTransitionScope,
             navBar = movableNavBar,
             navRail = movableNavRail,
-            enableBackNavigation = enableBackNavigation,
+            shouldShowTopBar = shouldShowTopBar,
+            shouldShowNavIcon = shouldShowNavIcon,
             topBar = topBar,
             navIcon = navIcon,
         )
@@ -144,7 +153,8 @@ fun rememberDecoratorStrategy(
 
 class DecoratorStrategy(
     private val sharedTransitionScope: SharedTransitionScope,
-    private val enableBackNavigation: State<Boolean>,
+    private val shouldShowTopBar: State<Boolean>,
+    private val shouldShowNavIcon: State<Boolean>,
     private val navBar: @Composable (() -> Unit),
     private val navRail: @Composable (() -> Unit),
     private val topBar: @Composable (() -> Unit),
@@ -160,7 +170,8 @@ class DecoratorStrategy(
             sharedTransitionScope = sharedTransitionScope,
             navBar = navBar,
             navRail = navRail,
-            enableBackNavigation = enableBackNavigation,
+            shouldShowTopBar = shouldShowTopBar,
+            shouldShowNavIcon = shouldShowNavIcon,
             topBar = topBar,
             navIcon = navIcon,
         )
