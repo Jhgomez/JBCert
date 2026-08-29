@@ -81,6 +81,10 @@ fun rememberExitThroughHomeAppNavState(
         mutableStateOf(false)
     }
 
+    val shouldShowNavIcon = rememberSerializable {
+        mutableStateOf(false)
+    }
+
     // I could switch to `rememberNavBackStack`
     val topLevelStack = rememberNavBackStack(
         configuration = SavedStateConfiguration {
@@ -100,9 +104,10 @@ fun rememberExitThroughHomeAppNavState(
         ExitThroughHomeAppNavState(
             homeKey = homeKey,
             topLevelStack = topLevelStack,
-            nestedStack = nestedStack,
+            nestedStacks = nestedStack,
             topLevelKeys = topLevelKeys,
-            shouldShowTopBar = shouldShowTopBar
+            shouldShowTopBar = shouldShowTopBar,
+            shouldShowNavIcon = shouldShowNavIcon
         )
     }
 }
@@ -119,14 +124,15 @@ fun rememberExitThroughHomeAppNavState(
 class ExitThroughHomeAppNavState(
     val homeKey: NavKey,
     val topLevelStack: NavBackStack<NavKey>,
-    val nestedStack: Array<Stack>,
+    val nestedStacks: Array<Stack>,
     val topLevelKeys: Array<NavKey>,
-    val shouldShowTopBar: MutableState<Boolean>
+    val shouldShowTopBar: MutableState<Boolean>,
+    val shouldShowNavIcon: MutableState<Boolean>
 ) {
 
     @Composable
     fun decorateAndReturnNavEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): SnapshotStateList<NavEntry<NavKey>> {
-        val navEntries = nestedStack.associate { stack ->
+        val navEntries = nestedStacks.associate { stack ->
             val decorators = listOf(
                 rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
                 rememberViewModelStoreNavEntryDecorator<NavKey>(),
