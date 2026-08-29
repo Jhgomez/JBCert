@@ -1,6 +1,7 @@
 package okik.tech.fullstack
 
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
@@ -139,10 +140,9 @@ fun App() {
                 },
                 navIcon = {
                     IconButton(onClick = navigator::goBack) {
-                        Icon(
+                        Image(
                             imageVector = vectorResource(Res.drawable.arrow_back),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground
+                            contentDescription = null
                         )
                     }
                 },
