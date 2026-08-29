@@ -4,7 +4,8 @@ object RemoteServerConfig {
     //    private const val SERVER_MODE = "broken"
     private const val SERVER_MODE = "working"
 
-    private const val WORKING_SERVER = "localhost"
+    // the IP assign to you by your DHCP server(AKA, your ISP router) or change it to "localhost"
+    private const val WORKING_SERVER = "192.168.1.15"
     private const val BROKEN_SERVER = "fake-server"
 
     private const val PORT = "7070"
