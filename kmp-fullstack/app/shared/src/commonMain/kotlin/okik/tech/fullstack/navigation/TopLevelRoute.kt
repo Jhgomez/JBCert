@@ -1,6 +1,5 @@
 package okik.tech.fullstack.navigation
 
-import androidx.navigation3.runtime.NavKey
 import fullstack.app.shared.generated.resources.Res
 import fullstack.app.shared.generated.resources.about
 import fullstack.app.shared.generated.resources.find
@@ -16,7 +15,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 
 enum class TopLevelRoute(
-    val homeKey: NavKey,
+    val homeKey: AppNavKey,
     val icon: DrawableResource,
     val description: StringResource
 ) {
