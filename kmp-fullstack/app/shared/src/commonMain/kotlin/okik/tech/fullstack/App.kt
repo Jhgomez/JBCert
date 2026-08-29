@@ -79,6 +79,17 @@ fun App() {
                 calculatePaneScaffoldDirective(windowAdaptiveInfo)
                     .copy(horizontalPartitionSpacerSize = 0.dp)
             }
+            val paneExpansionState = rememberPaneExpansionState(
+//                anchors = listOf(
+//                    PaneExpansionAnchor.Proportion(0.25f),
+//                    PaneExpansionAnchor.Proportion(0.5f),
+//                    PaneExpansionAnchor.Proportion(0.75f),
+//                )
+            )
+            LaunchedEffect(Unit) {
+                paneExpansionState.setFirstPaneProportion(.55f)
+            }
+
             val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>(
                 directive = directive,
                 paneExpansionDragHandle = { state ->
@@ -94,13 +105,7 @@ fun App() {
                         interactionSource = interactionSource
                     )
                 },
-                paneExpansionState = rememberPaneExpansionState(
-//                anchors = listOf(
-//                    PaneExpansionAnchor.Proportion(0.25f),
-//                    PaneExpansionAnchor.Proportion(0.5f),
-//                    PaneExpansionAnchor.Proportion(0.75f),
-//                )
-                )
+                paneExpansionState = paneExpansionState
             )
 
             val navRailState = rememberWideNavigationRailState()
