@@ -117,7 +117,8 @@ fun App() {
 
             val decoratorStrategy = rememberDecoratorStrategy(
                 sharedTransitionScope = this,
-                enableBackNavigation = backStackState.shouldShowTopBar,
+                shouldShowTopBar = backStackState.shouldShowTopBar,
+                shouldShowNavIcon = backStackState.shouldShowNavIcon,
                 navBar = {
                     BottomNavBar(
                         currentKey = backStackState.topLevelStack.lastOrNull(),
