@@ -1,6 +1,5 @@
 package okik.tech.fullstack.navigation.exitthroughhome
 
-import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import io.ktor.util.reflect.instanceOf
 import okik.tech.fullstack.navigation.AppNavKey
@@ -49,11 +48,14 @@ class ExitThroughHomeNavigator(private val state: ExitThroughHomeAppNavState) {
             currentNestedStack.removeLastOrNull()
         }
 
-        state.shouldShowTopBar.value = state
+        val currentKey = state
             .nestedStacks
             .firstOrNull { stack -> stack.key == state.topLevelStack.last() }!!
             .nestedStack
-            .last() !in state.topLevelKeys
+            .last() as AppNavKey
+
+        state.shouldShowTopBar.value = currentKey.shouldShowTopBar
+        state.shouldShowNavIcon.value = currentKey.shouldNavIcon
     }
 }
 
