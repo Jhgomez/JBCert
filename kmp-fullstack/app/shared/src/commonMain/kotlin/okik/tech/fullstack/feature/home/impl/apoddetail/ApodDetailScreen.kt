@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.AsyncImage
@@ -49,8 +50,6 @@ fun ApodDetailScreen(
     modifier: Modifier,
     goBack: () -> Unit
 ) {
-    val windowAdaptiveInfo = currentWindowAdaptiveInfoV2()
-
     ApodDetailScreen(
         title = apod.title,
         date = apod.date,
@@ -60,9 +59,6 @@ fun ApodDetailScreen(
         copyright = apod.copyright,
         coilCacheKey = coilCacheKey,
         keyExtras = keyExtras,
-        shouldShowBackIcon = !windowAdaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(
-            WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
-        ),
         modifier = modifier,
         goBack = goBack
     )
@@ -78,7 +74,6 @@ fun ApodDetailScreen(
     copyright: String?,
     coilCacheKey: String?,
     keyExtras: Map<String, String>?,
-    shouldShowBackIcon: Boolean,
     modifier: Modifier,
     goBack: () -> Unit
 ) {
@@ -88,60 +83,104 @@ fun ApodDetailScreen(
         Logger.logInfo("Coil cache", "Resource $resourceUrl cacheKey: $coilCacheKey")
         Logger.logInfo("Coil cache", "Resource $resourceUrl map: $keyExtras")
     }
-
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalPlatformContext.current)
-                        .data(resourceUrl)
-                        .placeholderMemoryCacheKey(coilCacheKey)
-                        .memoryCacheKeyExtras(keyExtras ?: emptyMap())
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.matchParentSize()
-                )
-                TopAppBar(
-                    title = {
-                        Text(title)
-                    },
-                    colors = MaterialTheme.colorScheme.topAppBarCustomColorsTwo,
-                    navigationIcon = {
-                        if (shouldShowBackIcon) {
-                            IconButton(onClick = goBack) {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.arrow_back),
-                                    contentDescription = null
-                                )
-                            }
-                        }
-                    },
-                    scrollBehavior = scrollBehavior,
-                    expandedHeight = 240.dp
-                )
-            }
-        },
-        content = { innerPadding ->
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(innerPadding)
-            ) {
-                items(
-                    count = 40,
-                    key = { it }
-                ) { index ->
+    Column(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalPlatformContext.current)
+                    .data(resourceUrl)
+                    .placeholderMemoryCacheKey(coilCacheKey)
+                    .memoryCacheKeyExtras(keyExtras ?: emptyMap())
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier.matchParentSize()
+            )
+            TopAppBar(
+                title = {
                     Text(
-                        text = "Es el item $index",
-                        style = MaterialTheme.typography.titleLargeEmphasized
+                        text = title,
+                        modifier = Modifier.fillMaxWidth().padding(start = 32.dp),
+                        textAlign = TextAlign.Center,
                     )
-                }
+                },
+                colors = MaterialTheme.colorScheme.topAppBarCustomColorsTwo,
+                scrollBehavior = scrollBehavior,
+                expandedHeight = 240.dp
+            )
+        }
+
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(
+                count = 40,
+                key = { it }
+            ) { index ->
+                Text(
+                    text = "Es el item $index",
+                    style = MaterialTheme.typography.titleLargeEmphasized
+                )
             }
         }
-    )
+    }
+
+//    Scaffold(
+//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+//        topBar = {
+//            Box(
+//                modifier = Modifier.fillMaxWidth(),
+//            ) {
+//                AsyncImage(
+//                    model = ImageRequest.Builder(LocalPlatformContext.current)
+//                        .data(resourceUrl)
+//                        .placeholderMemoryCacheKey(coilCacheKey)
+//                        .memoryCacheKeyExtras(keyExtras ?: emptyMap())
+//                        .build(),
+//                    contentDescription = null,
+//                    contentScale = ContentScale.FillBounds,
+//                    modifier = Modifier.matchParentSize()
+//                )
+//                TopAppBar(
+//                    title = {
+//                        Text(title)
+//                    },
+//                    colors = MaterialTheme.colorScheme.topAppBarCustomColorsTwo,
+//                    navigationIcon = {
+//                        if (shouldShowBackIcon) {
+//                            IconButton(onClick = goBack) {
+//                                Icon(
+//                                    imageVector = vectorResource(Res.drawable.arrow_back),
+//                                    contentDescription = null
+//                                )
+//                            }
+//                        }
+//                    },
+//                    scrollBehavior = scrollBehavior,
+//                    expandedHeight = 240.dp
+//                )
+//            }
+//        },
+//        content = { innerPadding ->
+//            LazyColumn(
+//                verticalArrangement = Arrangement.spacedBy(16.dp),
+//                modifier = Modifier.padding(innerPadding)
+//            ) {
+//                items(
+//                    count = 40,
+//                    key = { it }
+//                ) { index ->
+//                    Text(
+//                        text = "Es el item $index",
+//                        style = MaterialTheme.typography.titleLargeEmphasized
+//                    )
+//                }
+//            }
+//        }
+//    )
 }
 
 private var cachedTopBarColors: TopAppBarColors? = null
