@@ -2,6 +2,8 @@ package okik.tech.fullstack.data.db.dao
 
 import androidx.paging.PagingSource
 import app.cash.sqldelight.async.coroutines.awaitAsList
+import app.cash.sqldelight.async.coroutines.awaitAsOne
+import app.cash.sqldelight.async.coroutines.awaitAsOneOrNull
 import kotlinx.coroutines.CoroutineDispatcher
 import okik.tech.fullstack.data.db.paging.AsyncOffsetQueryPagingSource
 import okik.tech.fullstack.db.ApodEntity
@@ -22,6 +24,10 @@ class ApodDaoImpl(
         )
 
     override suspend fun selectAll(): List<ApodEntity> = queries.selectAll().awaitAsList()
+
+    override suspend fun selectById(dateId: Long): ApodEntity? =
+        queries.selectById(dateId).awaitAsOneOrNull()
+
 
     override suspend fun upsertApods(apods: Array<ApodEntity>): Array<ApodEntity> {
         for (apod in apods) {

@@ -7,6 +7,7 @@ import okik.tech.fullstack.db.PageInfoEntity
 interface ApodDao {
     fun getApodPagingSource(): PagingSource<Int, ApodEntity>
     suspend fun selectAll(): List<ApodEntity>
+    suspend fun selectById(dateId: Long): ApodEntity?
     suspend fun upsertApods(apods: Array<ApodEntity>): Array<ApodEntity>
     suspend fun upsertApod(apod: ApodEntity): ApodEntity
     suspend fun deleteAll()
