@@ -7,6 +7,9 @@ import androidx.paging.map
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayIn
 import okik.tech.fullstack.data.db.DbTransaction
 import okik.tech.fullstack.data.db.dao.ApodDao
 import okik.tech.fullstack.data.db.dao.PagingInfoDao
@@ -26,6 +29,7 @@ import okik.tech.fullstack.domain.Paging
 import okik.tech.fullstack.data.db.paging.ApodHistoryRemoteMediator
 import okik.tech.fullstack.db.ApodEntity
 import okik.tech.fullstack.models.PaginatedResponse
+import kotlin.time.Clock
 
 class ApodRepositoryImpl(
     private val apiService: ApodApiService,
@@ -34,17 +38,26 @@ class ApodRepositoryImpl(
     private val dbTransaction: DbTransaction
 ) : ApodRepository {
 
-    override suspend fun getTodayApod(): DomainResult<Apod> =
-        when (val response = apiService.getTodaysApod()) {
+    override suspend fun getTodayApod(): DomainResult<Apod> {
+        val cacheTodayApod =
+            apodDao.selectById(Clock.System.todayIn(TimeZone.UTC).toEpochDays())
+
+        if (cacheTodayApod != null) return DomainResult.Success(
+            result = cacheTodayApod.toDomainModel()
+        )
+
+        return when (val response = apiService.getTodaysApod()) {
             is ApiResult.Error<ApodResponse> -> response.toDomainResultError()
             is ApiResult.Success<ApodResponse> -> {
-                val insertedApod = apodDao.upsertApod(response.result.toApodEntity()).toDomainModel()
+                val insertedApod =
+                    apodDao.upsertApod(response.result.toApodEntity()).toDomainModel()
 
                 DomainResult.Success(
                     result = insertedApod
                 )
             }
         }
+    }
 
     override suspend fun getApodHistory(page: Int, pageSize: Int): DomainResult<Paging<Apod>> =
         when(val response = apiService.getApodHistory(page, pageSize)) {
