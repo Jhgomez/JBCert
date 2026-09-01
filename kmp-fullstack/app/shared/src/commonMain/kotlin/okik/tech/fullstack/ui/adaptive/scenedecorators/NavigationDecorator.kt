@@ -57,7 +57,7 @@ class NavigationDecoratorScene(
                                 modifier = Modifier
         //                            .cacheSize(!isMovableContentCaller)
                                     .sharedElement(
-                                        rememberSharedContentState("nav-rail"),
+                                        rememberSharedContentState("nav"),
                                         animatedContentScope
                                     )
                             ) {
@@ -104,7 +104,7 @@ class NavigationDecoratorScene(
                             modifier = Modifier
                                 .cacheSize(!isMovableContentCaller)
                                 .sharedElement(
-                                    rememberSharedContentState("nav-bar"),
+                                    rememberSharedContentState("nav"),
                                     animatedContentScope
                                 )
                         ) {
