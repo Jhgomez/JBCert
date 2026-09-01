@@ -10,8 +10,3 @@ sealed interface Search: AppNavKey
 
 @Serializable
 object SearchHome: Search
-
-@Serializable
-class SearchDetail(val apod: Apod?): Search {
-    override val shouldShowTopBar: Boolean = true
-}
