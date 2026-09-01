@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -150,6 +152,13 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
         Column(modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth(.6f)
+            .sharedBounds(
+                rememberSharedContentState(key = "bounds"),
+                animatedVisibilityScope = animatedContentScope,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds()
+            )
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalPlatformContext.current)
@@ -172,9 +181,8 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .padding(horizontal = 24.dp)
+                .fillMaxSize()
+                .padding(24.dp)
         ) {
             if (title != null && date != null && description != null) {
                 Text(
@@ -189,7 +197,7 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
                 Text(
                     text = date,
                     style = MaterialTheme.typography.labelSmallEmphasized,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     textAlign = TextAlign.Right
                 )
 
@@ -243,7 +251,15 @@ private fun SharedTransitionScope.SmallSizeScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) {
         Box(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .sharedBounds(
+                    rememberSharedContentState(key = "bounds"),
+                    animatedVisibilityScope = animatedContentScope,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds()
+                ),
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalPlatformContext.current)
@@ -324,7 +340,7 @@ private fun SharedTransitionScope.SmallSizeScreen(
                     .height(
                         if (sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) &&
                             sizeClass.minWidthDp <= 800)
-                            400.dp
+                            600.dp
                         else
                             240.dp
                     )
