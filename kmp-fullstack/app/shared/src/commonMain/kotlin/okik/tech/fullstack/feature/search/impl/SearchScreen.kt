@@ -68,7 +68,7 @@ fun SearchScreen(
 @Composable
 fun DatePickerModal(
     initialDate: LocalDate,
-    onDateSelected: (Long?) -> Unit,
+    onDateSelected: (LocalDate?) -> Unit,
     onDismiss: () -> Unit
 ) {
     val datePickerState = rememberDatePickerState(
@@ -79,7 +79,12 @@ fun DatePickerModal(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
+                onDateSelected(
+                    datePickerState.selectedDateMillis?.let {
+                        LocalDate.fromEpochDays(it)
+                    }
+                )
+
                 onDismiss()
             }) {
                 Text("OK")
