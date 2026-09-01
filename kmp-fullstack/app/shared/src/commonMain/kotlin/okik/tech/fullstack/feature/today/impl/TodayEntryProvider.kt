@@ -16,16 +16,6 @@ import okik.tech.fullstack.navigation.exitthroughhome.ExitThroughHomeNavigator
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 fun EntryProviderScope<NavKey>.todayEntries(navigator: ExitThroughHomeNavigator) {
     entry<TodayHome>() {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Button(onClick = {
-
-            }) {
-                Text("To TOday detail")
-            }
-        }
+        TodayScreen()
     }
 }
