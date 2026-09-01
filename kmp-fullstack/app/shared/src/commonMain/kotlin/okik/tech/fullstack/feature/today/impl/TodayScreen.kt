@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,7 +54,6 @@ fun TodayScreen(
     modifier: Modifier = Modifier,
     viewModel: TodayViewModel = koinViewModel()
 ) {
-
 }
 
 @Composable
@@ -96,7 +96,6 @@ fun TodayScreen(
         } else {
             MediumAndLargeSizeScreen(
                 modifier,
-                scrollBehavior,
                 resourceUrl,
                 { coilCacheKey -> if (cacheKey.value == null) cacheKey.value = coilCacheKey },
                 { cacheKey.value },
@@ -113,9 +112,8 @@ fun TodayScreen(
 }
 
 @Composable
-fun MediumAndLargeSizeScreen(
+fun SharedTransitionScope.MediumAndLargeSizeScreen(
     modifier: Modifier,
-    scrollBehavior: TopAppBarScrollBehavior,
     resourceUrl: String?,
     onSaveCoilCacheKey: (MemoryCache.Key?) -> Unit,
     coilCacheKey: () -> MemoryCache.Key?,
@@ -126,8 +124,80 @@ fun MediumAndLargeSizeScreen(
     copyright: String?,
     sizeClass: WindowSizeClass
 ) {
-    Row {
+    Row(modifier = modifier) {
+        Column(modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(.65f)
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalPlatformContext.current)
+                    .data(resourceUrl)
+                    .memoryCacheKey(coilCacheKey())
+                    .build(),
+                onSuccess = { onSaveCoilCacheKey(it.result.memoryCacheKey) },
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .sharedElement(
+                        sharedContentState = rememberSharedContentState("apod-image"),
+                        animatedVisibilityScope = animatedContentScope
+                    )
+            )
+        }
 
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .fillMaxWidth(0.35f)
+                .fillMaxHeight()
+                .padding(horizontal = 24.dp)
+        ) {
+            Text(
+                text = title,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLargeEmphasized
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            Text(
+                text = date,
+                style = MaterialTheme.typography.labelSmallEmphasized,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Right
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            Text(
+                text = description,
+                modifier = Modifier.fillMaxSize(),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Justify
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            if (copyright != null) {
+                Row {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.copyright),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+
+                    Spacer(Modifier.width(8.dp))
+
+                    Text(
+                        text = copyright,
+                        style = MaterialTheme.typography.labelMediumEmphasized
+                    )
+                }
+            }
+        }
     }
 }
 
