@@ -1,5 +1,6 @@
 package okik.tech.fullstack.feature.today.impl
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
@@ -81,7 +82,6 @@ fun TodayScreen(
     var cacheKey: MutableState<MemoryCache.Key?> = remember { mutableStateOf(null) }
     val keyExtras: Map<String, String>? = remember { null }
     val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
-    val animatedContentScope = LocalNavAnimatedContentScope.current
 
     SharedTransitionLayout {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -91,33 +91,37 @@ fun TodayScreen(
             Logger.logInfo("Coil cache", "Resource $resourceUrl map: $keyExtras")
         }
 
-        if (!sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
-            SmallSizeScreen(
-                modifier,
-                scrollBehavior,
-                resourceUrl,
-                { coilCacheKey -> if (cacheKey.value == null) cacheKey.value = coilCacheKey },
-                { cacheKey.value },
-                animatedContentScope,
-                title,
-                date,
-                description,
-                copyright,
-                sizeClass
-            )
-        } else {
-            MediumAndLargeSizeScreen(
-                modifier,
-                resourceUrl,
-                { coilCacheKey -> if (cacheKey.value == null) cacheKey.value = coilCacheKey },
-                { cacheKey.value },
-                animatedContentScope,
-                title,
-                date,
-                description,
-                copyright,
-                sizeClass
-            )
+        AnimatedContent(
+            targetState = sizeClass
+        ) { size ->
+            if (!size.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
+                SmallSizeScreen(
+                    modifier,
+                    scrollBehavior,
+                    resourceUrl,
+                    { coilCacheKey -> if (cacheKey.value == null) cacheKey.value = coilCacheKey },
+                    { cacheKey.value },
+                    this,
+                    title,
+                    date,
+                    description,
+                    copyright,
+                    sizeClass
+                )
+            } else {
+                MediumAndLargeSizeScreen(
+                    modifier,
+                    resourceUrl,
+                    { coilCacheKey -> if (cacheKey.value == null) cacheKey.value = coilCacheKey },
+                    { cacheKey.value },
+                    this,
+                    title,
+                    date,
+                    description,
+                    copyright,
+                    sizeClass
+                )
+            }
         }
     }
 
