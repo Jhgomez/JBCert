@@ -58,6 +58,12 @@ fun TodayScreen(
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(null) {
+        // not launching this method on the vm init because it seems to cause an subtle error just
+        // as stated here https://developer.android.com/topic/architecture/ui-layer/state-production#initializing-state-production
+        viewModel.getTodayApod()
+    }
+
     TodayScreen(
         title = state.value.apod?.title,
         date = state.value.apod?.date,
