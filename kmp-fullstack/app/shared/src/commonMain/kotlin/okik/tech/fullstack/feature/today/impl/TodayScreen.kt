@@ -36,6 +36,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.AsyncImage
@@ -54,15 +55,26 @@ fun TodayScreen(
     modifier: Modifier = Modifier,
     viewModel: TodayViewModel = koinViewModel()
 ) {
+    val state = viewModel.uiState.collectAsStateWithLifecycle()
+
+    TodayScreen(
+        title = state.value.apod?.title,
+        date = state.value.apod?.date,
+        resourceUrl = state.value.apod?.hdUrl,
+        resourceType = state.value.apod?.mediaType,
+        description = state.value.apod?.explanation,
+        copyright = state.value.apod?.copyright,
+        modifier = modifier
+    )
 }
 
 @Composable
 fun TodayScreen(
-    title: String,
-    date: String,
+    title: String?,
+    date: String?,
     resourceUrl: String?,
-    resourceType: String,
-    description: String,
+    resourceType: String?,
+    description: String?,
     copyright: String?,
     modifier: Modifier
 ) {
@@ -118,9 +130,9 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
     onSaveCoilCacheKey: (MemoryCache.Key?) -> Unit,
     coilCacheKey: () -> MemoryCache.Key?,
     animatedContentScope: AnimatedContentScope,
-    title: String,
-    date: String,
-    description: String,
+    title: String?,
+    date: String?,
+    description: String?,
     copyright: String?,
     sizeClass: WindowSizeClass
 ) {
@@ -154,32 +166,34 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
                 .fillMaxHeight()
                 .padding(horizontal = 24.dp)
         ) {
-            Text(
-                text = title,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLargeEmphasized
-            )
+            if (title != null && date != null && description != null) {
+                Text(
+                    text = title,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLargeEmphasized
+                )
 
-            Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(8.dp))
 
-            Text(
-                text = date,
-                style = MaterialTheme.typography.labelSmallEmphasized,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Right
-            )
+                Text(
+                    text = date,
+                    style = MaterialTheme.typography.labelSmallEmphasized,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Right
+                )
 
-            Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(24.dp))
 
-            Text(
-                text = description,
-                modifier = Modifier.fillMaxSize(),
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Justify
-            )
+                Text(
+                    text = description,
+                    modifier = Modifier.fillMaxSize(),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Justify
+                )
 
-            Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(24.dp))
+            }
 
             if (copyright != null) {
                 Row {
@@ -209,9 +223,9 @@ private fun SharedTransitionScope.SmallSizeScreen(
     onSaveCoilCacheKey: (MemoryCache.Key?) -> Unit,
     coilCacheKey: () -> MemoryCache.Key?,
     animatedContentScope: AnimatedContentScope,
-    title: String,
-    date: String,
-    description: String,
+    title: String?,
+    date: String?,
+    description: String?,
     copyright: String?,
     sizeClass: WindowSizeClass
 ) {
@@ -239,7 +253,7 @@ private fun SharedTransitionScope.SmallSizeScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = title,
+                        text = title ?: "",
                         modifier = Modifier.fillMaxWidth().padding(start = 32.dp),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleLargeEmphasized
@@ -261,7 +275,7 @@ private fun SharedTransitionScope.SmallSizeScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = date,
+                text = date ?: "",
                 style = MaterialTheme.typography.labelSmallEmphasized,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Right
@@ -270,7 +284,7 @@ private fun SharedTransitionScope.SmallSizeScreen(
             Spacer(Modifier.height(24.dp))
 
             Text(
-                text = description,
+                text = description ?: "",
                 modifier = Modifier.fillMaxSize(),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Justify
