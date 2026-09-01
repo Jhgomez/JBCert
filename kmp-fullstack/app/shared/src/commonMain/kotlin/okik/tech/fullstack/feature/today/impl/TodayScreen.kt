@@ -239,7 +239,7 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
 }
 
 @Composable
-private fun SharedTransitionScope.SmallSizeScreen(
+fun SharedTransitionScope.SmallSizeScreen(
     modifier: Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
     resourceUrl: String?,
