@@ -77,15 +77,15 @@ class ApodRepositoryImpl(
             }
         }
 
-    override suspend fun getApodByDate(date: Long): DomainResult<Apod> {
+    override suspend fun getApodByDate(date: LocalDate): DomainResult<Apod> {
         val cacheTodayApod =
-            apodDao.selectById(date)
+            apodDao.selectById(date.toEpochDays())
 
         if (cacheTodayApod != null) return DomainResult.Success(
             result = cacheTodayApod.toDomainModel()
         )
 
-        return when (val response = apiService.getApodByDate(LocalDate.fromEpochDays(date).toString())) {
+        return when (val response = apiService.getApodByDate(date.toString())) {
             is ApiResult.Error<ApodResponse> -> response.toDomainResultError()
             is ApiResult.Success<ApodResponse> -> {
                 val insertedApod =

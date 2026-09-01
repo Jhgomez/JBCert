@@ -1,11 +1,12 @@
 package okik.tech.fullstack.domain
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.LocalDate
 
 interface ApodRepository {
     suspend fun getTodayApod(): DomainResult<Apod>
     suspend fun getApodHistory(page: Int, pageSize: Int): DomainResult<Paging<Apod>>
-    suspend fun getApodByDate(date: Long): DomainResult<Apod>
+    suspend fun getApodByDate(date: LocalDate): DomainResult<Apod>
     fun getTodayApodFlow(): Flow<DomainResult<Apod>>
     suspend fun upsertPageInfo(pageInfo: PageInfo): PageInfo
     suspend fun deletePagesInfo()
