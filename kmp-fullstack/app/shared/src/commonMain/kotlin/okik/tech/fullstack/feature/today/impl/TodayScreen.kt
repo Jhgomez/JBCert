@@ -25,7 +25,11 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -35,6 +39,7 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
+import coil3.memory.MemoryCache
 import coil3.request.ImageRequest
 import fullstack.app.shared.generated.resources.Res
 import fullstack.app.shared.generated.resources.copyright
@@ -61,7 +66,7 @@ fun TodayScreen(
     copyright: String?,
     modifier: Modifier
 ) {
-    val coilCacheKey: String? = remember { null }
+    var cacheKey: MutableState<MemoryCache.Key?> = remember { mutableStateOf(null) }
     val keyExtras: Map<String, String>? = remember { null }
     val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     val animatedContentScope = LocalNavAnimatedContentScope.current
@@ -69,8 +74,8 @@ fun TodayScreen(
     SharedTransitionLayout {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-        LaunchedEffect(coilCacheKey, keyExtras) {
-            Logger.logInfo("Coil cache", "Resource $resourceUrl cacheKey: $coilCacheKey")
+        LaunchedEffect(cacheKey, keyExtras) {
+            Logger.logInfo("Coil cache", "Resource $resourceUrl cacheKey: $cacheKey")
             Logger.logInfo("Coil cache", "Resource $resourceUrl map: $keyExtras")
         }
 
@@ -79,8 +84,8 @@ fun TodayScreen(
                 modifier,
                 scrollBehavior,
                 resourceUrl,
-                coilCacheKey,
-                keyExtras,
+                { coilCacheKey -> if (cacheKey.value == null) cacheKey.value = coilCacheKey },
+                { cacheKey.value },
                 animatedContentScope,
                 title,
                 date,
@@ -89,12 +94,12 @@ fun TodayScreen(
                 sizeClass
             )
         } else {
-            SmallSizeScreen(
+            MediumAndLargeSizeScreen(
                 modifier,
                 scrollBehavior,
                 resourceUrl,
-                coilCacheKey,
-                keyExtras,
+                { coilCacheKey -> if (cacheKey.value == null) cacheKey.value = coilCacheKey },
+                { cacheKey.value },
                 animatedContentScope,
                 title,
                 date,
@@ -108,12 +113,31 @@ fun TodayScreen(
 }
 
 @Composable
+fun MediumAndLargeSizeScreen(
+    modifier: Modifier,
+    scrollBehavior: TopAppBarScrollBehavior,
+    resourceUrl: String?,
+    onSaveCoilCacheKey: (MemoryCache.Key?) -> Unit,
+    coilCacheKey: () -> MemoryCache.Key?,
+    animatedContentScope: AnimatedContentScope,
+    title: String,
+    date: String,
+    description: String,
+    copyright: String?,
+    sizeClass: WindowSizeClass
+) {
+    Row {
+
+    }
+}
+
+@Composable
 private fun SharedTransitionScope.SmallSizeScreen(
     modifier: Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
     resourceUrl: String?,
-    coilCacheKey: String?,
-    keyExtras: Map<String, String>?,
+    onSaveCoilCacheKey: (MemoryCache.Key?) -> Unit,
+    coilCacheKey: () -> MemoryCache.Key?,
     animatedContentScope: AnimatedContentScope,
     title: String,
     date: String,
@@ -130,9 +154,9 @@ private fun SharedTransitionScope.SmallSizeScreen(
             AsyncImage(
                 model = ImageRequest.Builder(LocalPlatformContext.current)
                     .data(resourceUrl)
-                    .placeholderMemoryCacheKey(coilCacheKey)
-                    .memoryCacheKeyExtras(keyExtras ?: emptyMap())
+                    .memoryCacheKey(coilCacheKey())
                     .build(),
+                onSuccess = { onSaveCoilCacheKey(it.result.memoryCacheKey) },
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
