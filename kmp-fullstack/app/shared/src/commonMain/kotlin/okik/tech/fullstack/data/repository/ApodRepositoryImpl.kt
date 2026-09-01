@@ -7,6 +7,7 @@ import androidx.paging.map
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
@@ -76,17 +77,26 @@ class ApodRepositoryImpl(
             }
         }
 
-    override suspend fun getApodByDate(date: String): DomainResult<Apod> =
-        when (val response = apiService.getApodByDate(date)) {
+    override suspend fun getApodByDate(date: Long): DomainResult<Apod> {
+        val cacheTodayApod =
+            apodDao.selectById(date)
+
+        if (cacheTodayApod != null) return DomainResult.Success(
+            result = cacheTodayApod.toDomainModel()
+        )
+
+        return when (val response = apiService.getApodByDate(LocalDate.fromEpochDays(date).toString())) {
             is ApiResult.Error<ApodResponse> -> response.toDomainResultError()
             is ApiResult.Success<ApodResponse> -> {
-                val insertedApod = apodDao.upsertApod(response.result.toApodEntity()).toDomainModel()
+                val insertedApod =
+                    apodDao.upsertApod(response.result.toApodEntity()).toDomainModel()
 
                 DomainResult.Success(
                     result = insertedApod
                 )
             }
         }
+    }
 
     override fun getTodayApodFlow(): Flow<DomainResult<Apod>> = flow {
         emit(getTodayApod())
