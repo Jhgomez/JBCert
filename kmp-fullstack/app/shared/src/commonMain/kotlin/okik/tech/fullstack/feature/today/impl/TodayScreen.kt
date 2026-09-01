@@ -88,7 +88,7 @@ fun TodayScreen(
     copyright: String?,
     modifier: Modifier
 ) {
-    var cacheKey: MutableState<MemoryCache.Key?> = remember { mutableStateOf(null) }
+    val cacheKey: MutableState<MemoryCache.Key?> = remember { mutableStateOf(null) }
     val keyExtras: Map<String, String>? = remember { null }
     val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
 
