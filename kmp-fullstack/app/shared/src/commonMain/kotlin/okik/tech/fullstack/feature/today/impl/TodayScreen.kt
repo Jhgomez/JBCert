@@ -6,6 +6,7 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -93,6 +94,7 @@ fun TodayScreen(
 
     SharedTransitionLayout {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+        val scrollState: ScrollState = rememberScrollState()
 
         LaunchedEffect(cacheKey, keyExtras) {
             Logger.logInfo("Coil cache", "Resource $resourceUrl cacheKey: $cacheKey")
@@ -114,20 +116,22 @@ fun TodayScreen(
                     date,
                     description,
                     copyright,
-                    size
+                    size,
+                    scrollState
                 )
             } else {
                 MediumAndLargeSizeScreen(
-                    modifier,
-                    resourceUrl,
-                    { coilCacheKey -> if (cacheKey.value == null) cacheKey.value = coilCacheKey },
-                    { cacheKey.value },
-                    this,
-                    title,
-                    date,
-                    description,
-                    copyright,
-                    size
+                    modifier = modifier,
+                    resourceUrl = resourceUrl,
+                    onSaveCoilCacheKey = { coilCacheKey -> if (cacheKey.value == null) cacheKey.value = coilCacheKey },
+                    coilCacheKey = { cacheKey.value },
+                    animatedContentScope = this,
+                    title = title,
+                    date = date,
+                    description = description,
+                    copyright = copyright,
+                    sizeClass = size,
+                    scrollState = scrollState
                 )
             }
         }
@@ -146,7 +150,8 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
     date: String?,
     description: String?,
     copyright: String?,
-    sizeClass: WindowSizeClass
+    sizeClass: WindowSizeClass,
+    scrollState: ScrollState
 ) {
     Row(modifier = modifier) {
         Column(modifier = Modifier
@@ -180,7 +185,7 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(state = scrollState)
                 .fillMaxSize()
                 .padding(24.dp)
         ) {
@@ -245,7 +250,8 @@ private fun SharedTransitionScope.SmallSizeScreen(
     date: String?,
     description: String?,
     copyright: String?,
-    sizeClass: WindowSizeClass
+    sizeClass: WindowSizeClass,
+    scrollState: ScrollState
 ) {
     Column(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -294,7 +300,7 @@ private fun SharedTransitionScope.SmallSizeScreen(
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(state = scrollState)
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
         ) {
