@@ -100,7 +100,7 @@ fun TodayScreen(
         AnimatedContent(
             targetState = sizeClass
         ) { size ->
-            if (!size.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
+            if (size.minWidthDp <= 800) {
                 SmallSizeScreen(
                     modifier,
                     scrollBehavior,
@@ -112,7 +112,7 @@ fun TodayScreen(
                     date,
                     description,
                     copyright,
-                    sizeClass
+                    size
                 )
             } else {
                 MediumAndLargeSizeScreen(
@@ -125,7 +125,7 @@ fun TodayScreen(
                     date,
                     description,
                     copyright,
-                    sizeClass
+                    size
                 )
             }
         }
@@ -149,7 +149,7 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
     Row(modifier = modifier) {
         Column(modifier = Modifier
             .fillMaxHeight()
-            .fillMaxWidth(.65f)
+            .fillMaxWidth(.6f)
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalPlatformContext.current)
@@ -172,7 +172,7 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .fillMaxWidth(0.35f)
+                .fillMaxWidth()
                 .fillMaxHeight()
                 .padding(horizontal = 24.dp)
         ) {
@@ -319,9 +319,16 @@ private fun SharedTransitionScope.SmallSizeScreen(
                 }
             }
 
-            if (!sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
-                Spacer(Modifier.height(200.dp))
-            }
+            Spacer(
+                Modifier
+                    .height(
+                        if (sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) &&
+                            sizeClass.minWidthDp <= 800)
+                            400.dp
+                        else
+                            240.dp
+                    )
+            )
         }
     }
 }
