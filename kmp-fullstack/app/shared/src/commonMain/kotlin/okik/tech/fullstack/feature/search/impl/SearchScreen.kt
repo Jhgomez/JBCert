@@ -1,7 +1,6 @@
 package okik.tech.fullstack.feature.search.impl
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
@@ -16,7 +15,6 @@ import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -26,15 +24,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.window.core.layout.WindowSizeClass
 import coil3.memory.MemoryCache
 import fullstack.app.shared.generated.resources.Res
 import fullstack.app.shared.generated.resources.calendar
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toLocalDateTime
 import okik.tech.fullstack.Logger
 import okik.tech.fullstack.feature.today.impl.SmallSizeScreen
 import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.time.Instant
 
 @Composable
 fun SearchScreen(
@@ -42,8 +44,8 @@ fun SearchScreen(
     viewModel: SearchViewModel = koinViewModel()
 ) {
     LaunchedEffect(null) {
-        if (viewModel.state.epochDays != null)
-            viewModel.getApod(viewModel.state.epochDays!!)
+        if (viewModel.state.localDate != null)
+            viewModel.getApod(viewModel.state.localDate!!)
     }
 
     SearchScreen(
@@ -54,7 +56,7 @@ fun SearchScreen(
         date = viewModel.state.apod?.date,
         description = viewModel.state.apod?.explanation,
         copyright = viewModel.state.apod?.copyright,
-        selectedEpochDay = viewModel.state.epochDays,
+        selectedDate = viewModel.state.localDate,
     )
 }
 
@@ -62,12 +64,12 @@ fun SearchScreen(
 fun SearchScreen(
     modifier: Modifier,
     resourceUrl: String?,
-    onDatePicked: (Long?) -> Unit,
+    onDatePicked: (LocalDate?) -> Unit,
     title: String?,
     date: String?,
     description: String?,
     copyright: String?,
-    selectedEpochDay: Long?
+    selectedDate: LocalDate?
 ) {
     val cacheKey: MutableState<MemoryCache.Key?> = remember { mutableStateOf(null) }
     val keyExtras: Map<String, String>? = remember { null }
@@ -117,7 +119,7 @@ fun SearchScreen(
 
                 if (showModal.value) {
                     DatePickerModal(
-                        initialEpochDay = selectedEpochDay,
+                        initialEpochDay = selectedDate,
                         onDateSelected = onDatePicked,
                         onDismiss = { showModal.value = false }
                     )
@@ -131,19 +133,24 @@ fun SearchScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(
-    initialEpochDay: Long?,
-    onDateSelected: (Long?) -> Unit,
+    initialEpochDay: LocalDate?,
+    onDateSelected: (LocalDate?) -> Unit,
     onDismiss: () -> Unit
 ) {
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = initialEpochDay
+        initialSelectedDateMillis = initialEpochDay?.atStartOfDayIn(TimeZone.UTC)?.toEpochMilliseconds()
     )
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
+
+                onDateSelected(
+                    datePickerState.selectedDateMillis?.let {
+                        Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date
+                    }
+                )
 
                 onDismiss()
             }) {
