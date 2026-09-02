@@ -156,28 +156,28 @@ class ApodViewModel(
         viewModelScope.launch {
             _findUiState.value = _findUiState.value.copy(isLoading = true, error = null)
 
-            with(repository.getApodByDate(date)) {
-                when (this) {
-                    is DomainResult.Success<Apod> ->
-                        _findUiState.value = _findUiState.value.copy(
-                            isLoading = false,
-                            foundApod = result,
-                            error = null
-                        )
-                    is DomainResult.DomainErrorResult.NetworkError,
-                    is DomainResult.DomainErrorResult.NotFound,
-                    is DomainResult.DomainErrorResult.Unauthorized,
-                    is DomainResult.DomainErrorResult.UnhandledHttpCode,
-                    is DomainResult.DomainErrorResult.UnknownResult -> {
-
-                        _homeUiState.value = _homeUiState.value.copy(
-                            isLoading = false,
-                            error = "$this",
-                            shouldShowRetry = this is DomainResult.DomainErrorResult.NetworkError
-                        )
-                    }
-                }
-            }
+//            with(repository.getApodByDate(date)) {
+//                when (this) {
+//                    is DomainResult.Success<Apod> ->
+//                        _findUiState.value = _findUiState.value.copy(
+//                            isLoading = false,
+//                            foundApod = result,
+//                            error = null
+//                        )
+//                    is DomainResult.DomainErrorResult.NetworkError,
+//                    is DomainResult.DomainErrorResult.NotFound,
+//                    is DomainResult.DomainErrorResult.Unauthorized,
+//                    is DomainResult.DomainErrorResult.UnhandledHttpCode,
+//                    is DomainResult.DomainErrorResult.UnknownResult -> {
+//
+//                        _homeUiState.value = _homeUiState.value.copy(
+//                            isLoading = false,
+//                            error = "$this",
+//                            shouldShowRetry = this is DomainResult.DomainErrorResult.NetworkError
+//                        )
+//                    }
+//                }
+//            }
         }
     }
 
