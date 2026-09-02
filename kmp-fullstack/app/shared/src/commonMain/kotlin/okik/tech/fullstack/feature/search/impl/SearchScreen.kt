@@ -6,6 +6,9 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.rememberScrollable2DState
+import androidx.compose.foundation.gestures.scrollable2D
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +18,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
@@ -38,7 +47,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -112,7 +124,10 @@ fun SearchScreen(
 
             Row(modifier = modifier) {
                 if (!isSmallScreen) {
-                    Column(modifier = Modifier.fillMaxHeight().fillMaxWidth(0.4f)) {
+                    Column(modifier = Modifier
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState())
+                    ) {
                         DatePickerDocked(
                             datePickerState = datePickerState,
                             onDateSelected = onDatePicked
@@ -205,43 +220,31 @@ fun DatePickerDocked(
     datePickerState: DatePickerState,
     onDateSelected: (LocalDate?) -> Unit
 ) {
-    Box(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        OutlinedTextField(
-            value = datePickerState.selectedDateMillis?.let {
-                val date = Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date
-                onDateSelected(date)
-                date.toString()
-            } ?: "",
-            onValueChange = { },
-            label = { Text("DOB") },
-            readOnly = true,
-            trailingIcon = {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.calendar),
-                    contentDescription = "Select date"
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(y = 64.dp)
-                .shadow(elevation = 4.dp)
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
-        ) {
-            DatePicker(
-                state = datePickerState,
-                showModeToggle = false
+    OutlinedTextField(
+        value = datePickerState.selectedDateMillis?.let {
+            val date = Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date
+            onDateSelected(date)
+            date.toString()
+        } ?: "",
+        onValueChange = { },
+        label = { Text("DOB") },
+        readOnly = true,
+        trailingIcon = {
+            Icon(
+                imageVector = vectorResource(Res.drawable.calendar),
+                contentDescription = "Select date"
             )
-        }
-    }
+        },
+        modifier = Modifier
+            .width(400.dp)
+            .height(64.dp)
+    )
+
+    DatePicker(
+        state = datePickerState,
+        showModeToggle = false,
+        modifier = Modifier.requiredSize(width = 400.dp, height = 521.dp)
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
