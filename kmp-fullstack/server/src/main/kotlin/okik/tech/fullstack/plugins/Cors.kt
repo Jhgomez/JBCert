@@ -13,6 +13,7 @@ fun Application.configureCors() {
         // the IP assign to you by your DHCP server(AKA, your ISP router) or change it to "localhost"
         // so other devices connected to my router can fetch also
         allowHost("192.168.1.15:8080")
+        allowHost("192.168.1.86:8080")
         // Or use anyHost() for loose development access:
         // anyHost()
 
