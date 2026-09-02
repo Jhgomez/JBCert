@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import okik.tech.fullstack.domain.Apod
 import okik.tech.fullstack.domain.ApodRepository
 import okik.tech.fullstack.domain.DomainResult
@@ -16,7 +17,7 @@ data class SearchUiState(
     val error: DomainResult.DomainErrorResult? = null,
     // since this is user input and we will use it to persist the state of the app across system-
     // initiated process death we will store it here instead of near the composable that consumes it
-    val epochDays: Long? = null
+    val localDate: LocalDate? = null
 )
 
 class SearchViewModel(
@@ -27,13 +28,17 @@ class SearchViewModel(
         private set
 
 
-    fun getApod(date: Long) {
+    fun getApod(date: LocalDate) {
         viewModelScope.launch {
-            state = state.copy(isLoading = true, epochDays = date)
+            state = state.copy(isLoading = true, localDate = date)
 
             when (val response = apodRepository.getApodByDate(date)) {
                 is DomainResult.Success<Apod> -> {
-                    state = SearchUiState(apod = response.result)
+                    state = state.copy(
+                        apod = response.result,
+                        isLoading = false,
+                        error = null
+                    )
                 }
                 is DomainResult.DomainErrorResult -> {
                     state = state.copy(isLoading = false, error = response)
