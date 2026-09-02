@@ -210,11 +210,11 @@ fun DatePickerDocked(
     ) {
         OutlinedTextField(
             value = datePickerState.selectedDateMillis?.let {
-                Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date.toString()
+                val date = Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date
+                onDateSelected(date)
+                date.toString()
             } ?: "",
-            onValueChange = {
-                onDateSelected(LocalDate.parse(it))
-            },
+            onValueChange = { },
             label = { Text("DOB") },
             readOnly = true,
             trailingIcon = {
