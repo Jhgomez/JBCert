@@ -1,7 +1,9 @@
 package okik.tech.fullstack.feature.search.impl
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +18,7 @@ import androidx.compose.material3.MediumFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -25,7 +28,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
 import coil3.memory.MemoryCache
 import fullstack.app.shared.generated.resources.Res
 import fullstack.app.shared.generated.resources.calendar
@@ -89,47 +94,91 @@ fun SearchScreen(
         AnimatedContent(
             targetState = sizeClass
         ) { size ->
-            Box(modifier = modifier) {
-                this@SharedTransitionLayout.SmallSizeScreen(
-                    modifier = Modifier.fillMaxSize(),
+            if (size.minWidthDp <= 800) {
+                SmallSearchScreen(
+                    modifier = modifier,
+                    scope = this@SharedTransitionLayout,
                     resourceUrl = resourceUrl,
-                    onSaveCoilCacheKey = { coilCacheKey ->
-                        if (cacheKey.value == null) cacheKey.value = coilCacheKey
-                    },
-                    coilCacheKey = { cacheKey.value },
-                    animatedContentScope = this@AnimatedContent,
+                    cacheKey = cacheKey,
+                    scope2 = this@AnimatedContent,
                     title = title,
                     date = date,
                     description = description,
                     copyright = copyright,
-                    sizeClass = size,
+                    size = size,
                     scrollState = scrollState,
-                    scrollBehavior = scrollBehavior
+                    scrollBehavior = scrollBehavior,
+                    showModal = showModal,
+                    selectedDate = selectedDate,
+                    onDatePicked = onDatePicked
                 )
+            } else {
 
-                MediumFloatingActionButton(
-                    modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-                    onClick = { showModal.value = true },
-                    shape = MaterialTheme.shapes.medium,
-                ) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.calendar),
-                        contentDescription = null
-                    )
-                }
-
-                if (showModal.value) {
-                    DatePickerModal(
-                        initialEpochDay = selectedDate,
-                        onDateSelected = onDatePicked,
-                        onDismiss = { showModal.value = false }
-                    )
-                }
             }
         }
 
     }
 }
+
+@Composable
+private fun SmallSearchScreen(
+    modifier: Modifier,
+    scope: SharedTransitionScope,
+    resourceUrl: String?,
+    cacheKey: MutableState<MemoryCache.Key?>,
+    scope2: AnimatedContentScope,
+    title: String?,
+    date: String?,
+    description: String?,
+    copyright: String?,
+    size: WindowSizeClass,
+    scrollState: ScrollState,
+    scrollBehavior: TopAppBarScrollBehavior,
+    showModal: MutableState<Boolean>,
+    selectedDate: LocalDate?,
+    onDatePicked: (LocalDate?) -> Unit
+) {
+    Box(modifier = modifier) {
+        1
+        scope.SmallSizeScreen(
+            modifier = Modifier.fillMaxSize(),
+            resourceUrl = resourceUrl,
+            onSaveCoilCacheKey = { coilCacheKey ->
+                if (cacheKey.value == null) cacheKey.value = coilCacheKey
+            },
+            coilCacheKey = { cacheKey.value },
+            animatedContentScope = scope2,
+            title = title,
+            date = date,
+            description = description,
+            copyright = copyright,
+            sizeClass = size,
+            scrollState = scrollState,
+            scrollBehavior = scrollBehavior
+        )
+        MediumFloatingActionButton(
+            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+            onClick = { showModal.value = true },
+            shape = MaterialTheme.shapes.medium,
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ) {
+            Icon(
+                imageVector = vectorResource(Res.drawable.calendar),
+                contentDescription = null
+            )
+        }
+
+        if (showModal.value) {
+            DatePickerModal(
+                initialEpochDay = selectedDate,
+                onDateSelected = onDatePicked,
+                onDismiss = { showModal.value = false }
+            )
+        }
+    }
+}
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -166,4 +215,22 @@ fun DatePickerModal(
     ) {
         DatePicker(state = datePickerState)
     }
+}
+
+@Preview
+@Composable
+private fun SearchScreenPreview() {
+    SearchScreen(
+        modifier = Modifier.fillMaxSize(),
+        resourceUrl = null,
+        onDatePicked = { },
+        title = null,
+        date = null,
+        description = null,
+        copyright = null,
+        selectedDate = LocalDate(2025, 11, 15)
+
+
+
+    )
 }
