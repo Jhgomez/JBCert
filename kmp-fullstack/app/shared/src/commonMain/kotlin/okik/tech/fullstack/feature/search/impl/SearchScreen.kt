@@ -5,16 +5,26 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumFloatingActionButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -28,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -81,6 +92,9 @@ fun SearchScreen(
     val keyExtras: Map<String, String>? = remember { null }
     val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     var showModal = remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = selectedDate?.atStartOfDayIn(TimeZone.UTC)?.toEpochMilliseconds()
+    )
 
     SharedTransitionLayout {
         val scrollState: ScrollState = rememberScrollState()
@@ -94,9 +108,20 @@ fun SearchScreen(
         AnimatedContent(
             targetState = sizeClass
         ) { size ->
-            if (size.minWidthDp <= 800) {
+            val isSmallScreen = size.minWidthDp <= 800
+
+            Row(modifier = modifier) {
+                if (!isSmallScreen) {
+                    Column(modifier = Modifier.fillMaxHeight().fillMaxWidth(0.4f)) {
+                        DatePickerDocked(
+                            datePickerState = datePickerState,
+                            onDateSelected = onDatePicked
+                        )
+                    }
+                }
+
                 SmallSearchScreen(
-                    modifier = modifier,
+                    modifier = Modifier.fillMaxSize(),
                     scope = this@SharedTransitionLayout,
                     resourceUrl = resourceUrl,
                     cacheKey = cacheKey,
@@ -109,14 +134,11 @@ fun SearchScreen(
                     scrollState = scrollState,
                     scrollBehavior = scrollBehavior,
                     showModal = showModal,
-                    selectedDate = selectedDate,
+                    datePickerState = datePickerState,
                     onDatePicked = onDatePicked
                 )
-            } else {
-
             }
         }
-
     }
 }
 
@@ -135,11 +157,11 @@ private fun SmallSearchScreen(
     scrollState: ScrollState,
     scrollBehavior: TopAppBarScrollBehavior,
     showModal: MutableState<Boolean>,
-    selectedDate: LocalDate?,
+    datePickerState: DatePickerState,
     onDatePicked: (LocalDate?) -> Unit
 ) {
+
     Box(modifier = modifier) {
-        1
         scope.SmallSizeScreen(
             modifier = Modifier.fillMaxSize(),
             resourceUrl = resourceUrl,
@@ -170,7 +192,7 @@ private fun SmallSearchScreen(
 
         if (showModal.value) {
             DatePickerModal(
-                initialEpochDay = selectedDate,
+                datePickerState = datePickerState,
                 onDateSelected = onDatePicked,
                 onDismiss = { showModal.value = false }
             )
@@ -178,18 +200,57 @@ private fun SmallSearchScreen(
     }
 }
 
+@Composable
+fun DatePickerDocked(
+    datePickerState: DatePickerState,
+    onDateSelected: (LocalDate?) -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        OutlinedTextField(
+            value = datePickerState.selectedDateMillis?.let {
+                Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date.toString()
+            } ?: "",
+            onValueChange = {
+                onDateSelected(LocalDate.parse(it))
+            },
+            label = { Text("DOB") },
+            readOnly = true,
+            trailingIcon = {
+                Icon(
+                    imageVector = vectorResource(Res.drawable.calendar),
+                    contentDescription = "Select date"
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+        )
 
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset(y = 64.dp)
+                .shadow(elevation = 4.dp)
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+        ) {
+            DatePicker(
+                state = datePickerState,
+                showModeToggle = false
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(
-    initialEpochDay: LocalDate?,
+    datePickerState: DatePickerState,
     onDateSelected: (LocalDate?) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = initialEpochDay?.atStartOfDayIn(TimeZone.UTC)?.toEpochMilliseconds()
-    )
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
@@ -229,8 +290,5 @@ private fun SearchScreenPreview() {
         description = null,
         copyright = null,
         selectedDate = LocalDate(2025, 11, 15)
-
-
-
     )
 }
