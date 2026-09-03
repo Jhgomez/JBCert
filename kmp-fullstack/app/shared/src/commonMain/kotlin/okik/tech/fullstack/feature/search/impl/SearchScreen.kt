@@ -242,16 +242,10 @@ fun DatePickerModal(
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = {
-                onDismiss()
-            }) {
-                Text("OK")
-            }
-        },
+        confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text("OK")
             }
         }
     ) {
