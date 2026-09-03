@@ -104,12 +104,11 @@ fun SearchScreen(
         }
 
         AnimatedContent(
-            targetState = sizeClass
-        ) { size ->
-            val isSmallScreen = size.minWidthDp <= 800
+            targetState = sizeClass.minWidthDp >= 800
+        ) { isLargeScreen ->
 
             Row(modifier = modifier) {
-                if (!isSmallScreen) {
+                if (isLargeScreen) {
                     Column(modifier = Modifier
                         .fillMaxHeight()
                         .verticalScroll(rememberScrollState())
