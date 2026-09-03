@@ -104,9 +104,9 @@ fun TodayScreen(
         }
 
         AnimatedContent(
-            targetState = sizeClass
-        ) { size ->
-            if (size.minWidthDp <= 800) {
+            targetState = sizeClass.minWidthDp <= 800
+        ) { isSmallScreen ->
+            if (isSmallScreen) {
                 SmallSizeScreen(
                     modifier,
                     scrollBehavior,
@@ -118,7 +118,7 @@ fun TodayScreen(
                     date,
                     description,
                     copyright,
-                    size,
+                    sizeClass,
                     scrollState
                 )
             } else {
@@ -132,7 +132,7 @@ fun TodayScreen(
                     date = date,
                     description = description,
                     copyright = copyright,
-                    sizeClass = size,
+                    sizeClass = sizeClass,
                     scrollState = scrollState
                 )
             }
@@ -156,34 +156,12 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
     scrollState: ScrollState
 ) {
     Row(modifier = modifier) {
-        Column(modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth(.6f)
-            .sharedBounds(
-                rememberSharedContentState(key = "bounds"),
-                animatedVisibilityScope = animatedContentScope,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds()
-            )
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalPlatformContext.current)
-                    .data(resourceUrl)
-                    .memoryCacheKey(coilCacheKey())
-                    .build(),
-                onSuccess = { onSaveCoilCacheKey(it.result.memoryCacheKey) },
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .verticalScroll(state = scrollState)
-                .fillMaxSize()
+                .fillMaxHeight()
+                .fillMaxWidth(.4f)
                 .padding(24.dp)
         ) {
             if (title != null && date != null && description != null) {
@@ -254,6 +232,28 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
                     )
                 }
             }
+        }
+
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .sharedBounds(
+                rememberSharedContentState(key = "bounds"),
+                animatedVisibilityScope = animatedContentScope,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds()
+            )
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalPlatformContext.current)
+                    .data(resourceUrl)
+                    .memoryCacheKey(coilCacheKey())
+                    .build(),
+                onSuccess = { onSaveCoilCacheKey(it.result.memoryCacheKey) },
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }
