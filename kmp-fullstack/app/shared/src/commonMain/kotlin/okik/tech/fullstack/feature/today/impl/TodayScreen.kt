@@ -189,7 +189,9 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
             if (title != null && date != null && description != null) {
                 Text(
                     text = title,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                    ,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLargeEmphasized
                 )
@@ -199,7 +201,13 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
                 Text(
                     text = date,
                     style = MaterialTheme.typography.labelSmallEmphasized,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .sharedElement(
+                            sharedContentState = rememberSharedContentState("apod-date"),
+                            animatedVisibilityScope = animatedContentScope
+                        ),
                     textAlign = TextAlign.Right
                 )
 
@@ -207,7 +215,12 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
 
                 Text(
                     text = description,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .sharedElement(
+                            sharedContentState = rememberSharedContentState("apod-desc"),
+                            animatedVisibilityScope = animatedContentScope
+                        ),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Justify
                 )
@@ -220,14 +233,24 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
                     Icon(
                         imageVector = vectorResource(Res.drawable.copyright),
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier
+                            .size(16.dp)
+                            .sharedElement(
+                                sharedContentState = rememberSharedContentState("apod-copy-icon"),
+                                animatedVisibilityScope = animatedContentScope
+                            )
                     )
 
                     Spacer(Modifier.width(8.dp))
 
                     Text(
                         text = copyright,
-                        style = MaterialTheme.typography.labelMediumEmphasized
+                        style = MaterialTheme.typography.labelMediumEmphasized,
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedContentState = rememberSharedContentState("apod-copy"),
+                                animatedVisibilityScope = animatedContentScope
+                            )
                     )
                 }
             }
