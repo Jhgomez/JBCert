@@ -235,7 +235,7 @@ fun SharedTransitionScope.DatePickerDocked(
     OutlinedTextField(
         value = localDate?.toString() ?: "",
         onValueChange = { },
-        label = { Text("DOB") },
+        label = { },
         readOnly = true,
         trailingIcon = {
             Icon(
@@ -245,7 +245,7 @@ fun SharedTransitionScope.DatePickerDocked(
         },
         modifier = Modifier
             .width(400.dp)
-            .height(64.dp)
+            .padding(8.dp)
     )
 
     DatePicker(
