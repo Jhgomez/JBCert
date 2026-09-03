@@ -58,11 +58,6 @@ fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = koinViewModel()
 ) {
-    LaunchedEffect(null) {
-        if (viewModel.state.localDate != null)
-            viewModel.getApod(viewModel.state.localDate!!)
-    }
-
     SearchScreen(
         modifier = modifier,
         resourceUrl = viewModel.state.apod?.hdUrl,
