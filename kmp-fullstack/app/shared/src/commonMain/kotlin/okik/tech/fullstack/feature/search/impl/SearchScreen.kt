@@ -5,24 +5,15 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.rememberScrollable2DState
-import androidx.compose.foundation.gestures.scrollable2D
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
@@ -30,7 +21,6 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumFloatingActionButton
 import androidx.compose.material3.OutlinedTextField
@@ -47,10 +37,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -137,15 +123,14 @@ fun SearchScreen(
 
                 SmallSearchScreen(
                     modifier = Modifier.fillMaxSize(),
-                    scope = this@SharedTransitionLayout,
                     resourceUrl = resourceUrl,
                     cacheKey = cacheKey,
-                    scope2 = this@AnimatedContent,
+                    animatedContentScope = this@AnimatedContent,
                     title = title,
                     date = date,
                     description = description,
                     copyright = copyright,
-                    size = size,
+                    size = sizeClass,
                     scrollState = scrollState,
                     scrollBehavior = scrollBehavior,
                     showModal = showModal,
@@ -158,12 +143,11 @@ fun SearchScreen(
 }
 
 @Composable
-private fun SmallSearchScreen(
+private fun SharedTransitionScope.SmallSearchScreen(
     modifier: Modifier,
-    scope: SharedTransitionScope,
     resourceUrl: String?,
     cacheKey: MutableState<MemoryCache.Key?>,
-    scope2: AnimatedContentScope,
+    animatedContentScope: AnimatedContentScope,
     title: String?,
     date: String?,
     description: String?,
@@ -177,14 +161,14 @@ private fun SmallSearchScreen(
 ) {
 
     Box(modifier = modifier) {
-        scope.SmallSizeScreen(
+        this@SmallSearchScreen.SmallSizeScreen(
             modifier = Modifier.fillMaxSize(),
             resourceUrl = resourceUrl,
             onSaveCoilCacheKey = { coilCacheKey ->
                 if (cacheKey.value == null) cacheKey.value = coilCacheKey
             },
             coilCacheKey = { cacheKey.value },
-            animatedContentScope = scope2,
+            animatedContentScope = animatedContentScope,
             title = title,
             date = date,
             description = description,
