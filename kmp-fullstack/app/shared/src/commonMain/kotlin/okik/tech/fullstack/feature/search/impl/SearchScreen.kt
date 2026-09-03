@@ -119,6 +119,10 @@ fun SearchScreen(
 
             Row(modifier = modifier) {
                 if (isLargeScreen) {
+                    LaunchedEffect(null) {
+                        showModal.value = false
+                    }
+
                     Column(
                         modifier = Modifier
                             .fillMaxHeight()
@@ -189,7 +193,7 @@ private fun SharedTransitionScope.SmallSearchScreen(
             scrollBehavior = scrollBehavior
         )
 
-        if (isLargeScreen) {
+        if (!isLargeScreen) {
             MediumFloatingActionButton(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
