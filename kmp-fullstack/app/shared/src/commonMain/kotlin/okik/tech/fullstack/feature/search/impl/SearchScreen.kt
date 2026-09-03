@@ -94,6 +94,13 @@ fun SearchScreen(
         initialSelectedDateMillis = selectedDate?.atStartOfDayIn(TimeZone.UTC)?.toEpochMilliseconds()
     )
 
+    LaunchedEffect(datePickerState.selectedDateMillis) {
+        datePickerState.selectedDateMillis?.let {
+            val date = Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date
+            onDatePicked(date)
+        }
+    }
+
     SharedTransitionLayout {
         val scrollState: ScrollState = rememberScrollState()
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -104,6 +111,7 @@ fun SearchScreen(
         }
 
         AnimatedContent(
+            // this seems to work like a derived state of, so there is no need to create a derived state of explicitly
             targetState = sizeClass.minWidthDp >= 800
         ) { isLargeScreen ->
 
@@ -115,7 +123,7 @@ fun SearchScreen(
                     ) {
                         DatePickerDocked(
                             datePickerState = datePickerState,
-                            onDateSelected = onDatePicked
+                            localDate = selectedDate
                         )
                     }
                 }
@@ -191,7 +199,6 @@ private fun SharedTransitionScope.SmallSearchScreen(
         if (showModal.value) {
             DatePickerModal(
                 datePickerState = datePickerState,
-                onDateSelected = onDatePicked,
                 onDismiss = { showModal.value = false }
             )
         }
@@ -201,14 +208,10 @@ private fun SharedTransitionScope.SmallSearchScreen(
 @Composable
 fun DatePickerDocked(
     datePickerState: DatePickerState,
-    onDateSelected: (LocalDate?) -> Unit
+    localDate: LocalDate?
 ) {
     OutlinedTextField(
-        value = datePickerState.selectedDateMillis?.let {
-            val date = Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date
-            onDateSelected(date)
-            date.toString()
-        } ?: "",
+        value = localDate.toString() ?: "",
         onValueChange = { },
         label = { Text("DOB") },
         readOnly = true,
@@ -234,7 +237,6 @@ fun DatePickerDocked(
 @Composable
 fun DatePickerModal(
     datePickerState: DatePickerState,
-    onDateSelected: (LocalDate?) -> Unit,
     onDismiss: () -> Unit
 ) {
 
@@ -242,13 +244,6 @@ fun DatePickerModal(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-
-                onDateSelected(
-                    datePickerState.selectedDateMillis?.let {
-                        Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date
-                    }
-                )
-
                 onDismiss()
             }) {
                 Text("OK")
