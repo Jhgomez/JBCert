@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -117,12 +119,14 @@ fun SearchScreen(
 
             Row(modifier = modifier) {
                 if (isLargeScreen) {
-                    Column(modifier = Modifier
-                        .fillMaxHeight()
-                        .verticalScroll(rememberScrollState())
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .verticalScroll(rememberScrollState())
                     ) {
                         DatePickerDocked(
                             datePickerState = datePickerState,
+                            animatedContentScope = this@AnimatedContent,
                             localDate = selectedDate
                         )
                     }
@@ -141,7 +145,8 @@ fun SearchScreen(
                     scrollState = scrollState,
                     scrollBehavior = scrollBehavior,
                     showModal = showModal,
-                    datePickerState = datePickerState
+                    datePickerState = datePickerState,
+                    isLargeScreen = isLargeScreen
                 )
             }
         }
@@ -162,7 +167,8 @@ private fun SharedTransitionScope.SmallSearchScreen(
     scrollState: ScrollState,
     scrollBehavior: TopAppBarScrollBehavior,
     showModal: MutableState<Boolean>,
-    datePickerState: DatePickerState
+    datePickerState: DatePickerState,
+    isLargeScreen: Boolean
 ) {
 
     Box(modifier = modifier) {
@@ -182,30 +188,44 @@ private fun SharedTransitionScope.SmallSearchScreen(
             scrollState = scrollState,
             scrollBehavior = scrollBehavior
         )
-        MediumFloatingActionButton(
-            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-            onClick = { showModal.value = true },
-            shape = MaterialTheme.shapes.medium,
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ) {
-            Icon(
-                imageVector = vectorResource(Res.drawable.calendar),
-                contentDescription = null
-            )
-        }
 
-        if (showModal.value) {
-            DatePickerModal(
-                datePickerState = datePickerState,
-                onDismiss = { showModal.value = false }
-            )
+        if (isLargeScreen) {
+            MediumFloatingActionButton(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
+                    .sharedBounds(
+                        rememberSharedContentState(key = "calendar-bounds"),
+                        animatedVisibilityScope = animatedContentScope,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds()
+                    ),
+                onClick = { showModal.value = true },
+                shape = MaterialTheme.shapes.medium,
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            ) {
+                Icon(
+                    imageVector = vectorResource(Res.drawable.calendar),
+                    contentDescription = null
+                )
+            }
+
+            if (showModal.value) {
+                DatePickerModal(
+                    modifier = Modifier,
+                    datePickerState = datePickerState,
+                    onDismiss = { showModal.value = false }
+                )
+            }
         }
     }
 }
 
 @Composable
-fun DatePickerDocked(
+fun SharedTransitionScope.DatePickerDocked(
     datePickerState: DatePickerState,
+    animatedContentScope: AnimatedContentScope,
     localDate: LocalDate?
 ) {
     OutlinedTextField(
@@ -227,18 +247,28 @@ fun DatePickerDocked(
     DatePicker(
         state = datePickerState,
         showModeToggle = false,
-        modifier = Modifier.requiredSize(width = 400.dp, height = 521.dp)
+        modifier = Modifier
+            .requiredSize(width = 400.dp, height = 521.dp)
+            .sharedBounds(
+                rememberSharedContentState(key = "calendar-bounds"),
+                animatedVisibilityScope = animatedContentScope,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds()
+            )
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(
+    modifier: Modifier,
     datePickerState: DatePickerState,
     onDismiss: () -> Unit
 ) {
 
     DatePickerDialog(
+        modifier = modifier,
         onDismissRequest = onDismiss,
         confirmButton = {},
         dismissButton = {
