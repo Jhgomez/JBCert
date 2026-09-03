@@ -2,6 +2,8 @@ package okik.tech.fullstack.feature.today.impl
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
@@ -293,7 +295,12 @@ fun SharedTransitionScope.SmallSizeScreen(
                 },
                 colors = MaterialTheme.colorScheme.topAppBarCustomColorsTwo,
                 scrollBehavior = scrollBehavior,
-                expandedHeight = 280.dp
+                expandedHeight = 280.dp,
+                modifier = Modifier
+                    .sharedElement(
+                        sharedContentState = rememberSharedContentState("apod-title"),
+                        animatedVisibilityScope = animatedContentScope
+                    )
             )
         }
 
@@ -309,7 +316,12 @@ fun SharedTransitionScope.SmallSizeScreen(
             Text(
                 text = date ?: "",
                 style = MaterialTheme.typography.labelSmallEmphasized,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .sharedElement(
+                        sharedContentState = rememberSharedContentState("apod-date"),
+                        animatedVisibilityScope = animatedContentScope
+                    ),
                 textAlign = TextAlign.Right
             )
 
@@ -317,7 +329,12 @@ fun SharedTransitionScope.SmallSizeScreen(
 
             Text(
                 text = description ?: "",
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .sharedElement(
+                        sharedContentState = rememberSharedContentState("apod-desc"),
+                        animatedVisibilityScope = animatedContentScope
+                    ),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Justify
             )
@@ -329,14 +346,24 @@ fun SharedTransitionScope.SmallSizeScreen(
                     Icon(
                         imageVector = vectorResource(Res.drawable.copyright),
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier
+                            .size(16.dp)
+                            .sharedElement(
+                                sharedContentState = rememberSharedContentState("apod-copy-icon"),
+                                animatedVisibilityScope = animatedContentScope
+                            )
                     )
 
                     Spacer(Modifier.width(8.dp))
 
                     Text(
                         text = copyright,
-                        style = MaterialTheme.typography.labelMediumEmphasized
+                        style = MaterialTheme.typography.labelMediumEmphasized,
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedContentState = rememberSharedContentState("apod-copy"),
+                                animatedVisibilityScope = animatedContentScope
+                            )
                     )
                 }
             }
