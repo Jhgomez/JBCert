@@ -175,12 +175,7 @@ fun SharedTransitionScope.MediumAndLargeSizeScreen(
                 onSuccess = { onSaveCoilCacheKey(it.result.memoryCacheKey) },
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .sharedElement(
-                        sharedContentState = rememberSharedContentState("apod-image"),
-                        animatedVisibilityScope = animatedContentScope
-                    )
+                modifier = Modifier.fillMaxWidth()
             )
         }
 
