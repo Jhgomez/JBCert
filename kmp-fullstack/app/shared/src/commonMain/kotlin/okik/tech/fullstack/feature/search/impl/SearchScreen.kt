@@ -7,14 +7,19 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -126,7 +131,15 @@ fun SearchScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxHeight()
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                             .verticalScroll(rememberScrollState())
+                            .sharedBounds(
+                            rememberSharedContentState(key = "calendar-bounds"),
+                            animatedVisibilityScope = this@AnimatedContent,
+                            enter = fadeIn(),
+                            exit = fadeOut(),
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds()
+                        )
                     ) {
                         DatePickerDocked(
                             datePickerState = datePickerState,
@@ -245,21 +258,14 @@ fun SharedTransitionScope.DatePickerDocked(
         },
         modifier = Modifier
             .width(400.dp)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(8.dp)
     )
 
     DatePicker(
         state = datePickerState,
         showModeToggle = false,
-        modifier = Modifier
-            .requiredSize(width = 400.dp, height = 521.dp)
-            .sharedBounds(
-                rememberSharedContentState(key = "calendar-bounds"),
-                animatedVisibilityScope = animatedContentScope,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds()
-            )
+        modifier = Modifier.requiredSize(width = 400.dp, height = 521.dp)
     )
 }
 
