@@ -84,7 +84,7 @@ fun SearchScreen(
     val cacheKey: MutableState<MemoryCache.Key?> = remember { mutableStateOf(null) }
     val keyExtras: Map<String, String>? = remember { null }
     val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
-    var showModal = remember { mutableStateOf(false) }
+    val showModal = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = selectedDate?.atStartOfDayIn(TimeZone.UTC)?.toEpochMilliseconds()
     )
@@ -92,7 +92,12 @@ fun SearchScreen(
     LaunchedEffect(datePickerState.selectedDateMillis) {
         datePickerState.selectedDateMillis?.let {
             val date = Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date
-            onDatePicked(date)
+
+            if (selectedDate == null) {
+                onDatePicked(date)
+            } else if (date.compareTo(selectedDate) != 0) {
+                onDatePicked(date)
+            }
         }
     }
 
