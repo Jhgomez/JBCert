@@ -141,8 +141,7 @@ fun SearchScreen(
                     scrollState = scrollState,
                     scrollBehavior = scrollBehavior,
                     showModal = showModal,
-                    datePickerState = datePickerState,
-                    onDatePicked = onDatePicked
+                    datePickerState = datePickerState
                 )
             }
         }
@@ -163,8 +162,7 @@ private fun SharedTransitionScope.SmallSearchScreen(
     scrollState: ScrollState,
     scrollBehavior: TopAppBarScrollBehavior,
     showModal: MutableState<Boolean>,
-    datePickerState: DatePickerState,
-    onDatePicked: (LocalDate?) -> Unit
+    datePickerState: DatePickerState
 ) {
 
     Box(modifier = modifier) {
@@ -211,7 +209,7 @@ fun DatePickerDocked(
     localDate: LocalDate?
 ) {
     OutlinedTextField(
-        value = localDate.toString() ?: "",
+        value = localDate?.toString() ?: "",
         onValueChange = { },
         label = { Text("DOB") },
         readOnly = true,
@@ -253,7 +251,7 @@ fun DatePickerModal(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun SearchScreenPreview() {
     SearchScreen(
