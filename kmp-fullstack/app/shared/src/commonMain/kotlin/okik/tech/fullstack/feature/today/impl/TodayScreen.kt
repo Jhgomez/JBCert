@@ -90,17 +90,15 @@ fun TodayScreen(
     copyright: String?,
     modifier: Modifier
 ) {
-    val cacheKey: MutableState<MemoryCache.Key?> = remember { mutableStateOf(null) }
-    val keyExtras: Map<String, String>? = remember { null }
+    val cacheKey: MutableState<MemoryCache.Key?> = remember(resourceUrl) { mutableStateOf(null) }
     val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
 
     SharedTransitionLayout {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val scrollState: ScrollState = rememberScrollState()
 
-        LaunchedEffect(cacheKey, keyExtras) {
+        LaunchedEffect(cacheKey) {
             Logger.logInfo("Coil cache", "Resource $resourceUrl cacheKey: $cacheKey")
-            Logger.logInfo("Coil cache", "Resource $resourceUrl map: $keyExtras")
         }
 
         AnimatedContent(
