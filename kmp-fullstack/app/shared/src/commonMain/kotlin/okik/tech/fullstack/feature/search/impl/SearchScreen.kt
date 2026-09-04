@@ -134,11 +134,11 @@ fun SearchScreen(
                             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                             .verticalScroll(rememberScrollState())
                             .sharedBounds(
-                            rememberSharedContentState(key = "calendar-bounds"),
-                            animatedVisibilityScope = this@AnimatedContent,
-                            enter = fadeIn(),
-                            exit = fadeOut(),
-                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds()
+                                rememberSharedContentState(key = "calendar-bounds"),
+                                animatedVisibilityScope = this@AnimatedContent,
+                                enter = fadeIn(),
+                                exit = fadeOut(),
+                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds()
                         )
                     ) {
                         DatePickerDocked(
