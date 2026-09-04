@@ -88,8 +88,7 @@ fun SearchScreen(
     copyright: String?,
     selectedDate: LocalDate?
 ) {
-    val cacheKey: MutableState<MemoryCache.Key?> = remember { mutableStateOf(null) }
-    val keyExtras: Map<String, String>? = remember { null }
+    val cacheKey: MutableState<MemoryCache.Key?> = remember(resourceUrl) { mutableStateOf(null) }
     val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     val showModal = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
@@ -112,9 +111,8 @@ fun SearchScreen(
         val scrollState: ScrollState = rememberScrollState()
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-        LaunchedEffect(cacheKey, keyExtras) {
+        LaunchedEffect(cacheKey) {
             Logger.logInfo("Coil cache", "Resource $resourceUrl cacheKey: $cacheKey")
-            Logger.logInfo("Coil cache", "Resource $resourceUrl map: $keyExtras")
         }
 
         AnimatedContent(
