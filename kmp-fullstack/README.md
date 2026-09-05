@@ -47,7 +47,7 @@ Use the run configurations provided by the run widget in your IDE's toolbar. You
 - Desktop app:
   - Hot reload: `./gradlew :app:desktopApp:hotRun --auto`
   - Standard run: `./gradlew :app:desktopApp:run`
-- Server: `./gradlew :server:run`
+- Server: `./gradlew :server:run` or `./gradlew :server:shadowJar`, this creates a fat jar in the file noted in the next command, `java -jar server/build/libs/server-all.jar`
 - Web app:
   - Wasm target (faster, modern browsers): `./gradlew :app:webApp:wasmJsBrowserDevelopmentRun`
   - JS target (slower, supports older browsers): `./gradlew :app:webApp:jsBrowserDevelopmentRun`
