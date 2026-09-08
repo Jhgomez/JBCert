@@ -1,10 +1,11 @@
 This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM), Server. Backend is built with Ktor and it integrates with NASA's Astronomy Picture of the Day API(aka, APOD)
 
+Click images for a video preview:
 
 [![Desktop Preview](resources/DesktopSwing.png)](https://streamable.com/wa1vn3)
 
 
-[![Wasm Preview](resources/wasm.png)](https://streamable.com/q5a2ml)
+<a href="https://streamable.com/q5a2ml"><img src="resources/wasm.png" width="200"></a>
 
 # Backend
 
