@@ -2,7 +2,7 @@ This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM
 
 Click images for a video preview:
 
-<a href="https://streamable.com/wa1vn3"><img src="resources/DesktopSwing.png" width="400"></a>
+<a href="https://streamable.com/wa1vn3"><img src="resources/DesktopSwing.png" width="600"></a>
 
 <a href="https://streamable.com/q5a2ml"><img src="resources/wasm.png" width="250"></a>
 
