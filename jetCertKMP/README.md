@@ -1,5 +1,5 @@
 
-This is a KMP with compose multiplatform project, it targets all platforms, Android, iOS, Web(Js and Assembly), and Desktop, they are all using Koin for DI, Ktor for a REST API, Apollo for a Graphql Client API, Sqldelight for local persistent storage, and KSafe for local encrypted and unencrypted preferences/settings
+This is a KMP with compose multiplatform project, it targets all platforms, Android, iOS, Web(Js and Assembly), and Desktop, they are all using Koin for DI, Ktor for a REST API, Apollo for a Graphql Client API, Sqldelight for local persistent storage, and KSafe for local encrypted and unencrypted preferences/settings. The GraphQl client is consuming GitHub's GraphQl API to fetch repos, and the Ktor http client is fetching from Hacker News REST API
 
 <img src="resources/demo.png" width="300">
 
