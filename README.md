@@ -1,10 +1,10 @@
 # Projects
 
-Compose Multiplatform application targeting all platforms trying out Koin for DI, Ktor for a REST API, Apollo for a Graphql Client API, Sqldelight for local persistent storage, and KSafe for local encrypted and unencrypted preferences/settings
+[Compose Multiplatform application](./jetCertKMP/README.md) targeting all platforms trying out Koin for DI, Ktor for a REST API, Apollo for a Graphql Client API, Sqldelight for local persistent storage, and KSafe for local encrypted and unencrypted preferences/settings
 
 <img src="jetCertKMP/resources/demo.png" width="300">
 
-CMP app targeting all platforms, demoing a more polished UI using Android Nav3, Scene API,
+[CMP app](./kmp-fullstack/README.md) targeting all platforms, demoing a more polished UI using Android Nav3, Scene API,
 Material3, Koin, Ktor client, Ktor server, SqlDelight, Unidirectional Data Flow, Animations and 
 Transitions, and clean architecture
 
