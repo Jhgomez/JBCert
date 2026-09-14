@@ -4,6 +4,9 @@ import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
+import okik.tech.daggerexample.client.di.ClientModule
+import okik.tech.daggerexample.data.repository.di.RepoAModule
+import okik.tech.daggerexample.data.service.di.ServiceAModule
 import javax.inject.Singleton
 
 /**
@@ -14,6 +17,9 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
+        ClientModule::class,
+        ServiceAModule::class,
+        RepoAModule::class,
         SubcomponentsModule::class
     ]
 )

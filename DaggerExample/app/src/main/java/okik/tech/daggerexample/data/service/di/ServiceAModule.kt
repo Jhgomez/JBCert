@@ -1,11 +1,13 @@
 package okik.tech.daggerexample.data.service.di
 
 import dagger.Binds
+import dagger.Component
+import dagger.Module
 import okik.tech.daggerexample.data.service.FakeServiceA
 import okik.tech.daggerexample.data.service.FakeServiceAImpl
 import javax.inject.Singleton
 
-@Singleton
+@Module
 interface ServiceAModule {
 
     @Singleton
