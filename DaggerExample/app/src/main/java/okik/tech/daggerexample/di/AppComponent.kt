@@ -4,6 +4,7 @@ import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
+import okik.tech.daggerexample.MainActivity
 import okik.tech.daggerexample.client.di.ClientModule
 import okik.tech.daggerexample.data.repository.di.RepoAModule
 import okik.tech.daggerexample.data.service.di.ServiceAModule
@@ -24,7 +25,7 @@ import javax.inject.Singleton
     ]
 )
 interface AppComponent {
-
+    fun inject(activity: MainActivity)
 }
 
 @Module(
