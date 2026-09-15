@@ -21,6 +21,7 @@ import javax.inject.Singleton
         ClientModule::class,
         ServiceAModule::class,
         RepoAModule::class,
+        ViewModelBuilderModule::class,
         SubcomponentsModule::class
     ]
 )
