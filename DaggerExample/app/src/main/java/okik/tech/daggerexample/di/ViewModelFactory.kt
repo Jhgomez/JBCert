@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
+import dagger.multibindings.IntoMap
+import okik.tech.daggerexample.DemoVm
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.collections.iterator
@@ -45,6 +47,11 @@ abstract class ViewModelBuilderModule {
     abstract fun bindViewModelFactory(
         factory: TodoViewModelFactory
     ): ViewModelProvider.Factory
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DemoVm::class)
+    abstract fun bindViewModel(viewmodel: DemoVm): ViewModel
 }
 
 @Target(
